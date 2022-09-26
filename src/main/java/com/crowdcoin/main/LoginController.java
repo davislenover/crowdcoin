@@ -82,7 +82,7 @@ public class LoginController {
             if (internetCheck.connectedToInternet) {
 
                 // If connected, attempt login
-                SQLData.sqlConnection = new SQLConnection("jdbc:mysql://70.50.140.88:3306/coinbase",loginInfo.getUsername(), loginInfo.getPassword());
+                SQLData.sqlConnection = new SQLConnection("jdbc:mysql://IPHERE:3306/coinbase",loginInfo.getUsername(), loginInfo.getPassword());
 
                 // Note since we are running the connection in a separate thread, all logic behind it must also be in the thread
                 // If connection failed, get error
