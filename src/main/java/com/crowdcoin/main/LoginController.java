@@ -81,35 +81,10 @@ public class LoginController {
             // Check result
             if (internetCheck.connectedToInternet) {
 
-                // If connected, attempt login
-                SQLData.sqlConnection = new SQLConnection("jdbc:mysql://IPHERE:3306/coinbase",loginInfo.getUsername(), loginInfo.getPassword());
+                try {
 
-                // Note since we are running the connection in a separate thread, all logic behind it must also be in the thread
-                // If connection failed, get error
-                if (SQLData.sqlConnection.getConnectionFailed()) {
-
-                    // Get error
-                    String errorMessage = SQLData.sqlConnection.getConnectionError().toString();
-
-                    // Check possible errors (we only expect invalid credentials)
-
-                    // Invalid credentials
-                    if (errorMessage.contains("Access denied")) {
-                        disableLogin(false);
-                        displayMessage(Defaults.invalidCredentials, Color.RED);
-
-                        // Internet but the server is not responding
-                    } else if (errorMessage.contains("The driver has not received any packets from the server")) {
-                        disableLogin(false);
-                        displayMessage(Defaults.invalidServer, Color.RED);
-
-                        // Any other error
-                    } else {
-                        // We need to throw this error to our ErrorHandler class as it's unexpected
-                        disableLogin(false);
-                        displayMessage(Defaults.abstractLoginError, Color.RED);
-                    }
-                } else {
+                    // If connected, attempt login
+                    SQLData.sqlConnection = new SQLConnection("jdbc:mysql://IPHERE:3306/coinbase",loginInfo.getUsername(), loginInfo.getPassword());
 
                     // If no errors, then we can continue as the user has successfully logged in
                     displayMessage(Defaults.goodLogin, Color.GREEN);
@@ -134,7 +109,33 @@ public class LoginController {
                         // Fire window close request event, this will trigger the event code in loginboard
                         login.fireEvent(new WindowEvent(login, WindowEvent.WINDOW_CLOSE_REQUEST));
 
-                            });
+                    });
+
+                } catch (Exception exception) {
+
+                    // Note since we are running the connection in a separate thread, all logic behind it must also be in the thread
+
+                    // Get error
+                    String errorMessage = exception.getMessage();
+
+                    // Check possible errors (we only expect invalid credentials)
+
+                    // Invalid credentials
+                    if (errorMessage.contains("Access denied")) {
+                        disableLogin(false);
+                        displayMessage(Defaults.invalidCredentials, Color.RED);
+
+                        // Internet but the server is not responding
+                    } else if (errorMessage.contains("The driver has not received any packets from the server")) {
+                        disableLogin(false);
+                        displayMessage(Defaults.invalidServer, Color.RED);
+
+                        // Any other error
+                    } else {
+                        // We need to throw this error to our ErrorHandler class as it's unexpected
+                        disableLogin(false);
+                        displayMessage(Defaults.abstractLoginError, Color.RED);
+                    }
 
                 }
 

@@ -12,11 +12,9 @@ public class SQLConnection {
     String databaseUsername;
     String databasePassword;
 
-    Boolean connectionFailed;
-    Exception connectionError;
-
     // Constructor to get MySQL Connection
-    public SQLConnection(String address, String databaseUsername, String databasePassword) {
+    // This class can throw exceptions
+    public SQLConnection(String address, String databaseUsername, String databasePassword) throws Exception {
 
         int currentAttemptNumber = 1;
 
@@ -29,21 +27,18 @@ public class SQLConnection {
                 this.address = address;
                 this.databaseUsername = databaseUsername;
                 this.databasePassword = databasePassword;
-                this.connectionFailed = false;
                 break;
 
             } catch (Exception e) {
 
                 // Check if it was a timeout error
-                if (e.getClass().getSimpleName() == "java.sql.SQLTimeoutException") {
+                if (e.getClass().getSimpleName().equals("java.sql.SQLTimeoutException")) {
 
                     // Check number of attempts already
                     if (currentAttemptNumber >= Defaults.maxConnectionAttempts) {
 
                         // If connection fails after x amount of attempts, set variables appropriately and get error message
-                        this.connectionFailed = true;
-                        this.connectionError = e;
-                        break;
+                        throw new SQLTimeoutException("SQLTimeoutException -> The driver has not received any packets from the server");
 
                     } else {
 
@@ -55,9 +50,7 @@ public class SQLConnection {
                 } else {
 
                     // If it is any other error, then the error may be unexpected
-                    this.connectionFailed = true;
-                    this.connectionError = e;
-                    break;
+                    throw new Exception(e);
 
                 }
 
@@ -68,12 +61,5 @@ public class SQLConnection {
     }
 
     // Getters
-    public Boolean getConnectionFailed() {
-        return connectionFailed;
-    }
-
-    public Exception getConnectionError() {
-        return connectionError;
-    }
 
 }
