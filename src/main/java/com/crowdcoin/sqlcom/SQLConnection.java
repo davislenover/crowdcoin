@@ -1,11 +1,12 @@
 package com.crowdcoin.sqlcom;
 
 
+import com.crowdcoin.exceptions.network.FailedQueryException;
+import com.crowdcoin.exceptions.network.NullConnectionException;
 import com.crowdcoin.format.Defaults;
 import java.sql.*;
 
 public class SQLConnection {
-
     // Declare connection and credential info
     Connection connection;
     String address;
@@ -58,6 +59,43 @@ public class SQLConnection {
 
         }
 
+    }
+
+    // Send commands to server
+    // Throws FailedQueryException if the Query fails
+    // This class is generic and return a generic type that extends the Object class
+    public <T extends Object> T sendQuery(String query) throws Exception {
+
+        Statement statement = null;
+        ResultSet result = null;
+
+        try {
+            // Attempt to create the statements and execution of said statement
+            statement = this.connection.createStatement();
+            // Get result of statement
+            result = statement.executeQuery(query);
+
+        } catch (Exception exception) {
+            // If an exception occurs, throw custom failed query exception
+            throw new FailedQueryException(query, exception);
+
+            // Attempt to close connections regardless of outcome to free resources
+        } finally {
+            try {
+                statement.close();
+                result.close();
+                // Ignore any exceptions
+            } catch (Exception ignore) {
+            }
+
+            statement = null;
+            result = null;
+
+        }
+
+        // Testing stuff
+        Integer test = 1;
+        return (T) test;
     }
 
     // Getters
