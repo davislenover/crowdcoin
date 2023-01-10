@@ -21,5 +21,10 @@ public class MainBoard {
         stage.setScene(scene);
         stage.setResizable(true);
         stage.show();
+
+        // Initialize coin list
+        MainBoardController controller = (MainBoardController) fxmlLoader.getController();
+        controller.initializeList();
+
     }
 }

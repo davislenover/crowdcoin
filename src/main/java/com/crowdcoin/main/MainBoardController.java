@@ -3,6 +3,7 @@ package com.crowdcoin.main;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 
@@ -18,6 +19,13 @@ public class MainBoardController {
     @FXML private MenuButton editMenuButton;
     @FXML private MenuItem editMenuNewEntry;
 
+    @FXML private ListView<String> mainCoinList;
+
+    // Method to initialize coin list on startup
+    public void initializeList() {
+
+    }
+
     // Events
 
     // Exit Button Action
@@ -31,6 +39,9 @@ public class MainBoardController {
     // New Entry into database
     @FXML
     protected void onNewEntry() {
+
+
+
 
     }
 

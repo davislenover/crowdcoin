@@ -84,7 +84,7 @@ public class LoginController {
                 try {
 
                     // If connected, attempt login
-                    SQLData.sqlConnection = new SQLConnection("jdbc:mysql://IPHERE:3306/coinbase",loginInfo.getUsername(), loginInfo.getPassword());
+                    SQLData.sqlConnection = new SQLConnection("jdbc:mysql://192.168.2.56:3306/coinbase",loginInfo.getUsername(), loginInfo.getPassword());
 
                     // If no errors, then we can continue as the user has successfully logged in
                     displayMessage(Defaults.goodLogin, Color.GREEN);
