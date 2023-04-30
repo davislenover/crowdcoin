@@ -11,8 +11,10 @@ module com.crowdcoin.main {
     requires com.almasb.fxgl.all;
     requires java.sql;
 
-    opens com.crowdcoin.main to javafx.fxml;
-    exports com.crowdcoin.main;
+    opens com.crowdcoin.loginBoard to javafx.fxml;
+    exports com.crowdcoin.loginBoard;
     exports com.crowdcoin.security;
     opens com.crowdcoin.security to javafx.fxml;
+    exports com.crowdcoin.mainBoard;
+    opens com.crowdcoin.mainBoard to javafx.fxml;
 }

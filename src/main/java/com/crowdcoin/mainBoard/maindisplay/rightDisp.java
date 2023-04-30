@@ -1,10 +1,8 @@
-package com.crowdcoin.maindisplay;
+package com.crowdcoin.mainBoard.maindisplay;
 
 import com.crowdcoin.exceptions.network.NullConnectionException;
-import com.crowdcoin.sqlcom.SQLConnection;
-import com.crowdcoin.sqlcom.SQLData;
-
-import java.sql.Connection;
+import com.crowdcoin.networking.sqlcom.SQLConnection;
+import com.crowdcoin.networking.sqlcom.SQLData;
 
 // Class for the right hand display in the MainBoard
 public class rightDisp {

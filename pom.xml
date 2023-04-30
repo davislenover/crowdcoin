@@ -128,7 +128,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.crowdcoin.main/com.crowdcoin.main.LoginBoard</mainClass>
+                            <mainClass>com.crowdcoin.main/com.crowdcoin.loginBoard.LoginBoard</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>

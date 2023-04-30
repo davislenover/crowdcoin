@@ -1,5 +1,6 @@
-package com.crowdcoin.main;
+package com.crowdcoin.loginBoard;
 
+import com.crowdcoin.mainBoard.MainBoard;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;

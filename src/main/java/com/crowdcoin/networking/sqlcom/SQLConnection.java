@@ -1,8 +1,7 @@
-package com.crowdcoin.sqlcom;
+package com.crowdcoin.networking.sqlcom;
 
 
 import com.crowdcoin.exceptions.network.FailedQueryException;
-import com.crowdcoin.exceptions.network.NullConnectionException;
 import com.crowdcoin.format.Defaults;
 import java.sql.*;
 

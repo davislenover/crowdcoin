@@ -1,9 +1,7 @@
-package com.crowdcoin.sqlcom;
+package com.crowdcoin.networking.sqlcom;
 
 import com.crowdcoin.exceptions.network.NullConnectionException;
 import com.crowdcoin.security.Credentials;
-
-import java.sql.Connection;
 
 public class SQLData {
 

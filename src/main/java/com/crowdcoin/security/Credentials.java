@@ -3,8 +3,8 @@ package com.crowdcoin.security;
 public class Credentials {
 
     // Variable declaration
-    String username;
-    String password;
+    private String username;
+    private String password;
 
     // Constructor
     public Credentials(String username, String password) {

@@ -1,14 +1,10 @@
-package com.crowdcoin.main;
+package com.crowdcoin.loginBoard;
 
 import com.crowdcoin.format.Defaults;
-import com.crowdcoin.sqlcom.InternetConnectionCheck;
-import com.crowdcoin.sqlcom.SQLData;
+import com.crowdcoin.networking.connections.InternetConnection;
+import com.crowdcoin.networking.sqlcom.SQLData;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressIndicator;
@@ -20,11 +16,9 @@ import javafx.scene.text.TextAlignment;
 
 // Custom Imports
 import com.crowdcoin.security.Credentials;
-import com.crowdcoin.sqlcom.SQLConnection;
+import com.crowdcoin.networking.sqlcom.SQLConnection;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
-import java.util.concurrent.TimeUnit;
 
 
 public class LoginController {
@@ -64,8 +58,7 @@ public class LoginController {
 
             // First, check if there is a connection to the internet
             // Create another thread and run it
-            InternetConnectionCheck internetCheck = new InternetConnectionCheck();
-            internetCheck.start();
+            InternetConnection internetCheck = new InternetConnection();
 
             // Wait for internet check to finish
             try {
@@ -79,7 +72,7 @@ public class LoginController {
             }
 
             // Check result
-            if (internetCheck.connectedToInternet) {
+            if (internetCheck.isOnline()) {
 
                 try {
 
