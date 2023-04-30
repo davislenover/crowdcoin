@@ -24,6 +24,7 @@ public class InternetConnection extends Thread {
             URLConnection connection = url.openConnection();
             connection.connect();
             connectedToInternet = true;
+            connection.getInputStream().close();
 
         } catch (Exception e) {
 
