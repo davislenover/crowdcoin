@@ -128,6 +128,8 @@ public class LoginController {
                         // We need to throw this error to our ErrorHandler class as it's unexpected
                         disableLogin(false);
                         displayMessage(Defaults.abstractLoginError, Color.RED);
+                        System.out.println(errorMessage);
+                        System.out.println(exception.getCause());
                     }
 
                 }
