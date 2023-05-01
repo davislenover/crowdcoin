@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableView;
 
 public class MainBoardController {
 
@@ -18,7 +19,7 @@ public class MainBoardController {
     @FXML private MenuButton editMenuButton;
     @FXML private MenuItem editMenuNewEntry;
 
-    @FXML private ListView<String> mainCoinList;
+    @FXML private TableView mainTable;
 
     // Method to initialize coin list on startup
     public void initializeList() {
