@@ -44,13 +44,12 @@ public class ModelClass {
         return this.classWithMethods.getClass();
     }
 
-    public String getMethodName(int methodIndex) {
-        try {
-            // Invoke specified method in class and return result as object
-            return this.dataMethods.get(methodIndex).getName();
-        } catch (Exception e) {
-            throw new IndexOutOfBoundsException(e.getMessage());
-        }
+    /**
+     * Get the instance object
+     * @return the instance as an Object
+     */
+    public Object getInstance() {
+        return this.classWithMethods;
     }
 
 }

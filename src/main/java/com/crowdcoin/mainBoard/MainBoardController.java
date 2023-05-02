@@ -70,6 +70,7 @@ public class MainBoardController {
 
         mainTable.getItems().add(modelClass);
         mainTable.getItems().add(factory.buildClone(modelClass,"myCompany2","012345",15,"01/01/2003","$103.93","myDenomination2","myGrade2"));
+        ((CoinModel) modelClass.getInstance()).setCoinID(1221);
 
     }
 

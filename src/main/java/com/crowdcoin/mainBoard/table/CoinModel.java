@@ -4,13 +4,13 @@ import javafx.beans.property.StringProperty;
 
 public class CoinModel {
 
-    public String certCompany;
-    public String certNumber;
-    public int coinID;
-    public String dateOfIssue;
-    public String declaredValue;
-    public String denomination;
-    public String grade;
+    private String certCompany;
+    private String certNumber;
+    private int coinID;
+    private String dateOfIssue;
+    private String declaredValue;
+    private String denomination;
+    private String grade;
 
     public CoinModel(String certCompany,String certNumber,Integer coinID,String dateOfIssue,String declaredValue,String denomination,String grade) {
 
@@ -58,4 +58,11 @@ public class CoinModel {
     public String grade() {
         return grade;
     }
+
+    public void setCoinID(int newId) {
+
+        this.coinID = newId;
+
+    }
+
 }
