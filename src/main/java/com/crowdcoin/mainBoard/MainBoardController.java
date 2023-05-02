@@ -1,18 +1,14 @@
 package com.crowdcoin.mainBoard;
 
 import com.crowdcoin.mainBoard.table.TableInformation;
-import com.crowdcoin.mainBoard.table.TableReadable;
 import com.crowdcoin.networking.sqlcom.SQLData;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.Statement;
 
 public class MainBoardController {
 
@@ -43,7 +39,7 @@ public class MainBoardController {
         // Loop through each column
         for (int i = 1; i <= resultSet.getColumnCount(); i++) {
             // Create a new column with the specified name
-            TableColumn<TableReadable<String>,String> column = new TableColumn<>(resultSet.getColumnName(i));
+            TableColumn<String,String> column = new TableColumn<>(resultSet.getColumnName(i));
             // Set the minimum width of the given column by calculating the width of the given text
             Text columnText = new Text(column.getText());
             columnText.setFont(column.getCellFactory().call(column).getFont());

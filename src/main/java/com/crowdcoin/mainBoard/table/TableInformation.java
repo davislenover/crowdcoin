@@ -6,11 +6,11 @@ import java.util.Iterator;
 import java.util.List;
 
 // Class contains table columns and associated data
-public class TableInformation implements Iterable<TableColumn<? extends TableReadable<?>,? extends Comparable<?>>> {
+public class TableInformation implements Iterable<TableColumn<?,? extends Comparable<?>>> {
 
     // Columns can be any data type as long as the data in question is comparable
     // Thus one can implement logical comparisons later on
-    private List<TableColumn<? extends TableReadable<?>,? extends Comparable<?>>> columnData;
+    private List<TableColumn<?,? extends Comparable<?>>> columnData;
 
     /**
      * Creates a TableInformation object
@@ -26,7 +26,7 @@ public class TableInformation implements Iterable<TableColumn<? extends TableRea
      * @returns a boolean value. True if the column was added, false otherwise
      * @Note Name of column MUST be different than what is already present in list
      */
-    public <T extends Comparable<T>> boolean addColumn(TableColumn<TableReadable<T>, T> column) {
+    public <T extends Comparable<T>> boolean addColumn(TableColumn<T, T> column) {
 
         // Check if name does not exist
         if (!doesNameExist(column.getText())) {
@@ -53,7 +53,7 @@ public class TableInformation implements Iterable<TableColumn<? extends TableRea
      * @param column the column object to remove
      * @returns a boolean value. True if the column was removed, false otherwise
      */
-    public <T extends Comparable<T>> boolean removeColumn(TableColumn<TableReadable<T>, T> column) {
+    public <T extends Comparable<T>> boolean removeColumn(TableColumn<T, T> column) {
         // Remove column from list (if applicable)
         return this.columnData.remove(column);
     }
@@ -105,7 +105,7 @@ public class TableInformation implements Iterable<TableColumn<? extends TableRea
 
     // Get iterator
     @Override
-    public Iterator<TableColumn<? extends TableReadable<?>, ? extends Comparable<?>>> iterator() {
+    public Iterator<TableColumn<?, ? extends Comparable<?>>> iterator() {
         return columnData.iterator();
     }
 

@@ -18,7 +18,7 @@ class TableInformationTest {
     public void checkTypes() {
 
         TableInformation test = new TableInformation();
-        test.addColumn(new TableColumn<TableReadable<String>,String>());
+        test.addColumn(new TableColumn<String,String>());
 
 
     }
