@@ -1,5 +1,8 @@
 package com.crowdcoin.mainBoard;
 
+import com.crowdcoin.mainBoard.table.CoinModel;
+import com.crowdcoin.mainBoard.table.ModelClass;
+import com.crowdcoin.mainBoard.table.ModelClassFactory;
 import com.crowdcoin.mainBoard.table.TableInformation;
 import com.crowdcoin.networking.sqlcom.SQLData;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
@@ -27,6 +30,9 @@ public class MainBoardController {
     // Method to initialize coin list on startup
     public void initializeList() throws Exception {
 
+        CoinModel model = new CoinModel("myCompany","01234",12,"01/01/2002","$101.93","myDenomination","myGrade");
+        ModelClassFactory factory = new ModelClassFactory();
+        ModelClass modelClass = factory.build(model);
         TableInformation tableTest = new TableInformation();
 
         double totalWidth = 0;
@@ -39,7 +45,7 @@ public class MainBoardController {
         // Loop through each column
         for (int i = 1; i <= resultSet.getColumnCount(); i++) {
             // Create a new column with the specified name
-            TableColumn<String,String> column = new TableColumn<>(resultSet.getColumnName(i));
+            TableColumn<ModelClass,Object> column = new TableColumn<>(resultSet.getColumnName(i));
             // Set the minimum width of the given column by calculating the width of the given text
             Text columnText = new Text(column.getText());
             columnText.setFont(column.getCellFactory().call(column).getFont());
@@ -61,6 +67,9 @@ public class MainBoardController {
             // Add column to table
             mainTable.getColumns().add(curColumn);
         }
+
+        mainTable.getItems().add(modelClass);
+        mainTable.getItems().add(factory.buildClone(modelClass,"myCompany2","012345",15,"01/01/2003","$103.93","myDenomination2","myGrade2"));
 
     }
 
