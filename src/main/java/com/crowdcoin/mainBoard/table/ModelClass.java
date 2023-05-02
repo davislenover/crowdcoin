@@ -36,4 +36,12 @@ public class ModelClass {
 
     }
 
+    /**
+     * Get the instance class
+     * @return the instance as a Class object
+     */
+    public Class getInstanceClass() {
+        return this.classWithMethods.getClass();
+    }
+
 }

@@ -2,11 +2,10 @@ package com.crowdcoin.mainBoard.table;
 
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class ModelClassFactory {
 
@@ -43,6 +42,40 @@ public class ModelClassFactory {
         Collections.sort(methodList, Comparator.comparingInt((Method o) -> o.getAnnotation(TableReadable.class).order()));
         return new ModelClass(classInstance,methodList);
 
+    }
+
+    /**
+     * Builds a ModelClass clone from a specified ModelClass instance. Clones can have same or different parameter values. Is intended to allow for different values for different TableColumn cells
+     * @param modelClass the ModelClass instance to clone
+     * @param params variable arguments which correspond to the same arguments as the class instance constructor (NOT ModelClass constructor but rather the instance class it contains)
+     * @return a ModelClass object containing class instance instantiated with the given parameters and cloned TableReadable methods
+     * @throws NotZeroArgumentException if any method that is annotated contains more than zero arguments. This can happen if ModelClass was instantiated without the Factory
+     * @throws NoSuchMethodException if params length or any type mismatches that of the declared constructor. Note that this may occur if attempting to clone a class that was defined within a class as the super class (outer class) will need to be instantiated too
+     * @throws InvocationTargetException if an exception is thrown by the declared constructor of the instance class
+     * @throws InstantiationException if the specified class cannot be instantiated
+     * @throws IllegalAccessException if the class access modifiers prohibit instantiation in this manner
+     */
+    public ModelClass buildClone(ModelClass modelClass, Object ... params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NotZeroArgumentException {
+
+        // params are variable arguments and thus are treated as an array
+        // To find the correct constructor, one needs all parameter types of the constructor in an array
+        // Create new Class array where the Class can be of any type (?) per index
+        Class<?>[] paramTypes = new Class<?>[params.length];
+        // Get all specific classes of params and add them to the paramTypes array
+        for (int i = 0; i < params.length; i++) {
+            // Note that Object is the static type of each param, getClass returns the runtime type
+            paramTypes[i] = params[i].getClass();
         }
+
+        // Attempt to find constructor with specified signature
+        Constructor constructor = modelClass.getInstanceClass().getDeclaredConstructor(paramTypes);
+
+        // Use actual parameter values to create new class instance
+        Object newInstance = constructor.newInstance(params);
+
+        // Create new ModelClass
+        return this.build(newInstance);
+
+    }
 
 }
