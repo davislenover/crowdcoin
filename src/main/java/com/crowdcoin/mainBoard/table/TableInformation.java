@@ -29,7 +29,7 @@ public class TableInformation implements Iterable<TableColumn<? extends TableRea
     public <T extends Comparable<T>> boolean addColumn(TableColumn<TableReadable<T>, T> column) {
 
         // Check if name does not exist
-        if (!doesNameExist(column.getId())) {
+        if (!doesNameExist(column.getText())) {
             // Add to list
             return this.columnData.add(column);
         } else {
@@ -67,7 +67,7 @@ public class TableInformation implements Iterable<TableColumn<? extends TableRea
 
         for (TableColumn currentColumn : this.columnData) {
 
-            if (currentColumn.getId().equals(columnName)) {
+            if (currentColumn.getText().equals(columnName)) {
 
                 return currentColumn;
 
@@ -92,7 +92,7 @@ public class TableInformation implements Iterable<TableColumn<? extends TableRea
     private boolean doesNameExist(String name) {
         for (TableColumn currentColumn : this.columnData) {
 
-            if (currentColumn.getId().equals(name)) {
+            if (currentColumn.getText().equals(name)) {
 
                 return true;
 

@@ -63,7 +63,7 @@ public class SQLConnection {
     // Send commands to server
     // Throws FailedQueryException if the Query fails
     // This class is generic and return a generic type that extends the Object class
-    public <T extends Object> T sendQuery(String query) throws Exception {
+    public ResultSet sendQuery(String query) throws Exception {
 
         Statement statement = null;
         ResultSet result = null;
@@ -74,27 +74,59 @@ public class SQLConnection {
             // Get result of statement
             result = statement.executeQuery(query);
 
-        } catch (Exception exception) {
-            // If an exception occurs, throw custom failed query exception
-            throw new FailedQueryException(query, exception);
+            return result;
 
-            // Attempt to close connections regardless of outcome to free resources
-        } finally {
+        } catch (Exception exception) {
             try {
+                // Attempt to close connections if failed
                 statement.close();
                 result.close();
                 // Ignore any exceptions
             } catch (Exception ignore) {
             }
+            // If an exception occurs, throw custom failed query exception
+            throw new FailedQueryException(query, exception);
+        } finally {
 
             statement = null;
             result = null;
 
         }
+    }
 
-        // Testing stuff
-        Integer test = 1;
-        return (T) test;
+    public ResultSetMetaData sendQueryGetMetaData(String query) throws Exception {
+
+        Statement statement = null;
+        ResultSet result = null;
+
+        try {
+            // Attempt to create the statements and execution of said statement
+            statement = this.connection.createStatement();
+            // Get result of statement
+            result = statement.executeQuery(query);
+            // Get metadata
+            ResultSetMetaData metaData = result.getMetaData();
+            // Close streams
+            statement.close();
+            result.close();
+            return metaData;
+
+        } catch (Exception exception) {
+            try {
+                // Attempt to close connections if failed
+                statement.close();
+                result.close();
+                // Ignore any exceptions
+            } catch (Exception ignore) {
+            }
+            // If an exception occurs, throw custom failed query exception
+            throw new FailedQueryException(query, exception);
+        } finally {
+
+            statement = null;
+            result = null;
+
+        }
     }
 
     // Getters
