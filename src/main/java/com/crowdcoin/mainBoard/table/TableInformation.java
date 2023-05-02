@@ -1,31 +1,48 @@
 package com.crowdcoin.mainBoard.table;
-
 import javafx.scene.control.TableColumn;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 // Class contains table columns and associated data
-public class TableInformation<T extends Object> {
-    private List<TableColumn<TableReadable<T>,T>> columnData;
+public class TableInformation {
+
+    // Columns can be any data type as long as the data in question is comparable
+    // Thus one can implement logical comparisons later on
+    private List<TableColumn<? extends TableReadable<?>,? extends Comparable<?>>> columnData;
 
     public TableInformation() {
         this.columnData = new ArrayList<>();
     }
 
-    public TableInformation(Set<String> columnNames) {
+    public <T extends Comparable<T>> boolean addColumn(TableColumn<TableReadable<T>, T> column) {
+        // Add to list
+        return this.columnData.add(column);
+    }
 
-        this.columnData = new ArrayList<>();
+    public boolean removeColumn(String columnName) {
 
-        for (String columnName : columnNames) {
+        return removeColumn(getColumn(columnName));
 
-            // Create a new column with the given name
-            TableColumn<TableReadable<T>, T> newColumn = new TableColumn<>(columnName);
-            // Add to list
-            this.columnData.add(newColumn);
+    }
+
+    public <T extends Comparable<T>> boolean removeColumn(TableColumn<TableReadable<T>, T> column) {
+        // Remove column from list (if applicable)
+        return this.columnData.remove(column);
+    }
+
+    public TableColumn getColumn(String columnName) {
+
+        for (TableColumn currentColumn : this.columnData) {
+
+            if (currentColumn.getId().equals(columnName)) {
+
+                return currentColumn;
+
+            }
 
         }
+
+        return null;
 
     }
 

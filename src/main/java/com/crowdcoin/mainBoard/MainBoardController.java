@@ -24,6 +24,7 @@ public class MainBoardController {
     // Method to initialize coin list on startup
     public void initializeList() {
 
+
     }
 
     // Events

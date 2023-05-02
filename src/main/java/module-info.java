@@ -10,6 +10,7 @@ module com.crowdcoin.main {
     //requires org.kordamp.bootstrapfx.core;
     //requires com.almasb.fxgl.all;
     requires java.sql;
+    requires org.apache.logging.log4j;
 
     opens com.crowdcoin.loginBoard to javafx.fxml;
     exports com.crowdcoin.loginBoard;

@@ -1,8 +1,8 @@
 package com.crowdcoin.mainBoard.table;
 
-public interface TableReadable<T> {
+import javafx.beans.Observable;
 
-    String getTableDataMethod();
-    T getTableData();
+public interface TableReadable<T> {
+    T getRowValue();
 
 }
