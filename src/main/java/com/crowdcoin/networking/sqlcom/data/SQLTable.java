@@ -18,18 +18,12 @@ public class SQLTable {
     private List<String[]> tableColumns;
     private SQLConnection connection;
 
-    public SQLTable(SQLConnection connection, String tableName) {
+    public SQLTable(SQLConnection connection, String tableName) throws FailedQueryException, SQLException {
 
-        try {
-
-            // Setup
-            this.connection = connection;
-            this.tableName = tableName;
-            getTableData();
-
-        } catch (Exception e) {
-
-        }
+        // Setup
+        this.connection = connection;
+        this.tableName = tableName;
+        getTableData();
 
     }
 
@@ -88,7 +82,6 @@ public class SQLTable {
 
         return returnRow;
 
-
     }
 
     /**
@@ -120,6 +113,84 @@ public class SQLTable {
 
         return returnRow;
 
+    }
+
+    /**
+     * Get a list of data between two columns corresponding to given rows in the SQL table (NOT Table object).
+     * @param rowIndex the corresponding starting row within the SQL table to get data from
+     * @param numberOfRows how many rows (starting from row given in rowIndex) to get
+     * @param startColumn the starting column in the row to begin reading data from (inclusive) where the column string is the same as that found within the table
+     * @param endColumn the ending column in the row to end reading data from (inclusive) where the column string is the same as that found within the table
+     * @return a list of Object type containing the data found via the specified arguments. First list corresponds to each row whereas second list contains the data for the specified row.
+     * @throws InvalidRangeException if startColumn comes after endColumn (i.e., the range does not make sense)
+     * @throws UnknownColumnNameException if either startColumn or endColumn do not exist within the table
+     * @throws SQLException if a database access error occurred
+     * @throws FailedQueryException if query failed to execute
+     */
+    public List<List<Object>> getRows(int rowIndex, int numberOfRows, String startColumn, String endColumn) throws InvalidRangeException, UnknownColumnNameException, SQLException, FailedQueryException {
+
+        // Get query result
+        // Specifies to get a specific row of all data from table
+        ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllWithLimit(this.tableName,rowIndex,numberOfRows));
+        List<List<Object>> returnRows = new ArrayList<>();
+
+        // Get list of all column names in the desired column range to return data from
+        List<String> columnRange = getColumnNameList(startColumn,endColumn);
+
+        while (result.next()) {
+            List<Object> returnRow = new ArrayList<>();
+            // Loop through range and add data of the specified columns to the return list
+            for (String columnName : columnRange) {
+                returnRow.add(result.getObject(columnName));
+            }
+
+            // Add row to return list
+            returnRows.add(returnRow);
+
+        }
+
+        result.close();
+
+        return returnRows;
+
+    }
+
+    /**
+     * Get a list of data between two columns corresponding to given rows in the SQL table (NOT Table object).
+     * @param rowIndex the corresponding starting row within the SQL table to get data from
+     * @param numberOfRows how many rows (starting from row given in rowIndex) to get
+     * @param startColumnIndex the starting column in the row to begin reading data from (inclusive) where the integer corresponds to the position of the column as found within the table (upwards)
+     * @param endColumnIndex the ending column in the row to end reading data from (inclusive) where the integer corresponds to the position of the column as found within the table (upwards)
+     * @return a list of Object type containing the data found via the specified arguments. First list corresponds to each row whereas second list contains the data for the specified row.
+     * @throws InvalidRangeException if startColumn comes after endColumn (i.e., the range does not make sense)
+     * @throws UnknownColumnNameException if either startColumn or endColumn do not exist within the table
+     * @throws SQLException if a database access error occurred
+     * @throws FailedQueryException if query failed to execute
+     */
+    public List<List<Object>> getRows(int rowIndex, int numberOfRows, int startColumnIndex, int endColumnIndex) throws InvalidRangeException, FailedQueryException, SQLException {
+
+        if (startColumnIndex < endColumnIndex) {
+            throw new InvalidRangeException(String.valueOf(startColumnIndex),String.valueOf(endColumnIndex));
+        }
+
+        ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllWithLimit(this.tableName,rowIndex,numberOfRows));
+        List<List<Object>> returnRows = new ArrayList<>();
+
+
+        while (result.next()) {
+            List<Object> returnRow = new ArrayList<>();
+            // Loop through start to end and add the corresponding column data to return list
+            for (int index = startColumnIndex; index <= endColumnIndex; index++) {
+                returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
+            }
+            // Add row to return list
+            returnRows.add(returnRow);
+
+        }
+
+        result.close();
+
+        return returnRows;
 
     }
 
