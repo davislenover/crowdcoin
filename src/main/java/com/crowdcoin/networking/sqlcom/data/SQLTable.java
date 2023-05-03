@@ -97,7 +97,7 @@ public class SQLTable {
      */
     public List<Object> getRow(int rowIndex, int startColumnIndex, int endColumnIndex) throws InvalidRangeException, FailedQueryException, SQLException {
 
-        if (startColumnIndex < endColumnIndex) {
+        if (startColumnIndex > endColumnIndex) {
             throw new InvalidRangeException(String.valueOf(startColumnIndex),String.valueOf(endColumnIndex));
         }
 
@@ -118,7 +118,7 @@ public class SQLTable {
     /**
      * Get a list of data between two columns corresponding to given rows in the SQL table (NOT Table object).
      * @param rowIndex the corresponding starting row within the SQL table to get data from
-     * @param numberOfRows how many rows (starting from row given in rowIndex) to get
+     * @param numberOfRows how many rows (starting from row given in rowIndex) to get. e.g., specifying a rowIndex of 0 and numberOfRows as 3 will get the first 3 rows
      * @param startColumn the starting column in the row to begin reading data from (inclusive) where the column string is the same as that found within the table
      * @param endColumn the ending column in the row to end reading data from (inclusive) where the column string is the same as that found within the table
      * @return a list of Object type containing the data found via the specified arguments. First list corresponds to each row whereas second list contains the data for the specified row.
@@ -158,7 +158,7 @@ public class SQLTable {
     /**
      * Get a list of data between two columns corresponding to given rows in the SQL table (NOT Table object).
      * @param rowIndex the corresponding starting row within the SQL table to get data from
-     * @param numberOfRows how many rows (starting from row given in rowIndex) to get
+     * @param numberOfRows how many rows (starting from row given in rowIndex) to get. e.g., specifying a rowIndex of 0 and numberOfRows as 3 will get the first 3 rows
      * @param startColumnIndex the starting column in the row to begin reading data from (inclusive) where the integer corresponds to the position of the column as found within the table (upwards)
      * @param endColumnIndex the ending column in the row to end reading data from (inclusive) where the integer corresponds to the position of the column as found within the table (upwards)
      * @return a list of Object type containing the data found via the specified arguments. First list corresponds to each row whereas second list contains the data for the specified row.
@@ -169,7 +169,7 @@ public class SQLTable {
      */
     public List<List<Object>> getRows(int rowIndex, int numberOfRows, int startColumnIndex, int endColumnIndex) throws InvalidRangeException, FailedQueryException, SQLException {
 
-        if (startColumnIndex < endColumnIndex) {
+        if (startColumnIndex > endColumnIndex) {
             throw new InvalidRangeException(String.valueOf(startColumnIndex),String.valueOf(endColumnIndex));
         }
 

@@ -12,7 +12,7 @@ public class SQLDefaultQueries {
     }
 
     public static String getAll(String tableName) {
-        return getAll+tableName;
+        return getAll+tableName+" ";
     }
 
     public static String getAllWithLimit(String tableName, int firstRow, int maxRows) {

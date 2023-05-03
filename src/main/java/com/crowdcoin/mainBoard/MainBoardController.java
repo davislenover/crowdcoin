@@ -14,6 +14,7 @@ import javafx.scene.text.Text;
 
 import java.sql.ResultSetMetaData;
 import java.util.Arrays;
+import java.util.List;
 
 public class MainBoardController {
 
@@ -43,6 +44,19 @@ public class MainBoardController {
 
         // Get all column names in table
         ResultSetMetaData resultSet = SQLData.getSqlConnection().sendQueryGetMetaData(SQLDefaultQueries.getAll("coindata"));
+
+        SQLTable testTable = new SQLTable(SQLData.getSqlConnection(),"coindata");
+
+        List<List<Object>> testResult = testTable.getRows(0,3,0,6);
+
+        for (List<Object> row : testResult) {
+
+            System.out.println("NEW ROW");
+            for (Object item : row) {
+                System.out.println(item);
+            }
+
+        }
 
         // Loop through each column
         for (int i = 1; i <= resultSet.getColumnCount(); i++) {
