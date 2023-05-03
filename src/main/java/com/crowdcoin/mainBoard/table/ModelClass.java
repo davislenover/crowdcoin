@@ -52,4 +52,12 @@ public class ModelClass {
         return this.classWithMethods;
     }
 
+    /**
+     * Get the number of invokable methods
+     * @return the number of methods as an Integer
+     */
+    public int getNumberOfMethods() {
+        return this.dataMethods.size();
+    }
+
 }

@@ -18,6 +18,13 @@ public class SQLTable {
     private List<String[]> tableColumns;
     private SQLConnection connection;
 
+    /**
+     * An object to get information from an SQL database
+     * @param connection the current connection to communicate with the database
+     * @param tableName the table within the database to get data from
+     * @throws FailedQueryException if the query fails to execute. This could be for a multitude of reasons and is recommended to get rootException within this exception for exact cause. It may indicate the table provided does not exist within the database
+     * @throws SQLException if a database access error occurs
+     */
     public SQLTable(SQLConnection connection, String tableName) throws FailedQueryException, SQLException {
 
         // Setup
@@ -45,7 +52,6 @@ public class SQLTable {
             newColumn[1] = result.getString(SQLDefaultQueries.informationSchemaDataType);
             this.tableColumns.add(newColumn);
 
-
         }
 
         result.close();
@@ -62,6 +68,7 @@ public class SQLTable {
      * @throws UnknownColumnNameException if either startColumn or endColumn do not exist within the table
      * @throws SQLException if a database access error occurred
      * @throws FailedQueryException if query failed to execute
+     * @Note if rowIndex is not physically present in the database, an empty list will be returned
      */
     public List<Object> getRow(int rowIndex, String startColumn, String endColumn) throws InvalidRangeException, UnknownColumnNameException, SQLException, FailedQueryException {
 
@@ -93,7 +100,7 @@ public class SQLTable {
      * @throws InvalidRangeException if startColumn comes after endColumn (i.e., the range does not make sense)
      * @throws SQLException if a database access error occurred
      * @throws FailedQueryException if query failed to execute
-     * @Note this method does not throw UnknownColumnNameException as columns are referenced by index and not by string
+     * @Note this method does not throw UnknownColumnNameException as columns are referenced by index and not by string. If rowIndex is not physically present in the database, an empty list will be returned
      */
     public List<Object> getRow(int rowIndex, int startColumnIndex, int endColumnIndex) throws InvalidRangeException, FailedQueryException, SQLException {
 
@@ -126,6 +133,7 @@ public class SQLTable {
      * @throws UnknownColumnNameException if either startColumn or endColumn do not exist within the table
      * @throws SQLException if a database access error occurred
      * @throws FailedQueryException if query failed to execute
+     * @Note if numberOfRows exceeds that of what is physically available in the database, up to and including the last row possible will be returned
      */
     public List<List<Object>> getRows(int rowIndex, int numberOfRows, String startColumn, String endColumn) throws InvalidRangeException, UnknownColumnNameException, SQLException, FailedQueryException {
 
@@ -166,6 +174,7 @@ public class SQLTable {
      * @throws UnknownColumnNameException if either startColumn or endColumn do not exist within the table
      * @throws SQLException if a database access error occurred
      * @throws FailedQueryException if query failed to execute
+     * @Note if numberOfRows exceeds that of what is physically available in the database, up to and including the last row possible will be returned
      */
     public List<List<Object>> getRows(int rowIndex, int numberOfRows, int startColumnIndex, int endColumnIndex) throws InvalidRangeException, FailedQueryException, SQLException {
 
@@ -191,6 +200,30 @@ public class SQLTable {
         result.close();
 
         return returnRows;
+
+    }
+
+    /**
+     * Get the number of columns the sql table has
+     * @return the number of columns as an Integer
+     */
+    public int getNumberOfColumns() {
+        return this.tableColumns.size();
+    }
+
+    /**
+     * Get all column names found within the table
+     * @return the column names in a list of Strings
+     */
+    public List<String> getColumnNames() {
+
+        List<String> columnNames = new ArrayList<>();
+
+        for (String[] currentColumn : this.tableColumns) {
+            columnNames.add(currentColumn[0]);
+        }
+
+        return columnNames;
 
     }
 
