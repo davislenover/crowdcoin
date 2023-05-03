@@ -29,30 +29,27 @@ public class SQLConnection {
                 this.databasePassword = databasePassword;
                 break;
 
-            } catch (Exception e) {
+                // Catch timeout
+            } catch (SQLTimeoutException e) {
 
-                // Check if it was a timeout error
-                if (e.getClass().getSimpleName().equals("java.sql.SQLTimeoutException")) {
+                // Check number of attempts already
+                if (currentAttemptNumber >= Defaults.maxConnectionAttempts) {
 
-                    // Check number of attempts already
-                    if (currentAttemptNumber >= Defaults.maxConnectionAttempts) {
-
-                        // If connection fails after x amount of attempts, set variables appropriately and get error message
-                        throw new SQLTimeoutException("SQLTimeoutException -> The driver has not received any packets from the server");
-
-                    } else {
-
-                        // If we have not reached max attempts, add 1 to currentAttemptNumber and retry connection
-                        currentAttemptNumber++;
-
-                    }
+                    // TODO why?
+                    // If connection fails after x amount of attempts, set variables appropriately and get error message
+                    throw new SQLTimeoutException("SQLTimeoutException -> The driver has not received any packets from the server");
 
                 } else {
 
-                    // If it is any other error, then the error may be unexpected
-                    throw new Exception(e);
+                    // If we have not reached max attempts, add 1 to currentAttemptNumber and retry connection
+                    currentAttemptNumber++;
 
                 }
+
+                // Catch if access to url failed
+            } catch (SQLException e) {
+
+                // TODO
 
             }
 
@@ -60,9 +57,13 @@ public class SQLConnection {
 
     }
 
-    // Send commands to server
-    // Throws FailedQueryException if the Query fails
-    public ResultSet sendQuery(String query) throws Exception {
+    /**
+     * Execute query on database
+     * @param query a string containing the query to execute
+     * @return a ResultSet object containing the result of the query execution (data)
+     * @throws FailedQueryException if the query fails to execute. This could be for a multitude of reasons and is recommended to get rootException within this exception for exact cause
+     */
+    public ResultSet sendQuery(String query) throws FailedQueryException {
 
         Statement statement = null;
         ResultSet result = null;
@@ -93,8 +94,13 @@ public class SQLConnection {
         }
     }
 
-    // Send commands and get metaData set
-    public ResultSetMetaData sendQueryGetMetaData(String query) throws Exception {
+    /**
+     * Execute query on database
+     * @param query a string containing the query to execute
+     * @return a ResultSetMetaData object containing the metaData of the query execution (data)
+     * @throws FailedQueryException if the query fails to execute. This could be for a multitude of reasons and is recommended to get rootException within this exception for exact cause
+     */
+    public ResultSetMetaData sendQueryGetMetaData(String query) throws FailedQueryException {
 
         Statement statement = null;
         ResultSet result = null;
@@ -128,7 +134,5 @@ public class SQLConnection {
 
         }
     }
-
-    // Getters
 
 }
