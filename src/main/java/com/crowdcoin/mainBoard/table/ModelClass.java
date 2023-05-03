@@ -9,7 +9,7 @@ public class ModelClass {
     private List<Method> dataMethods;
 
     /**
-     * Create a ModelClass for TableColumn's to reference
+     * Create a ModelClass for TableColumn's to reference (i.e., TableColumns will invoke specified methods which get data within the ModelClass to display on screen)
      * @param classInstance class instance which contains associatedMethods
      * @param associatedMethods executable methods from class instance
      * @Note It is recommended to call ModelClassFactory build() on a class instance to produce a ModelClass object

@@ -17,18 +17,20 @@ public class TableInformation implements Iterable<TableColumn<ModelClass,Object>
     private List<TableColumn<ModelClass,Object>> columnData;
 
     /**
-     * Creates a TableInformation object
+     * Creates a TableInformation object. Acts as a container for columns
      * @returns a TableInformation object with a blank list
+     * @Note columns added will have their CellValueFactory updated to retrieve data from ModelClasses
      */
     public TableInformation() {
         this.columnData = new ArrayList<>();
     }
 
     /**
-     * Add a column object to the list of columns
+     * Add a column object to the list of columns. The order in which a column is added specifies which method index in an arbitrary ModelClass instance it will invoke to get data to display
+     * (i.e., if the column is the second column that was added, then it will invoke the second method found within the arbitrary ModelClass (or the method of "order = 2" via @TableReadable annotation)
      * @param column a column object to add to the list
      * @returns a boolean value. True if the column was added, false otherwise
-     * @Note Name of column MUST be different than what is already present in list
+     * @Note Name of column MUST be different than what is already present in list.
      */
     public boolean addColumn(TableColumn<ModelClass, Object> column) {
 
@@ -62,7 +64,7 @@ public class TableInformation implements Iterable<TableColumn<ModelClass,Object>
      * Remove a column given the object
      * @param column the column object to remove
      * @returns a boolean value. True if the column was removed, false otherwise
-     * @Note removing a column will shift method's used by columns to retrieve cell values
+     * @Note removing a column will shift method's in an arbitrary ModelClass used by columns to retrieve cell values
      */
     public boolean removeColumn(TableColumn<ModelClass, Object> column) {
         // Remove column from list (if applicable)
@@ -130,6 +132,7 @@ public class TableInformation implements Iterable<TableColumn<ModelClass,Object>
         int methodIndex = this.columnData.size()-1;
         // p is of CellDataFeature type, calling getValue() gets the corresponding ModelClass instance and thus, invokes given method at given index
         // Returned value is displayed in column
+        // When this column displays data, it will execute the following expression where p is the given ModelClass
         column.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getData(methodIndex)));
     }
 
