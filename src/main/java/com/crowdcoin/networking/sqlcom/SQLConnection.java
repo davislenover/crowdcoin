@@ -62,7 +62,6 @@ public class SQLConnection {
 
     // Send commands to server
     // Throws FailedQueryException if the Query fails
-    // This class is generic and return a generic type that extends the Object class
     public ResultSet sendQuery(String query) throws Exception {
 
         Statement statement = null;
@@ -94,6 +93,7 @@ public class SQLConnection {
         }
     }
 
+    // Send commands and get metaData set
     public ResultSetMetaData sendQueryGetMetaData(String query) throws Exception {
 
         Statement statement = null;
