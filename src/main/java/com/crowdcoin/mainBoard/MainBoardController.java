@@ -42,7 +42,7 @@ public class MainBoardController {
         mainTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
         // Get all column names in table
-        ResultSetMetaData resultSet = SQLData.getSqlConnection().sendQueryGetMetaData(SQLDefaultQueries.getColumnNames);
+        ResultSetMetaData resultSet = SQLData.getSqlConnection().sendQueryGetMetaData(SQLDefaultQueries.getAll("coindata"));
 
         // Loop through each column
         for (int i = 1; i <= resultSet.getColumnCount(); i++) {
