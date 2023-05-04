@@ -2,7 +2,6 @@ package com.crowdcoin.mainBoard.table;
 
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 
-import java.lang.reflect.AnnotatedTypeVariable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

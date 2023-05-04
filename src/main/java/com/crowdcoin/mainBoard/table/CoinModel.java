@@ -1,7 +1,5 @@
 package com.crowdcoin.mainBoard.table;
 
-import javafx.beans.property.StringProperty;
-
 public class CoinModel {
 
     private String certCompany;

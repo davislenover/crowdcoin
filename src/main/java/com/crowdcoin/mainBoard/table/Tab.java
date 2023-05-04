@@ -10,12 +10,8 @@ import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.text.Text;
-
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Type;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.List;
 
 public class Tab {
