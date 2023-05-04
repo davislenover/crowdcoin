@@ -34,6 +34,7 @@ public class Tab {
      * @param sqlTable an SQLTable object which is responsible for gathering data of a specific table found within the database
      * @throws NotZeroArgumentException if the model class contains invokable methods that have more than zero parameters
      * @throws IncompatibleModelClassException if the model class does not contain the same number of invokable methods as there are columns within the given table within the database (as specified within the SQLTable object)
+     * @throws ModelClassConstructorTypeException if the modelClass constructor contains an argument type mismatch to one or more columns within the database table. This could mean the constructor arguments of the modeling class are not in the correct order.
      */
     public Tab(Object classToModel, SQLTable sqlTable) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException {
 
