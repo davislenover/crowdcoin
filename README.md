@@ -14,4 +14,4 @@ Status: Pending (P), Started (S), Blocked (B), Done (D)
 | Id  | TODO title                                    | Who?               | Start      | End        | Status |
 |:---:|-----------------------------------------------|--------------------|------------|------------|--------|
 | F01 | Refactor to improve readability and maintainability | Davis Lenover      | 2023-04-30 | 2023-05-01 | D      |
-| F02 | Read and create table from SQL database       | Davis Lenover      | 2023-05-01 |            | S      |
+| F02 | Read and create table from SQL database       | Davis Lenover      | 2023-05-01 | 2023-05-03 | D      |
