@@ -6,8 +6,11 @@ import com.crowdcoin.exceptions.table.UnknownColumnNameException;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +28,7 @@ public class SQLTable {
      * @throws FailedQueryException if the query fails to execute. This could be for a multitude of reasons and is recommended to get rootException within this exception for exact cause. It may indicate the table provided does not exist within the database
      * @throws SQLException if a database access error occurs
      */
-    public SQLTable(SQLConnection connection, String tableName) throws FailedQueryException, SQLException {
+    public SQLTable(SQLConnection connection, String tableName) throws FailedQueryException, SQLException, NoSuchFieldException, IllegalAccessException {
 
         // Setup
         this.connection = connection;
@@ -35,7 +38,7 @@ public class SQLTable {
     }
 
     // Method gets table information and set's up tableColumn list
-    private void getTableData() throws FailedQueryException, SQLException {
+    private void getTableData() throws FailedQueryException, SQLException, NoSuchFieldException, IllegalAccessException {
 
         this.tableColumns = new ArrayList<>();
 
@@ -50,6 +53,7 @@ public class SQLTable {
             newColumn[0] = result.getString(SQLDefaultQueries.informationSchemaColumnName);
             // Get columns data type
             newColumn[1] = result.getString(SQLDefaultQueries.informationSchemaDataType);
+
             this.tableColumns.add(newColumn);
 
         }
@@ -224,6 +228,22 @@ public class SQLTable {
         }
 
         return columnNames;
+
+    }
+
+    /**
+     * Get all column types found within the table (in-order)
+     * @return the column types as specified within the database in a list of Strings
+     */
+    public List<String> getColumnTypes() {
+
+        List<String> columnTypes = new ArrayList<>();
+
+        for (String[] currentColumn : this.tableColumns) {
+            columnTypes.add(currentColumn[1]);
+        }
+
+        return columnTypes;
 
     }
 

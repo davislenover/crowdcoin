@@ -3,14 +3,19 @@ package com.crowdcoin.mainBoard.table;
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.tab.IncompatibleModelClassException;
+import com.crowdcoin.exceptions.tab.ModelClassConstructorTypeException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
+import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.text.Text;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 
 public class Tab {
@@ -30,7 +35,7 @@ public class Tab {
      * @throws NotZeroArgumentException if the model class contains invokable methods that have more than zero parameters
      * @throws IncompatibleModelClassException if the model class does not contain the same number of invokable methods as there are columns within the given table within the database (as specified within the SQLTable object)
      */
-    public Tab(Object classToModel, SQLTable sqlTable) throws NotZeroArgumentException, IncompatibleModelClassException {
+    public Tab(Object classToModel, SQLTable sqlTable) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException {
 
         // Create instances needed
         this.tableInfo = new TableInformation();
@@ -44,7 +49,38 @@ public class Tab {
             throw new IncompatibleModelClassException(this.modelClass.getNumberOfMethods(),this.sqlTable.getNumberOfColumns());
         }
 
+        if (!checkTypes()) {
+            throw new ModelClassConstructorTypeException();
+        }
+
         setupTab();
+
+    }
+
+    // Method to check if the parameter types of the modelClass constructor match that of columns within the database
+    // False if there is a mismatch
+    private boolean checkTypes() {
+
+        // Get constructor of modelClass (which is assumed to be the only constructor)
+        Class<?>[] modelClassConstructorTypes = this.modelClass.getInstanceClass().getConstructors()[0].getParameterTypes();
+
+        // Loop through the column types
+        int constructorTypeIndex = 0;
+        for (String columnType : this.sqlTable.getColumnTypes()) {
+            try {
+                // Queries class contains a hashmap that provides the corresponding class for the given column type in sql
+                // Check if both the columnType class and the corresponding constructor parameter match
+                if (!SQLDefaultQueries.SQLToJavaType.get(columnType.toUpperCase()).getName().toUpperCase().contains(modelClassConstructorTypes[constructorTypeIndex].getName().toUpperCase())) {
+                    return false;
+                }
+                // Index out of bounds also indicates there are more columns than there are arguments in the constructor
+            } catch (IndexOutOfBoundsException e) {
+                return false;
+            }
+            constructorTypeIndex++;
+        }
+
+        return true;
 
     }
 

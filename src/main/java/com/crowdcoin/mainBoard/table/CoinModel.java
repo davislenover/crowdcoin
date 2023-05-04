@@ -12,6 +12,7 @@ public class CoinModel {
     private String denomination;
     private String grade;
 
+    // When creating a constructor for the model, make sure that the types match that of what is read from the actual database table
     public CoinModel(String certCompany,String certNumber,Integer coinID,String dateOfIssue,String declaredValue,String denomination,String grade) {
 
         this.certCompany = certCompany;
