@@ -37,6 +37,7 @@ public class TextFieldCombo {
      */
     public TextFieldCombo(String header, String description) {
 
+        // All these objects are housed in a parent pane, a StackPane for organization
         this.textField = new TextField();
         this.fieldHeader = new Text(header);
         this.fieldDescription = new Text(description);
@@ -66,12 +67,25 @@ public class TextFieldCombo {
 
     }
 
+    /**
+     * Add object to a GridPane
+     * @param targetPane the GridPane object to add the object to
+     * @param targetRow the target row of the GridPane object to add the object to
+     */
     public void applyPane(GridPane targetPane, int targetRow) {
         targetPane.add(this.containerPane,0,targetRow);
     }
 
     public Pane getPane() {
         return this.containerPane;
+    }
+
+    /**
+     * Gets the current text present within the TextField
+     * @return the text present as a String
+     */
+    public String getInput() {
+        return this.textField.getText();
     }
 
 }

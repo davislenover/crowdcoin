@@ -46,8 +46,9 @@ public class MainBoardController {
         Tab testTab = new Tab(model,table);
         testTab.loadTab(mainTable);
 
+        // an InteractivePane houses all data for a specific tab in regard to the rightDisplay
         InteractivePane testPane = new InteractivePane(rightDisplay);
-
+        // Add fields to the pane
         testPane.addField("This is a test", "This is a test combo object for textfield combo's 1");
         testPane.addField("This is a test2", "This is a test combo object for textfield combo's 2");
         testPane.addField("This is a test3", "This is a test combo object for textfield combo's 3");
