@@ -41,7 +41,7 @@ public class MainBoardController {
     // Method to initialize coin list on startup
     public void initializeList() throws Exception {
 
-        CoinModel model = new CoinModel("myCompany","01234",12,"01/01/2002","$101.93","myDenomination","myGrade");
+        CoinModel model = new CoinModel(12,"myDenomination","01/01/2002","myGrade","myCompany","01234","$101.93");
         SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coindata");
         Tab testTab = new Tab(model,table);
         testTab.loadTab(mainTable);

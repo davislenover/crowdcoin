@@ -10,6 +10,7 @@ public class SQLDefaultQueries {
     private static String getAll = "select * from ";
     public static String informationSchemaColumnName = "COLUMN_NAME";
     public static String informationSchemaDataType = "DATA_TYPE";
+    public static String informationSchemaOrdinalPosition = "ORDINAL_POSITION";
     private static String getColumnData = "select * FROM INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = ";
 
     public static Map<String,Class<?>> SQLToJavaType = new HashMap<>()
@@ -51,6 +52,7 @@ public class SQLDefaultQueries {
     }
 
     public static String getAllWithLimit(String tableName, int firstRow, int maxRows) {
+
         return getAll+tableName+" LIMIT "+firstRow+","+maxRows;
     }
 }

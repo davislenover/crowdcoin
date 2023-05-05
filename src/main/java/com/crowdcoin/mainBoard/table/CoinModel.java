@@ -11,7 +11,7 @@ public class CoinModel {
     private String grade;
 
     // When creating a constructor for the model, make sure that the types match that of what is read from the actual database table
-    public CoinModel(String certCompany,String certNumber,Integer coinID,String dateOfIssue,String declaredValue,String denomination,String grade) {
+    public CoinModel(Integer coinID, String denomination, String dateOfIssue,String grade, String certCompany,String certNumber,String declaredValue) {
 
         this.certCompany = certCompany;
         this.certNumber = certNumber;
@@ -23,37 +23,37 @@ public class CoinModel {
 
     }
 
-    @TableReadable (order = 0)
+    @TableReadable (order = 4)
     public String certCompany() {
         return certCompany;
     }
 
-    @TableReadable (order = 1)
+    @TableReadable (order = 5)
     public String certNumber() {
         return certNumber;
     }
 
-    @TableReadable (order = 2)
+    @TableReadable (order = 0)
     public int coinID() {
         return coinID;
     }
 
-    @TableReadable (order = 3)
+    @TableReadable (order = 2)
     public String dateOfIssue() {
         return dateOfIssue;
     }
 
-    @TableReadable (order = 4)
+    @TableReadable (order = 6)
     public String declaredValue() {
         return declaredValue;
     }
 
-    @TableReadable (order = 5)
+    @TableReadable (order = 1)
     public String denomination() {
         return denomination;
     }
 
-    @TableReadable (order = 6)
+    @TableReadable (order = 3)
     public String grade() {
         return grade;
     }

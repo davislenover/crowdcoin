@@ -30,7 +30,7 @@ public class Tab {
      * @param sqlTable an SQLTable object which is responsible for gathering data of a specific table found within the database
      * @throws NotZeroArgumentException if the model class contains invokable methods that have more than zero parameters
      * @throws IncompatibleModelClassException if the model class does not contain the same number of invokable methods as there are columns within the given table within the database (as specified within the SQLTable object)
-     * @throws ModelClassConstructorTypeException if the modelClass constructor contains an argument type mismatch to one or more columns within the database table. This could mean the constructor arguments of the modeling class are not in the correct order.
+     * @throws ModelClassConstructorTypeException if the modelClass constructor contains an argument type mismatch to one or more columns within the database table. This could mean the constructor arguments of the modeling class are not in the correct order. Note that SQLTable returns a list where each element is a row of the database table sorted in ordinal position thus it is imperative to organize constructor parameters in the same position as column ordinal position
      */
     public Tab(Object classToModel, SQLTable sqlTable) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException {
 
@@ -64,6 +64,7 @@ public class Tab {
         // Loop through the column types
         int constructorTypeIndex = 0;
         for (String columnType : this.sqlTable.getColumnTypes()) {
+
             try {
                 // Queries class contains a hashmap that provides the corresponding class for the given column type in sql
                 // Check if both the columnType class and the corresponding constructor parameter match

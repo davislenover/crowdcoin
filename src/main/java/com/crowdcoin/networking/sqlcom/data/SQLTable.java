@@ -8,23 +8,25 @@ import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class SQLTable {
 
     private String tableName;
-    // 0 corresponds to table name, 1 is data type as specified in SQL table
+    // 0 corresponds to table name, 1 is data type as specified in SQL table, 2 specifies the ordinal position
     private List<String[]> tableColumns;
     private SQLConnection connection;
 
     /**
      * An object to get information from an SQL database
      * @param connection the current connection to communicate with the database
-     * @param tableName the table within the database to get data from
+     * @param tableName the table within the database to get data from. Note the ordering of the columns when returning rows is via ordinal position (as raw ResultSets do NOT guarantee specific column ordering on queries thus SQLTable is intended deal with it via sorting the ResultSet via ordinal position)
      * @throws FailedQueryException if the query fails to execute. This could be for a multitude of reasons and is recommended to get rootException within this exception for exact cause. It may indicate the table provided does not exist within the database
      * @throws SQLException if a database access error occurs
      */
-    public SQLTable(SQLConnection connection, String tableName) throws FailedQueryException, SQLException, NoSuchFieldException, IllegalAccessException {
+    public SQLTable(SQLConnection connection, String tableName) throws FailedQueryException, SQLException {
 
         // Setup
         this.connection = connection;
@@ -34,7 +36,7 @@ public class SQLTable {
     }
 
     // Method gets table information and set's up tableColumn list
-    private void getTableData() throws FailedQueryException, SQLException, NoSuchFieldException, IllegalAccessException {
+    private void getTableData() throws FailedQueryException, SQLException {
 
         this.tableColumns = new ArrayList<>();
 
@@ -44,25 +46,39 @@ public class SQLTable {
         // Loop over each row
         while (result.next()) {
 
-            String[] newColumn = new String[2];
+            String[] newColumn = new String[3];
             // Get corresponding column name
             newColumn[0] = result.getString(SQLDefaultQueries.informationSchemaColumnName);
             // Get columns data type
             newColumn[1] = result.getString(SQLDefaultQueries.informationSchemaDataType);
+            // Get it's ordinal position
+            // All results will be returned in ordinal position for query consistency
+            newColumn[2] = result.getString(SQLDefaultQueries.informationSchemaOrdinalPosition);
 
             this.tableColumns.add(newColumn);
 
         }
+
+        // Sort each column within list by ordinal position (where o1 and o2 are the corresponding String arrays within the list to compare)
+        this.tableColumns.sort((o1, o2) -> {
+
+            // Get ordinal position
+            int o1Value = Integer.valueOf(o1[2]);
+            int o2Value = Integer.valueOf(o2[2]);
+
+            // Return result of comparing both ordinal positions
+            return Integer.compare(o1Value,o2Value);
+        });
 
         result.close();
 
     }
 
     /**
-     * Get a list of data between two columns corresponding to a given row in the SQL table (NOT Table object).
+     * Get a list of data between two columns corresponding to a given row in the SQL table (NOT Table object). Results are returned in ordinal position of columns as specified in database
      * @param rowIndex the corresponding row within the SQL table to get data from
-     * @param startColumn the starting column in the row to begin reading data from (inclusive) where the column string is the same as that found within the table
-     * @param endColumn the ending column in the row to end reading data from (inclusive) where the column string is the same as that found within the table
+     * @param startColumn the starting column in the row to begin reading data from (inclusive) where the column string is the same as that found within the table. Note the ordering of the columns is via ordinal position
+     * @param endColumn the ending column in the row to end reading data from (inclusive) where the column string is the same as that found within the table. Note the ordering of the columns is via ordinal position
      * @return a list of Object type containing the data found via the specified arguments
      * @throws InvalidRangeException if startColumn comes after endColumn (i.e., the range does not make sense)
      * @throws UnknownColumnNameException if either startColumn or endColumn do not exist within the table
@@ -112,7 +128,10 @@ public class SQLTable {
         List<Object> returnRow = new ArrayList<>();
 
         // Loop through start to end and add the corresponding column data to return list
+        // The result set is not guaranteed to have returned a query in any particular column position
+        // Thus, given the ordinal position is known, we will return the result list in said position
         for (int index = startColumnIndex; index <= endColumnIndex; index++) {
+            // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
             returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
         }
 
@@ -123,11 +142,11 @@ public class SQLTable {
     }
 
     /**
-     * Get a list of data between two columns corresponding to given rows in the SQL table (NOT Table object).
+     * Get a list of data between two columns corresponding to given rows in the SQL table (NOT Table object). Results are returned in ordinal position of columns as specified in database
      * @param rowIndex the corresponding starting row within the SQL table to get data from
      * @param numberOfRows how many rows (starting from row given in rowIndex) to get. e.g., specifying a rowIndex of 0 and numberOfRows as 3 will get the first 3 rows
-     * @param startColumn the starting column in the row to begin reading data from (inclusive) where the column string is the same as that found within the table
-     * @param endColumn the ending column in the row to end reading data from (inclusive) where the column string is the same as that found within the table
+     * @param startColumn the starting column in the row to begin reading data from (inclusive) where the column string is the same as that found within the table. Note the ordering of the columns is via ordinal position
+     * @param endColumn the ending column in the row to end reading data from (inclusive) where the column string is the same as that found within the table. Note the ordering of the columns is via ordinal position
      * @return a list of Object type containing the data found via the specified arguments. First list corresponds to each row whereas second list contains the data for the specified row.
      * @throws InvalidRangeException if startColumn comes after endColumn (i.e., the range does not make sense)
      * @throws UnknownColumnNameException if either startColumn or endColumn do not exist within the table
@@ -164,11 +183,11 @@ public class SQLTable {
     }
 
     /**
-     * Get a list of data between two columns corresponding to given rows in the SQL table (NOT Table object).
+     * Get a list of data between two columns corresponding to given rows in the SQL table (NOT Table object). Results are returned in ordinal position of columns as specified in database
      * @param rowIndex the corresponding starting row within the SQL table to get data from
      * @param numberOfRows how many rows (starting from row given in rowIndex) to get. e.g., specifying a rowIndex of 0 and numberOfRows as 3 will get the first 3 rows
-     * @param startColumnIndex the starting column in the row to begin reading data from (inclusive) where the integer corresponds to the position of the column as found within the table (upwards)
-     * @param endColumnIndex the ending column in the row to end reading data from (inclusive) where the integer corresponds to the position of the column as found within the table (upwards)
+     * @param startColumnIndex the starting column in the row to begin reading data from (inclusive) where the integer corresponds to the position of the column as found within the table (upwards). Note the ordering of the columns is via ordinal position
+     * @param endColumnIndex the ending column in the row to end reading data from (inclusive) where the integer corresponds to the position of the column as found within the table (upwards). Note the ordering of the columns is via ordinal position
      * @return a list of Object type containing the data found via the specified arguments. First list corresponds to each row whereas second list contains the data for the specified row.
      * @throws InvalidRangeException if startColumn comes after endColumn (i.e., the range does not make sense)
      * @throws UnknownColumnNameException if either startColumn or endColumn do not exist within the table
@@ -185,9 +204,9 @@ public class SQLTable {
         ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllWithLimit(this.tableName,rowIndex,numberOfRows));
         List<List<Object>> returnRows = new ArrayList<>();
 
-
         while (result.next()) {
             List<Object> returnRow = new ArrayList<>();
+
             // Loop through start to end and add the corresponding column data to return list
             for (int index = startColumnIndex; index <= endColumnIndex; index++) {
                 returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
@@ -196,6 +215,7 @@ public class SQLTable {
             returnRows.add(returnRow);
 
         }
+
 
         result.close();
 
