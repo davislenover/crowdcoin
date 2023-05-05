@@ -1,5 +1,6 @@
 package com.crowdcoin.mainBoard;
 
+import com.crowdcoin.mainBoard.Interactive.ButtonHandler;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.TextFieldCombo;
 import com.crowdcoin.mainBoard.table.CoinModel;
@@ -11,6 +12,7 @@ import com.crowdcoin.networking.sqlcom.SQLData;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -37,6 +39,7 @@ public class MainBoardController {
 
     @FXML private TableView mainTable;
     @FXML private GridPane rightDisplay;
+    @FXML private GridPane buttonGrid;
 
     // Method to initialize coin list on startup
     public void initializeList() throws Exception {
@@ -46,12 +49,27 @@ public class MainBoardController {
         Tab testTab = new Tab(model,table);
         testTab.loadTab(mainTable);
 
-        // an InteractivePane houses all data for a specific tab in regard to the rightDisplay
-        InteractivePane testPane = new InteractivePane(rightDisplay);
+        // an InteractivePane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
+        InteractivePane testPane = new InteractivePane(rightDisplay,buttonGrid);
         // Add fields to the pane
         testPane.addField("This is a test", "This is a test combo object for textfield combo's 1");
         testPane.addField("This is a test2", "This is a test combo object for textfield combo's 2");
         testPane.addField("This is a test3", "This is a test combo object for textfield combo's 3");
+
+        // Testing buttons
+        // One can specify how they would like a button to handle an ActionEvent by defining it within a specific class or on the fly
+        ButtonHandler testHandler = new ButtonHandler() {
+            @Override
+            public void handleButtonClick(ActionEvent event, Button button, InteractivePane pane) {
+                System.out.println(event.getEventType().getName());
+                System.out.println(button.getText() + " fired an event!");
+            }
+        };
+
+        testPane.addButton("Button1",testHandler);
+        testPane.addButton("Button2", testHandler);
+
+
     }
 
     // Events
