@@ -44,7 +44,7 @@ public class MainBoardController {
         SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coindata");
 
         // an InteractivePane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
-        InteractivePane testPane = new InteractivePane(rightDisplay,buttonGrid);
+        InteractivePane testPane = new InteractivePane();
         // Add fields to the pane
         testPane.addField("This is a test", "This is a test combo object for textfield combo's 1");
         testPane.addField("This is a test2", "This is a test combo object for textfield combo's 2");
@@ -67,10 +67,11 @@ public class MainBoardController {
         testTab.setTabTableAction(new TabTableActionEvent() {
             @Override
             public void tableActionHandler(TableInformation tableInformation, InteractivePane pane) {
-                System.out.println("Test!");
+                System.out.println("This tab was pressed!");
             }
         });
-        testTab.loadTab(mainTable);
+
+        testTab.loadTab(mainTable,rightDisplay,buttonGrid);
 
 
     }

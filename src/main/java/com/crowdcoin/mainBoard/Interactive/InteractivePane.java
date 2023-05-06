@@ -10,27 +10,20 @@ import java.util.List;
 public class InteractivePane {
 
     // The idea is to have some object which can be passed into a Tab that defines how a tab interacts with the right display (intractable display)
-
-    private GridPane parentFieldGridPane;
-    private GridPane parentButtonGridPane;
-
     private List<TextFieldCombo> fieldsList;
     private List<ButtonCombo> buttonList;
 
     /**
-     * Creates an InteractivePane object. InteractivePane's define how a Tab interacts with the rightmost display beside the TableView (by convention)
-     * @param parentFieldGridPane the GridPane to house user intractable Fields. By convention, this Pane is above the Button GridPane
-     * @param parentButtonGridPane the GridPane to house user intractable Buttons. By convention, this Pane is below the Fields GridPane
+     * Creates an InteractivePane object. InteractivePane's define how a Tab interacts with the rightmost display beside the TableView (by convention).
+     * This object is typically used in tandem with a Tab object (as a Tab handles invocation of applying InteractivePane to GridPanes)
      */
-    public InteractivePane(GridPane parentFieldGridPane, GridPane parentButtonGridPane) {
-        this.parentFieldGridPane = parentFieldGridPane;
-        this.parentButtonGridPane = parentButtonGridPane;
+    public InteractivePane() {
         this.fieldsList = new ArrayList<>();
         this.buttonList = new ArrayList<>();
     }
 
     /**
-     * Add a field to the GridPane. Creates a new row at the bottom of the Field GridPane and inserts the field there. All other rows are automatically resized such that they are all spaced out evenly
+     * Add a field to the GridPane. When applyInteractivePane() is called, all fields added will be applied to the corresponding field GridPane
      * @param header the top text to appear with the TextField
      * @param description the text below the header. Typically used to convey what the TextField is used for
      * @return true if a new field was added, false otherwise
@@ -41,74 +34,87 @@ public class InteractivePane {
         // Create a new TextFieldCombo object containing the corresponding header and description
         TextFieldCombo newField = new TextFieldCombo(header,description);
         // Attempt to store in list
-        boolean returnBool = this.fieldsList.add(newField);
-
-        // If object fails to be added, no need to update the GridPane thus return here
-        if (!returnBool) {
-            return false;
-        }
-
-        // Given a new item was added, update row constraints to add another row
-        updateParentDisplayPane();
-        // Add field to pane
-        newField.applyPane(this.parentFieldGridPane,this.fieldsList.size()-1);
-
-        return returnBool;
+        return this.fieldsList.add(newField);
     }
 
     // Method to update row constraints
-    private void updateParentDisplayPane() {
+    // Called to setup spacing of fields evenly in GridPane
+    private void updateParentDisplayPane(GridPane parentFieldGridPane) {
 
         // Clear all prior constraints
-        this.parentFieldGridPane.getRowConstraints().clear();
+        parentFieldGridPane.getRowConstraints().clear();
 
-        // This method is usually called when a new field is added thus we need to update how much space each row will need (in height)
+        // Update how much space each row will need (in height)
         RowConstraints rowConstraint = new RowConstraints();
         rowConstraint.percentHeightProperty().setValue(100/this.fieldsList.size());
 
         // Apply updated property for however many rows are needed
         for (int i = 0; i < this.fieldsList.size(); i++) {
-            this.parentFieldGridPane.getRowConstraints().add(rowConstraint);
+            parentFieldGridPane.getRowConstraints().add(rowConstraint);
         }
 
     }
 
     /**
-     * Add a button to the GridPane. Creates a new column at the rightmost side of the Button GridPane and inserts the field there. All other columns are automatically resized such that they are all spaced out evenly
+     * Add a button to InteractivePane. When applyInteractivePane() is called, all buttons added will be applied to the corresponding button GridPane
      * @param buttonText the text to be displayed by the Button
      * @param eventHandler the class containing an invokable method by the Button to perform arbitrary logic upon firing of an ActionEvent by the Button. Intended to allow users to execute arbitrary logic for each button and not singular unified logic
      * @return true if a new field was added, false otherwise
      * @Note by convention, Buttons are added horizontally below the Field Grid
      */
     public boolean addButton(String buttonText, ButtonHandler eventHandler) {
-
         ButtonCombo newButton = new ButtonCombo(buttonText,eventHandler,this);
-        boolean returnBool = this.buttonList.add(newButton);
-
-        if (!returnBool) {
-            return false;
-        }
-
-        updateParentButtonPane();
-        newButton.applyPane(this.parentButtonGridPane,this.buttonList.size()-1);
-
-        return returnBool;
-
+        return this.buttonList.add(newButton);
     }
 
     // Method to update column constraints for button grid
     // Unlike the field grid, buttons are added horizontally rather than vertically, thus column constraints is updated instead
-    private void updateParentButtonPane() {
+    private void updateParentButtonPane(GridPane parentButtonGridPane) {
 
-        this.parentButtonGridPane.getColumnConstraints().clear();
+        parentButtonGridPane.getColumnConstraints().clear();
 
         ColumnConstraints columnConstraint = new ColumnConstraints();
         columnConstraint.percentWidthProperty().setValue(100/this.buttonList.size());
 
         // Apply updated property for however many columns are needed
         for (int i = 0; i < this.buttonList.size(); i++) {
-            this.parentButtonGridPane.getColumnConstraints().add(columnConstraint);
+            parentButtonGridPane.getColumnConstraints().add(columnConstraint);
         }
+
+    }
+
+    /**
+     * Applys Fields and Buttons to GridPanes.
+     * @param parentFieldGridPane the GridPane to insert fields into. For each field, creates a new row at the bottom of the Field GridPane and inserts a new field there. All other rows are automatically resized such that they are all spaced out evenly.
+     * @param parentButtonGridPane the GridPane to insert buttons into. For each button, Creates a new column at the rightmost side of the Button GridPane and inserts the field there. All other columns are automatically resized such that they are all spaced out evenly.
+     * @Note by convention, the field GridPane should be above the button GridPane
+     */
+    public void applyInteractivePane(GridPane parentFieldGridPane, GridPane parentButtonGridPane) {
+
+        // Clear both GridPanes
+        parentFieldGridPane.getChildren().clear();
+        parentButtonGridPane.getChildren().clear();
+
+        // Clear and update column/row constraints for fitting this instances TextFields and Buttons
+        updateParentDisplayPane(parentFieldGridPane);
+        updateParentButtonPane(parentButtonGridPane);
+
+        // Apply fields
+        for (int fieldIndex = 0; fieldIndex < this.fieldsList.size(); fieldIndex++) {
+            // Get field
+            TextFieldCombo currentField = this.fieldsList.get(fieldIndex);
+            // Apply to GirdPane in corresponding index location (same as fieldsList index)
+            currentField.applyPane(parentFieldGridPane,fieldIndex);
+        }
+
+        // Apply buttons
+        for (int buttonIndex = 0; buttonIndex < this.buttonList.size(); buttonIndex++) {
+            // Get Button
+            ButtonCombo currentButton = this.buttonList.get(buttonIndex);
+            // Apply to GirdPane in corresponding index location (same as buttonList index)
+            currentButton.applyPane(parentButtonGridPane,buttonIndex);
+        }
+
 
     }
 

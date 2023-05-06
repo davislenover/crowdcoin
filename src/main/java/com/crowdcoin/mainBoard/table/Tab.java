@@ -14,6 +14,7 @@ import javafx.event.EventType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
 import java.lang.reflect.InvocationTargetException;
@@ -139,6 +140,8 @@ public class Tab {
     /**
      * Load a tab into a TableView object
      * @param destinationTable the TableView object to apply the Tab object to. ALL present data within the TableView object will be erased and replaced with the data found within the Tab object
+     * @param fieldPane apart of the intractableDisplay, fieldPane indicates the GridPane where user input fields are to be placed
+     * @param buttonPane apart of the intractableDisplay, buttonPane indicates the GridPane where user intractable buttons are to be placed
      * @throws FailedQueryException
      * @throws SQLException
      * @throws InvalidRangeException
@@ -148,7 +151,7 @@ public class Tab {
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public void loadTab(TableView destinationTable) throws FailedQueryException, SQLException, InvalidRangeException, NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void loadTab(TableView destinationTable, GridPane fieldPane, GridPane buttonPane) throws FailedQueryException, SQLException, InvalidRangeException, NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         // Clear current data and columns
         destinationTable.getItems().clear();
@@ -180,6 +183,9 @@ public class Tab {
 
         // Change MouseCLicked event to the TableView object, to invoke the corresponding tableActionHandler method
         destinationTable.setOnMouseClicked(mouseEvent -> this.tableSelectHandler.tableActionHandler(this.tableInfo,this.interactivePane));
+
+        // Apply InteractivePane
+        this.interactivePane.applyInteractivePane(fieldPane,buttonPane);
 
     }
 
