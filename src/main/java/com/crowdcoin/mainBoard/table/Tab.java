@@ -175,8 +175,11 @@ public class Tab {
             destinationTable.getItems().add(this.factory.buildClone(this.modelClass,row.toArray()));
         }
 
-        // Add an event to the TableView object, invoking the tableActionHandler method
-        destinationTable.addEventHandler(MouseEvent.MOUSE_CLICKED, p -> this.tableSelectHandler.tableActionHandler(this.tableInfo,this.interactivePane));
+        // Clear prior mouse clicked event before applying current Tab one (redundant but safer)
+        destinationTable.setOnMouseClicked(null);
+
+        // Change MouseCLicked event to the TableView object, to invoke the corresponding tableActionHandler method
+        destinationTable.setOnMouseClicked(mouseEvent -> this.tableSelectHandler.tableActionHandler(this.tableInfo,this.interactivePane));
 
     }
 
