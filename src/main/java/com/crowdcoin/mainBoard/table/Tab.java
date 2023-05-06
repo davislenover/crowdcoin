@@ -152,8 +152,6 @@ public class Tab {
             destinationTable.getItems().add(this.factory.buildClone(this.modelClass,row.toArray()));
         }
 
-        System.out.println(Arrays.toString(this.tableInfo.getRow(5).toArray()));
-
     }
 
 }

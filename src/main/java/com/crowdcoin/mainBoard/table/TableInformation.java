@@ -1,5 +1,6 @@
 package com.crowdcoin.mainBoard.table;
 import com.crowdcoin.exceptions.TableInformation.NoColumnsException;
+import com.crowdcoin.exceptions.TableInformation.NoTableViewInstanceException;
 import com.crowdcoin.exceptions.TableInformation.UnknownRowException;
 import javafx.beans.Observable;
 import javafx.beans.property.SimpleObjectProperty;
@@ -114,15 +115,27 @@ public class TableInformation implements Iterable<TableColumn<ModelClass,Object>
      * @return a list of Objects corresponding to the given rowIndex
      * @throws UnknownRowException if the specified rowIndex is not within the TableView
      * @throws NoColumnsException if there are no columns currently within the TableInformation instance (i.e., it is impossible to retrieve any data from nothing)
+     * @throws NoTableViewInstanceException if columns do not contain a TableView instance. This is mostly likely caused by failure to load the Tab (that contains the TableInformation instance) into a TableView using the loadTab() method
      */
-    public List<Object> getRow(int rowIndex) throws UnknownRowException, NoColumnsException {
+    public List<Object> getRow(int rowIndex) throws UnknownRowException, NoColumnsException, NoTableViewInstanceException {
 
         if (this.columnData.isEmpty()) {
             throw new NoColumnsException();
         }
 
-        // Each row has its own modelClass which tells each column what data to display per row
-        List<ModelClass> rowModelList = this.columnData.get(0).getTableView().getItems();
+        List<ModelClass> rowModelList;
+
+        // If loadTab() was not called within a TabInstance to apply these columns, it is possible that the given columns within TableInformation do not contain a TableView
+        try {
+
+            // Each row has its own modelClass which tells each column what data to display per row
+            rowModelList = this.columnData.get(0).getTableView().getItems();
+
+        } catch (NullPointerException e) {
+
+            throw new NoTableViewInstanceException();
+
+        }
 
         try {
 
