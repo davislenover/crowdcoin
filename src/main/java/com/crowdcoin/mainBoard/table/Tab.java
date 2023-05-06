@@ -5,11 +5,17 @@ import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.tab.IncompatibleModelClassException;
 import com.crowdcoin.exceptions.tab.ModelClassConstructorTypeException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
+import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
+
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -21,6 +27,18 @@ public class Tab {
     private ModelClass modelClass;
     private ModelClassFactory factory;
     private SQLTable sqlTable;
+    private InteractivePane interactivePane;
+
+    // TabTableActionEvent is intended to allow arbitrary logic to be invoked when a user selects anything within the TableView object within the Tab
+    // Basically provides a connection between the TableView and InteractivePane on the right beside the table (something happens in the Table, do something in the InteractivePane)
+    // On instantiation, set action event to default
+    private TabTableActionEvent tableSelectHandler = new TabTableActionEvent() {
+        @Override
+        public void tableActionHandler(TableInformation tableInformation, InteractivePane pane) {
+            return;
+        }
+    };;
+
 
     private int defaultNumberOfRows = 10;
     private double totalWidth;
@@ -33,12 +51,13 @@ public class Tab {
      * @throws IncompatibleModelClassException if the model class does not contain the same number of invokable methods as there are columns within the given table within the database (as specified within the SQLTable object)
      * @throws ModelClassConstructorTypeException if the modelClass constructor contains an argument type mismatch to one or more columns within the database table. This could mean the constructor arguments of the modeling class are not in the correct order. Note that SQLTable returns a list where each element is a row of the database table sorted in ordinal position thus it is imperative to organize constructor parameters in the same position as column ordinal position
      */
-    public Tab(Object classToModel, SQLTable sqlTable) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException {
+    public Tab(Object classToModel, SQLTable sqlTable, InteractivePane interactivePane) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException {
 
         // Create instances needed
         this.tableInfo = new TableInformation();
         this.factory = new ModelClassFactory();
         this.sqlTable = sqlTable;
+        this.interactivePane = interactivePane;
         // Build model class from model reference
         this.modelClass = this.factory.build(classToModel);
 
@@ -113,6 +132,10 @@ public class Tab {
 
     }
 
+    public void setTabTableAction(TabTableActionEvent event) {
+        this.tableSelectHandler = event;
+    }
+
     /**
      * Load a tab into a TableView object
      * @param destinationTable the TableView object to apply the Tab object to. ALL present data within the TableView object will be erased and replaced with the data found within the Tab object
@@ -151,6 +174,9 @@ public class Tab {
             // This cloned ModelClass houses the row data from the table within the database and utilizes the specified methods (via @TableReadable annotation) to retrieve the data
             destinationTable.getItems().add(this.factory.buildClone(this.modelClass,row.toArray()));
         }
+
+        // Add an event to the TableView object, invoking the tableActionHandler method
+        destinationTable.addEventHandler(MouseEvent.MOUSE_CLICKED, p -> this.tableSelectHandler.tableActionHandler(this.tableInfo,this.interactivePane));
 
     }
 

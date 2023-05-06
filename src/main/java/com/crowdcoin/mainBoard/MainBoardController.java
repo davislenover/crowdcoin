@@ -3,11 +3,7 @@ package com.crowdcoin.mainBoard;
 import com.crowdcoin.mainBoard.Interactive.ButtonHandler;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.TextFieldCombo;
-import com.crowdcoin.mainBoard.table.CoinModel;
-import com.crowdcoin.mainBoard.table.ModelClass;
-import com.crowdcoin.mainBoard.table.ModelClassFactory;
-import com.crowdcoin.mainBoard.table.Tab;
-import com.crowdcoin.mainBoard.table.TableInformation;
+import com.crowdcoin.mainBoard.table.*;
 import com.crowdcoin.networking.sqlcom.SQLData;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
@@ -46,8 +42,6 @@ public class MainBoardController {
 
         CoinModel model = new CoinModel(12,"myDenomination","01/01/2002","myGrade","myCompany","01234","$101.93");
         SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coindata");
-        Tab testTab = new Tab(model,table);
-        testTab.loadTab(mainTable);
 
         // an InteractivePane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
         InteractivePane testPane = new InteractivePane(rightDisplay,buttonGrid);
@@ -68,6 +62,15 @@ public class MainBoardController {
 
         testPane.addButton("Button1",testHandler);
         testPane.addButton("Button2", testHandler);
+
+        Tab testTab = new Tab(model,table,testPane);
+        testTab.setTabTableAction(new TabTableActionEvent() {
+            @Override
+            public void tableActionHandler(TableInformation tableInformation, InteractivePane pane) {
+                System.out.println("Test!");
+            }
+        });
+        testTab.loadTab(mainTable);
 
 
     }
