@@ -1,5 +1,9 @@
 package com.crowdcoin.mainBoard.table;
+import com.crowdcoin.exceptions.TableInformation.NoColumnsException;
+import com.crowdcoin.exceptions.TableInformation.UnknownRowException;
+import javafx.beans.Observable;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -103,6 +107,48 @@ public class TableInformation implements Iterable<TableColumn<ModelClass,Object>
     public Iterator<TableColumn<ModelClass, Object>> iterator() {
         return columnData.iterator();
     }
+
+    /**
+     * Get a row of data as a list of Objects. Data is returned in order of left to right in the TableView
+     * @param rowIndex the row to get data. From 0 (first row) upwards
+     * @return a list of Objects corresponding to the given rowIndex
+     * @throws UnknownRowException if the specified rowIndex is not within the TableView
+     * @throws NoColumnsException if there are no columns currently within the TableInformation instance (i.e., it is impossible to retrieve any data from nothing)
+     */
+    public List<Object> getRow(int rowIndex) throws UnknownRowException, NoColumnsException {
+
+        if (this.columnData.isEmpty()) {
+            throw new NoColumnsException();
+        }
+
+        // Each row has its own modelClass which tells each column what data to display per row
+        List<ModelClass> rowModelList = this.columnData.get(0).getTableView().getItems();
+
+        try {
+
+            // Get the selected row of data
+            // This gets the corresponding model class for the table row
+            ModelClass row = rowModelList.get(rowIndex);
+
+            List<Object> returnRow = new ArrayList<>();
+
+            // From the modelClass, invoke all methods in-order and add their returns to the Object list
+            for (int methodIndex = 0; methodIndex < row.getNumberOfMethods(); methodIndex++) {
+
+                returnRow.add(row.getData(methodIndex));
+
+            }
+
+            return returnRow;
+
+        } catch (IndexOutOfBoundsException e) {
+
+            throw new UnknownRowException(rowIndex,rowModelList.size()-1);
+
+        }
+
+    }
+
 
     // Check if the name of a column already exists in the list
     // True if yes, false otherwise

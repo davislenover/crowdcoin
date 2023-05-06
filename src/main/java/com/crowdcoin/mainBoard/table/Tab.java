@@ -12,6 +12,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.text.Text;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 public class Tab {
@@ -150,6 +151,8 @@ public class Tab {
             // This cloned ModelClass houses the row data from the table within the database and utilizes the specified methods (via @TableReadable annotation) to retrieve the data
             destinationTable.getItems().add(this.factory.buildClone(this.modelClass,row.toArray()));
         }
+
+        System.out.println(Arrays.toString(this.tableInfo.getRow(5).toArray()));
 
     }
 
