@@ -8,18 +8,13 @@ import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 
 public class Tab {
@@ -45,20 +40,20 @@ public class Tab {
     private double totalWidth;
 
     /**
-     * Create a Tab object. Similar to a tab in a web browser, a Tab object stores a "state" of the TableView
+     * Create a Tab object. Similar to a tab in a web browser, a Tab object stores a "state" of the TableView. Upon creation, a blank InteractivePane is available for use
      * @param classToModel an instance of the class to model for column data. This class will be used to get values for columns. To learn more, please see ModelClass and ModelClassFactory
      * @param sqlTable an SQLTable object which is responsible for gathering data of a specific table found within the database
      * @throws NotZeroArgumentException if the model class contains invokable methods that have more than zero parameters
      * @throws IncompatibleModelClassException if the model class does not contain the same number of invokable methods as there are columns within the given table within the database (as specified within the SQLTable object)
      * @throws ModelClassConstructorTypeException if the modelClass constructor contains an argument type mismatch to one or more columns within the database table. This could mean the constructor arguments of the modeling class are not in the correct order. Note that SQLTable returns a list where each element is a row of the database table sorted in ordinal position thus it is imperative to organize constructor parameters in the same position as column ordinal position
      */
-    public Tab(Object classToModel, SQLTable sqlTable, InteractivePane interactivePane) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException {
+    public Tab(Object classToModel, SQLTable sqlTable) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException {
 
         // Create instances needed
         this.tableInfo = new TableInformation();
         this.factory = new ModelClassFactory();
         this.sqlTable = sqlTable;
-        this.interactivePane = interactivePane;
+        this.interactivePane = new InteractivePane();
         // Build model class from model reference
         this.modelClass = this.factory.build(classToModel);
 
@@ -133,15 +128,27 @@ public class Tab {
 
     }
 
+    /**
+     * Gets the associated InteractivePane created upon instantiation of a Tab object.
+     * @return the associated InteractivePane object. The object is live.
+     */
+    public InteractivePane getInteractivePane() {
+        return this.interactivePane;
+    }
+
+    /**
+     * Set the action to be performed when a user clicks within the TableView object. Note that one needs to load the tab to apply the corresponding event
+     * @param event the arbitrary logic to invoke
+     */
     public void setTabTableAction(TabTableActionEvent event) {
         this.tableSelectHandler = event;
     }
 
     /**
      * Load a tab into a TableView object
-     * @param destinationTable the TableView object to apply the Tab object to. ALL present data within the TableView object will be erased and replaced with the data found within the Tab object
-     * @param fieldPane apart of the intractableDisplay, fieldPane indicates the GridPane where user input fields are to be placed
-     * @param buttonPane apart of the intractableDisplay, buttonPane indicates the GridPane where user intractable buttons are to be placed
+     * @param destinationTable the TableView object to apply the Tab object to. ALL present data within the TableView object (and any MouseClick On Mouse Pressed event) will be erased and replaced with the data found within the Tab object
+     * @param fieldPane apart of the IntractablePane, fieldPane indicates the GridPane where user input fields are to be placed
+     * @param buttonPane apart of the IntractablePane, buttonPane indicates the GridPane where user intractable buttons are to be placed
      * @throws FailedQueryException
      * @throws SQLException
      * @throws InvalidRangeException
@@ -185,7 +192,7 @@ public class Tab {
         destinationTable.setOnMouseClicked(mouseEvent -> this.tableSelectHandler.tableActionHandler(this.tableInfo,this.interactivePane));
 
         // Apply InteractivePane
-        this.interactivePane.applyInteractivePane(fieldPane,buttonPane);
+        this.interactivePane.applyInteractivePane(fieldPane, buttonPane);
 
     }
 

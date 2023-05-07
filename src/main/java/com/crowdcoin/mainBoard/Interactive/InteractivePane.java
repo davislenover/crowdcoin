@@ -37,6 +37,17 @@ public class InteractivePane {
         return this.fieldsList.add(newField);
     }
 
+    /**
+     * Removes a specified field from the InteractivePane. Note removal change does NOT take effect on GridPane until application method is invoked
+     * @param fieldIndex the index within the InteractivePane of the field to remove
+     * @throws IndexOutOfBoundsException if fieldIndex is not within the range of the list
+     */
+    public void removeField(int fieldIndex) throws IndexOutOfBoundsException {
+
+        this.fieldsList.remove(fieldIndex);
+
+    }
+
     // Method to update row constraints
     // Called to setup spacing of fields evenly in GridPane
     private void updateParentDisplayPane(GridPane parentFieldGridPane) {
@@ -67,6 +78,17 @@ public class InteractivePane {
         return this.buttonList.add(newButton);
     }
 
+    /**
+     * Removes a specified button from the InteractivePane. Note removal change does NOT take effect on GridPane until application method is invoked
+     * @param buttonIndex the index within the InteractivePane of the button to remove
+     * @throws IndexOutOfBoundsException if buttonIndex is not within the range of the list
+     */
+    public void removeButton(int buttonIndex) throws IndexOutOfBoundsException {
+
+        this.buttonList.remove(buttonIndex);
+
+    }
+
     // Method to update column constraints for button grid
     // Unlike the field grid, buttons are added horizontally rather than vertically, thus column constraints is updated instead
     private void updateParentButtonPane(GridPane parentButtonGridPane) {
@@ -85,8 +107,8 @@ public class InteractivePane {
 
     /**
      * Applys Fields and Buttons to GridPanes.
-     * @param parentFieldGridPane the GridPane to insert fields into. For each field, creates a new row at the bottom of the Field GridPane and inserts a new field there. All other rows are automatically resized such that they are all spaced out evenly.
-     * @param parentButtonGridPane the GridPane to insert buttons into. For each button, Creates a new column at the rightmost side of the Button GridPane and inserts the field there. All other columns are automatically resized such that they are all spaced out evenly.
+     * @param parentFieldGridPane the target GridPane to insert fields into. Upon application, for each field, creates a new row at the bottom of the Field GridPane and inserts a new field there. All other rows are automatically resized such that they are all spaced out evenly.
+     * @param parentButtonGridPane the target GridPane to insert buttons into. Upon application, for each button, Creates a new column at the rightmost side of the Button GridPane and inserts the field there. All other columns are automatically resized such that they are all spaced out evenly.
      * @Note by convention, the field GridPane should be above the button GridPane
      */
     public void applyInteractivePane(GridPane parentFieldGridPane, GridPane parentButtonGridPane) {
@@ -95,7 +117,7 @@ public class InteractivePane {
         parentFieldGridPane.getChildren().clear();
         parentButtonGridPane.getChildren().clear();
 
-        // Clear and update column/row constraints for fitting this instances TextFields and Buttons
+        // Clear and update column/row constraints for fitting instances of TextFields and Buttons
         updateParentDisplayPane(parentFieldGridPane);
         updateParentButtonPane(parentButtonGridPane);
 
@@ -117,7 +139,6 @@ public class InteractivePane {
 
 
     }
-
 
     /**
      * Gets all user input from all TextFields

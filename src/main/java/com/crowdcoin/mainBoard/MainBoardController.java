@@ -43,8 +43,16 @@ public class MainBoardController {
         CoinModel model = new CoinModel(12,"myDenomination","01/01/2002","myGrade","myCompany","01234","$101.93");
         SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coindata");
 
+        Tab testTab = new Tab(model,table);
+        testTab.setTabTableAction(new TabTableActionEvent() {
+            @Override
+            public void tableActionHandler(TableInformation tableInformation, InteractivePane pane) {
+                System.out.println("This tab was pressed!");
+            }
+        });
+
         // an InteractivePane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
-        InteractivePane testPane = new InteractivePane();
+        InteractivePane testPane = testTab.getInteractivePane();
         // Add fields to the pane
         testPane.addField("This is a test", "This is a test combo object for textfield combo's 1");
         testPane.addField("This is a test2", "This is a test combo object for textfield combo's 2");
@@ -63,14 +71,11 @@ public class MainBoardController {
         testPane.addButton("Button1",testHandler);
         testPane.addButton("Button2", testHandler);
 
-        Tab testTab = new Tab(model,table,testPane);
-        testTab.setTabTableAction(new TabTableActionEvent() {
-            @Override
-            public void tableActionHandler(TableInformation tableInformation, InteractivePane pane) {
-                System.out.println("This tab was pressed!");
-            }
-        });
+        testTab.loadTab(mainTable,rightDisplay,buttonGrid);
 
+        // Test removing elements
+        testPane.removeButton(0);
+        testPane.removeField(0);
         testTab.loadTab(mainTable,rightDisplay,buttonGrid);
 
 
