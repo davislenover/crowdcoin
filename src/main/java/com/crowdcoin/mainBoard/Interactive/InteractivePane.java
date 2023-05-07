@@ -10,8 +10,8 @@ import java.util.List;
 public class InteractivePane {
 
     // The idea is to have some object which can be passed into a Tab that defines how a tab interacts with the right display (intractable display)
-    private List<TextFieldCombo> fieldsList;
-    private List<ButtonCombo> buttonList;
+    private List<InteractiveTextField> fieldsList;
+    private List<InteractiveButton> buttonList;
 
     /**
      * Creates an InteractivePane object. InteractivePane's define how a Tab interacts with the rightmost display beside the TableView (by convention).
@@ -31,8 +31,8 @@ public class InteractivePane {
      */
     public boolean addField(String header, String description) {
 
-        // Create a new TextFieldCombo object containing the corresponding header and description
-        TextFieldCombo newField = new TextFieldCombo(header,description);
+        // Create a new InteractiveTextField object containing the corresponding header and description
+        InteractiveTextField newField = new InteractiveTextField(header,description);
         // Attempt to store in list
         return this.fieldsList.add(newField);
     }
@@ -71,10 +71,10 @@ public class InteractivePane {
      * @param buttonText the text to be displayed by the Button
      * @param eventHandler the class containing an invokable method by the Button to perform arbitrary logic upon firing of an ActionEvent by the Button. Intended to allow users to execute arbitrary logic for each button and not singular unified logic
      * @return true if a new field was added, false otherwise
-     * @Note by convention, Buttons are added horizontally below the Field Grid
+     * @Note by convention, Buttons are added horizontally below the Field Grid horizontally
      */
-    public boolean addButton(String buttonText, ButtonHandler eventHandler) {
-        ButtonCombo newButton = new ButtonCombo(buttonText,eventHandler,this);
+    public boolean addButton(String buttonText, InteractiveButtonActionEvent eventHandler) {
+        InteractiveButton newButton = new InteractiveButton(buttonText,eventHandler,this);
         return this.buttonList.add(newButton);
     }
 
@@ -124,7 +124,7 @@ public class InteractivePane {
         // Apply fields
         for (int fieldIndex = 0; fieldIndex < this.fieldsList.size(); fieldIndex++) {
             // Get field
-            TextFieldCombo currentField = this.fieldsList.get(fieldIndex);
+            InteractiveTextField currentField = this.fieldsList.get(fieldIndex);
             // Apply to GirdPane in corresponding index location (same as fieldsList index)
             currentField.applyPane(parentFieldGridPane,fieldIndex);
         }
@@ -132,7 +132,7 @@ public class InteractivePane {
         // Apply buttons
         for (int buttonIndex = 0; buttonIndex < this.buttonList.size(); buttonIndex++) {
             // Get Button
-            ButtonCombo currentButton = this.buttonList.get(buttonIndex);
+            InteractiveButton currentButton = this.buttonList.get(buttonIndex);
             // Apply to GirdPane in corresponding index location (same as buttonList index)
             currentButton.applyPane(parentButtonGridPane,buttonIndex);
         }
@@ -148,7 +148,7 @@ public class InteractivePane {
 
         List<String> returnList = new ArrayList<>();
 
-        for (TextFieldCombo field : this.fieldsList) {
+        for (InteractiveTextField field : this.fieldsList) {
 
             returnList.add(field.getInput());
 

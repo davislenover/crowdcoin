@@ -19,18 +19,18 @@ import java.util.List;
 
 public class Tab {
 
-    private TableInformation tableInfo;
+    private ColumnContainer tableInfo;
     private ModelClass modelClass;
     private ModelClassFactory factory;
     private SQLTable sqlTable;
     private InteractivePane interactivePane;
 
-    // TabTableActionEvent is intended to allow arbitrary logic to be invoked when a user selects anything within the TableView object within the Tab
+    // TabActionEvent is intended to allow arbitrary logic to be invoked when a user selects anything within the TableView object within the Tab
     // Basically provides a connection between the TableView and InteractivePane on the right beside the table (something happens in the Table, do something in the InteractivePane)
     // On instantiation, set action event to default
-    private TabTableActionEvent tableSelectHandler = new TabTableActionEvent() {
+    private TabActionEvent tableSelectHandler = new TabActionEvent() {
         @Override
-        public void tableActionHandler(TableInformation tableInformation, InteractivePane pane) {
+        public void tableActionHandler(ColumnContainer tableInformation, InteractivePane pane) {
             return;
         }
     };;
@@ -50,7 +50,7 @@ public class Tab {
     public Tab(Object classToModel, SQLTable sqlTable) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException {
 
         // Create instances needed
-        this.tableInfo = new TableInformation();
+        this.tableInfo = new ColumnContainer();
         this.factory = new ModelClassFactory();
         this.sqlTable = sqlTable;
         this.interactivePane = new InteractivePane();
@@ -98,7 +98,7 @@ public class Tab {
 
     }
 
-    // Method to set up TableInformation object with columns
+    // Method to set up ColumnContainer object with columns
     private void setupTab() {
 
         this.totalWidth = 0;
@@ -140,7 +140,7 @@ public class Tab {
      * Set the action to be performed when a user clicks within the TableView object. Note that one needs to load the tab to apply the corresponding event
      * @param event the arbitrary logic to invoke
      */
-    public void setTabTableAction(TabTableActionEvent event) {
+    public void setTabTableAction(TabActionEvent event) {
         this.tableSelectHandler = event;
     }
 

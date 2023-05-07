@@ -1,4 +1,4 @@
-package com.crowdcoin.exceptions.TableInformation;
+package com.crowdcoin.exceptions.columnContainer;
 
 public class NoTableViewInstanceException extends Exception {
 

@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Specifies methods which are to be used to get data from for a TableColumn object
+ * Specifies methods which are to be used to get data from for a ColumnContainer object
  * @Note order parameter specifies the order in which the methods are placed within the ModelClass object. Default 0.
  */
 // Specify this annotation is to be used on methods

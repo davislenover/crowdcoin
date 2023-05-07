@@ -7,7 +7,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
-public class TextFieldCombo {
+public class InteractiveTextField {
 
     // Defaults
 
@@ -35,7 +35,7 @@ public class TextFieldCombo {
      * @param description the description of what the text field (user input) is used for
      * @Note this is the lower level object used in InteractivePane's
      */
-    public TextFieldCombo(String header, String description) {
+    public InteractiveTextField(String header, String description) {
 
         // All these objects are housed in a parent pane, a StackPane for organization
         this.textField = new TextField();

@@ -1,27 +1,25 @@
 package com.crowdcoin.mainBoard.table;
-import com.crowdcoin.exceptions.TableInformation.NoColumnsException;
-import com.crowdcoin.exceptions.TableInformation.NoTableViewInstanceException;
-import com.crowdcoin.exceptions.TableInformation.UnknownRowException;
-import javafx.beans.Observable;
+import com.crowdcoin.exceptions.columnContainer.NoColumnsException;
+import com.crowdcoin.exceptions.columnContainer.NoTableViewInstanceException;
+import com.crowdcoin.exceptions.columnContainer.UnknownRowException;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 // Class contains table columns and associated data
-public class TableInformation implements Iterable<TableColumn<ModelClass,Object>> {
+public class ColumnContainer implements Iterable<TableColumn<ModelClass,Object>> {
 
     // Columns can be any data type (Object), runtime type will decide
     private List<TableColumn<ModelClass,Object>> columnData;
 
     /**
-     * Creates a TableInformation object. Acts as a container for columns
-     * @returns a TableInformation object with a blank list
+     * Creates a ColumnContainer object. Acts as a container for columns
+     * @returns a ColumnContainer object with a blank list
      * @Note columns added will have their CellValueFactory updated to retrieve data from ModelClasses
      */
-    public TableInformation() {
+    public ColumnContainer() {
         this.columnData = new ArrayList<>();
     }
 
@@ -114,8 +112,8 @@ public class TableInformation implements Iterable<TableColumn<ModelClass,Object>
      * @param rowIndex the row to get data. From 0 (first row) upwards
      * @return a list of Objects corresponding to the given rowIndex
      * @throws UnknownRowException if the specified rowIndex is not within the TableView
-     * @throws NoColumnsException if there are no columns currently within the TableInformation instance (i.e., it is impossible to retrieve any data from nothing)
-     * @throws NoTableViewInstanceException if columns do not contain a TableView instance. This is mostly likely caused by failure to load the Tab (that contains the TableInformation instance) into a TableView using the loadTab() method
+     * @throws NoColumnsException if there are no columns currently within the ColumnContainer instance (i.e., it is impossible to retrieve any data from nothing)
+     * @throws NoTableViewInstanceException if columns do not contain a TableView instance. This is mostly likely caused by failure to load the Tab (that contains the ColumnContainer instance) into a TableView using the loadTab() method
      */
     public List<Object> getRow(int rowIndex) throws UnknownRowException, NoColumnsException, NoTableViewInstanceException {
 
@@ -125,7 +123,7 @@ public class TableInformation implements Iterable<TableColumn<ModelClass,Object>
 
         List<ModelClass> rowModelList;
 
-        // If loadTab() was not called within a TabInstance to apply these columns, it is possible that the given columns within TableInformation do not contain a TableView
+        // If loadTab() was not called within a TabInstance to apply these columns, it is possible that the given columns within ColumnContainer do not contain a TableView
         try {
 
             // Each row has its own modelClass which tells each column what data to display per row
