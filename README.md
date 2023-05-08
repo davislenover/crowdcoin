@@ -11,8 +11,9 @@ CrowdCoin is a Java based program designed to enable multiple users to interact 
 ### Product Backlog
 Status: Pending (P), Started (S), Blocked (B), Done (D)
 
-| Id  | TODO title                                          | Who?               | Start      | End        | Status |
-|:---:|-----------------------------------------------------|--------------------|------------|------------|--------|
+| Id  | TODO title                                        | Who?               | Start      | End        | Status |
+|:---:|---------------------------------------------------|--------------------|------------|------------|--------|
 | F01 | Refactor to improve readability and maintainability | Davis Lenover      | 2023-04-30 | 2023-05-01 | D      |
-| F02 | Read and create table from SQL database             | Davis Lenover      | 2023-05-01 | 2023-05-03 | D      |
-| F03 | Tabs define how sidebar logic works                 | Davis Lenover      | 2023-05-03 | 2023-05-06 | D      |
+| F02 | Read and create table from SQL database           | Davis Lenover      | 2023-05-01 | 2023-05-03 | D      |
+| F03 | Tabs define how sidebar logic works               | Davis Lenover      | 2023-05-03 | 2023-05-06 | D      |
+| F04 | Menu bar is defined by groups of buttons          | Davis Lenover      | 2023-05-08 |  | S      |
