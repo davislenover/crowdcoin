@@ -15,4 +15,4 @@ Status: Pending (P), Started (S), Blocked (B), Done (D)
 |:---:|-----------------------------------------------------|--------------------|------------|------------|--------|
 | F01 | Refactor to improve readability and maintainability | Davis Lenover      | 2023-04-30 | 2023-05-01 | D      |
 | F02 | Read and create table from SQL database             | Davis Lenover      | 2023-05-01 | 2023-05-03 | D      |
-| F03 | Tabs define how sidebar logic works                 | Davis Lenover      | 2023-05-03 |            | S      |
+| F03 | Tabs define how sidebar logic works                 | Davis Lenover      | 2023-05-03 | 2023-05-06 | D      |

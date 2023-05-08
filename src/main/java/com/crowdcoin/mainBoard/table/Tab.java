@@ -19,7 +19,7 @@ import java.util.List;
 
 public class Tab {
 
-    private ColumnContainer tableInfo;
+    private ColumnContainer columnContainer;
     private ModelClass modelClass;
     private ModelClassFactory factory;
     private SQLTable sqlTable;
@@ -30,7 +30,7 @@ public class Tab {
     // On instantiation, set action event to default
     private TabActionEvent tableSelectHandler = new TabActionEvent() {
         @Override
-        public void tableActionHandler(ColumnContainer tableInformation, InteractivePane pane) {
+        public void tableActionHandler(ColumnContainer columnContainer, InteractivePane pane) {
             return;
         }
     };;
@@ -50,7 +50,7 @@ public class Tab {
     public Tab(Object classToModel, SQLTable sqlTable) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException {
 
         // Create instances needed
-        this.tableInfo = new ColumnContainer();
+        this.columnContainer = new ColumnContainer();
         this.factory = new ModelClassFactory();
         this.sqlTable = sqlTable;
         this.interactivePane = new InteractivePane();
@@ -122,7 +122,7 @@ public class Tab {
             columnObject.setPrefWidth(widthValue);
             this.totalWidth+=widthValue;
 
-            this.tableInfo.addColumn(columnObject);
+            this.columnContainer.addColumn(columnObject);
 
         }
 
@@ -167,7 +167,7 @@ public class Tab {
         destinationTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
         // Load columns within Tab to table
-        for (TableColumn column : this.tableInfo) {
+        for (TableColumn column : this.columnContainer) {
             destinationTable.getColumns().add(column);
         }
 
@@ -189,7 +189,7 @@ public class Tab {
         destinationTable.setOnMouseClicked(null);
 
         // Change MouseCLicked event to the TableView object, to invoke the corresponding tableActionHandler method
-        destinationTable.setOnMouseClicked(mouseEvent -> this.tableSelectHandler.tableActionHandler(this.tableInfo,this.interactivePane));
+        destinationTable.setOnMouseClicked(mouseEvent -> this.tableSelectHandler.tableActionHandler(this.columnContainer,this.interactivePane));
 
         // Apply InteractivePane
         this.interactivePane.applyInteractivePane(fieldPane, buttonPane);

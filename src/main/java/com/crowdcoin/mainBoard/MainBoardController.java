@@ -37,7 +37,7 @@ public class MainBoardController {
         Tab testTab = new Tab(model,table);
         testTab.setTabTableAction(new TabActionEvent() {
             @Override
-            public void tableActionHandler(ColumnContainer tableInformation, InteractivePane pane) {
+            public void tableActionHandler(ColumnContainer columnContainer, InteractivePane pane) {
                 System.out.println("This tab was pressed!");
             }
         });
