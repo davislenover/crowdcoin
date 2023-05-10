@@ -3,6 +3,8 @@ package com.crowdcoin.mainBoard;
 import com.crowdcoin.mainBoard.Interactive.InteractiveButtonActionEvent;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.table.*;
+import com.crowdcoin.mainBoard.toolBar.MenuGroup;
+import com.crowdcoin.mainBoard.toolBar.MenuGroupContainer;
 import com.crowdcoin.networking.sqlcom.SQLData;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.application.Platform;
@@ -27,6 +29,7 @@ public class MainBoardController {
     @FXML private TableView mainTable;
     @FXML private GridPane rightDisplay;
     @FXML private GridPane buttonGrid;
+    @FXML private ToolBar toolBar;
 
     // Method to initialize coin list on startup
     public void initializeList() throws Exception {
@@ -68,6 +71,17 @@ public class MainBoardController {
         testPane.removeButton(0);
         testPane.removeField(0);
         testTab.loadTab(mainTable,rightDisplay,buttonGrid);
+
+        // Test adding MenuOptions
+        MenuGroupContainer testContainer = new MenuGroupContainer(this.toolBar);
+
+        MenuGroup test1 = new MenuGroup("Test1");
+        MenuGroup test2 = new MenuGroup("Test2");
+
+        testContainer.addMenuGroup(test1);
+        testContainer.addMenuGroup(test2);
+
+        testContainer.removeMenuGroup(test2);
 
 
     }
