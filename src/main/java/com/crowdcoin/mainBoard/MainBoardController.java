@@ -18,15 +18,7 @@ import javafx.scene.layout.*;
 
 public class MainBoardController {
 
-    // Toolbar menu button declarations
-
-    // File
-    @FXML private MenuButton fileMenuButton;
-    @FXML private MenuItem fileMenuExit;
-
-    // Edit
-    @FXML private MenuButton editMenuButton;
-    @FXML private MenuItem editMenuNewEntry;
+    // Main Node Declarations
 
     @FXML private TableView mainTable;
     @FXML private GridPane rightDisplay;
@@ -89,25 +81,6 @@ public class MainBoardController {
         testContainer.addMenuGroup(test2);
 
         testContainer.removeMenuGroup(test2);
-
-
-    }
-
-    // Events
-
-    // Exit Button Action
-    @FXML
-    protected void onMenuItemExitAction() {
-
-        Platform.exit();
-
-    }
-
-    // New Entry into database
-    @FXML
-    protected void onNewEntry() {
-
-
 
 
     }

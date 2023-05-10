@@ -22,7 +22,7 @@ public class MenuGroupContainer implements Iterable<MenuGroup> {
     }
 
     /**
-     * Adds a MenuGroup the ToolBar. MenuGroups cannot contain the same name
+     * Adds a MenuGroup the ToolBar. MenuGroups cannot contain the same name. The ToolBar JavaFX object associated is automatically updated
      * @param menuGroup the given MenuGroup to add
      * @return true if the MenuGroup was added, false otherwise (i.e., the given MenuGroup shares a name with an element already present in the container)
      * @Note When a MenuGroup is added, the referenced MenuButton from the MenuGroup is cloned and thus, any changes made to the original MenuButton outside of this container will have no effect on the Toolbar
@@ -42,7 +42,7 @@ public class MenuGroupContainer implements Iterable<MenuGroup> {
     }
 
     /**
-     * Removes a MenuGroup the ToolBar.
+     * Removes a MenuGroup the ToolBar. The ToolBar JavaFX object associated is automatically updated
      * @param menuGroup the given MenuGroup to remove
      * @return true if the MenuGroup was remove, false otherwise (i.e., the given MenuGroup shares a name with an element already present in the container)
      */
@@ -65,7 +65,20 @@ public class MenuGroupContainer implements Iterable<MenuGroup> {
 
     }
 
+    /**
+     * Remove a MenuGroup object from the container instance. The ToolBar JavaFX object associated is automatically updated
+     * @param index the given index of the MenuGroup to remove
+     * @throws IndexOutOfBoundsException if the given index is not within the range of the list
+     */
+    public void removeMenuGroup(int index) throws IndexOutOfBoundsException {
+        this.menus.remove(index);
+        this.targetToolbar.getItems().remove(index);
+    }
 
+    /**
+     * Iterate over all MenuGroups
+     * @return an Iterator object for the container
+     */
     @Override
     public Iterator<MenuGroup> iterator() {
         return this.menus.iterator();

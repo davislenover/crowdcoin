@@ -52,18 +52,28 @@ public class MenuGroup implements Cloneable,Iterable<MenuOption> {
      */
     public boolean removeOption(MenuOption option) {
 
-        try {
-            int removalIndex = this.menuOptions.indexOf(option);
-            this.menuOptions.remove(option);
-            // Index corresponds to MenuItem to remove (this is because MenuItem is cloned so attempting to remove original MenuItem will not work)
-            this.menuButtonObject.getItems().remove(removalIndex);
-
-        } catch (Exception e) {
+        int removalIndex = this.menuOptions.indexOf(option);
+        // -1 indicates no such index was found
+        if (removalIndex == (-1)) {
             return false;
         }
 
-        return false;
+        this.menuOptions.remove(option);
+        // Index corresponds to MenuItem to remove (this is because MenuItem is cloned so attempting to remove original MenuItem will not work)
+        this.menuButtonObject.getItems().remove(removalIndex);
 
+        return true;
+
+    }
+
+    /**
+     * Remove a MenuOption object from the MenuGroup. The MenuButton JavaFX object associated is automatically updated (non-clone).
+     * @param index the given index of the MenuOption to remove
+     * @throws IndexOutOfBoundsException if the given index is not within the range of the list
+     */
+    public void removeOption(int index) throws IndexOutOfBoundsException {
+        this.menuOptions.remove(index);
+        this.menuButtonObject.getItems().remove(index);
     }
 
     public String getGroupName() {
