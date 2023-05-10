@@ -20,6 +20,11 @@ public class MenuGroup implements Cloneable,Iterable<MenuOption> {
 
     }
 
+    /**
+     * Add a MenuOption object to the MenuGroup. The MenuButton JavaFX object associated is automatically updated (non-clone). No MenuOption can contain the same name
+     * @param option the given MenuOption to add
+     * @return true if the given MenuOption object was added, false otherwise (i.e., if the MenuOption shares a name with an element present within the list)
+     */
     public boolean addOption(MenuOption option) {
 
         // contains() calls equals() to check for object matches
@@ -40,6 +45,11 @@ public class MenuGroup implements Cloneable,Iterable<MenuOption> {
 
     }
 
+    /**
+     * Remove a MenuOption object from the MenuGroup. The MenuButton JavaFX object associated is automatically updated (non-clone).
+     * @param option the given MenuOption to remove
+     * @return true if the given MenuOption object was removed, false otherwise
+     */
     public boolean removeOption(MenuOption option) {
         boolean result = this.menuOptions.remove(option);
         if (result) {
@@ -54,6 +64,11 @@ public class MenuGroup implements Cloneable,Iterable<MenuOption> {
         return this.groupName;
     }
 
+    /**
+     * Gets the associated MenuButton JavaFX object from the given MenuGroup instance. Note that the MenuButton referenced to the MenuGroup is cloned (as the MenuGroup instance, including all MenuOptions associated, are cloned)/
+     * This means any changes to the MenuButton JavaFX object do not affect the original MenuGroup instance
+     * @return the cloned MenuButton JavaFX object
+     */
     public MenuButton getMenuButton() {
         MenuGroup clonedObject = this.clone();
         return clonedObject.menuButtonObject;

@@ -31,8 +31,13 @@ public class MenuOption implements Cloneable {
         return this.optionName;
     }
 
+    /**
+     * Gets the MenuItem JavaFX object associated with the class. Note, the given MenuOption instance is cloned and the cloned MenuItem is returned.
+     * This means any changes to the MenuItem object do not affect the original MenuOption class
+     * @return cloned MenuItem JavaFX object
+     */
     public MenuItem getMenuItem() {
-        return this.menuItemObject;
+        return this.clone().menuItemObject;
     }
 
     /**
