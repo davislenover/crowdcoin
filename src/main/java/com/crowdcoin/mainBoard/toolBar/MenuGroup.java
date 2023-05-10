@@ -51,9 +51,15 @@ public class MenuGroup implements Cloneable,Iterable<MenuOption> {
      * @return true if the given MenuOption object was removed, false otherwise
      */
     public boolean removeOption(MenuOption option) {
-        boolean result = this.menuOptions.remove(option);
-        if (result) {
-            return this.menuButtonObject.getItems().remove(option.getMenuItem());
+
+        try {
+            int removalIndex = this.menuOptions.indexOf(option);
+            this.menuOptions.remove(option);
+            // Index corresponds to MenuItem to remove (this is because MenuItem is cloned so attempting to remove original MenuItem will not work)
+            this.menuButtonObject.getItems().remove(removalIndex);
+
+        } catch (Exception e) {
+            return false;
         }
 
         return false;

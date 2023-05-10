@@ -5,6 +5,8 @@ import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.table.*;
 import com.crowdcoin.mainBoard.toolBar.MenuGroup;
 import com.crowdcoin.mainBoard.toolBar.MenuGroupContainer;
+import com.crowdcoin.mainBoard.toolBar.MenuOption;
+import com.crowdcoin.mainBoard.toolBar.MenuOptionActionEvent;
 import com.crowdcoin.networking.sqlcom.SQLData;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.application.Platform;
@@ -76,7 +78,12 @@ public class MainBoardController {
         MenuGroupContainer testContainer = new MenuGroupContainer(this.toolBar);
 
         MenuGroup test1 = new MenuGroup("Test1");
+        test1.addOption(new MenuOption("Exit", p -> Platform.exit()));
+        test1.addOption(new MenuOption("Hello", p -> System.out.println("Hello world!")));
         MenuGroup test2 = new MenuGroup("Test2");
+
+        // Note that options are cloned thus updates need to be made before adding to container (this might change in the future)
+        test1.removeOption(new MenuOption("Hello",p -> System.out.println("Test!")));
 
         testContainer.addMenuGroup(test1);
         testContainer.addMenuGroup(test2);

@@ -3,9 +3,10 @@ package com.crowdcoin.mainBoard.toolBar;
 import javafx.scene.control.ToolBar;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class MenuGroupContainer {
+public class MenuGroupContainer implements Iterable<MenuGroup> {
 
     // Holds MenuGroups
     private ToolBar targetToolbar;
@@ -65,4 +66,8 @@ public class MenuGroupContainer {
     }
 
 
+    @Override
+    public Iterator<MenuGroup> iterator() {
+        return this.menus.iterator();
+    }
 }
