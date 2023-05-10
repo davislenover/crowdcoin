@@ -3,9 +3,10 @@ package com.crowdcoin.mainBoard.toolBar;
 import javafx.scene.control.MenuButton;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class MenuGroup {
+public class MenuGroup implements Cloneable,Iterable<MenuOption> {
 
     // Groups together MenuOptions to form one menu
     private List<MenuOption> menuOptions;
@@ -53,6 +54,25 @@ public class MenuGroup {
         return this.groupName;
     }
 
+    public MenuButton getMenuButton() {
+        MenuGroup clonedObject = this.clone();
+        return clonedObject.menuButtonObject;
+    }
+
+
+    @Override
+    public MenuGroup clone() {
+
+        MenuGroup returnClone = new MenuGroup(this.groupName);
+
+        for (MenuOption currentOption : this) {
+            returnClone.addOption(currentOption.clone());
+        }
+
+        return returnClone;
+
+    }
+
     @Override
     public boolean equals(Object o) {
 
@@ -76,4 +96,8 @@ public class MenuGroup {
     }
 
 
+    @Override
+    public Iterator iterator() {
+        return this.menuOptions.iterator();
+    }
 }

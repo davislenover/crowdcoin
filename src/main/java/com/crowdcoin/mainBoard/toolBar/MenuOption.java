@@ -4,7 +4,7 @@ package com.crowdcoin.mainBoard.toolBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.Pane;
 
-public class MenuOption {
+public class MenuOption implements Cloneable {
 
     // An option to be placed in a MenuGroup
     private String optionName;
@@ -66,6 +66,11 @@ public class MenuOption {
     public int hashCode() {
         // Because MenuOptions are compared by names, simply return the hashCode of the name String
         return this.optionName.hashCode();
+    }
+
+    @Override
+    public MenuOption clone() {
+        return new MenuOption(this.optionName,this.actionEvent);
     }
 
 }
