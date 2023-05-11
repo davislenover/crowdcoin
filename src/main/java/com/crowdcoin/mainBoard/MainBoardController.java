@@ -24,6 +24,7 @@ public class MainBoardController {
     @FXML private GridPane rightDisplay;
     @FXML private GridPane buttonGrid;
     @FXML private ToolBar toolBar;
+    @FXML private TabPane tabBar;
 
     // Method to initialize coin list on startup
     public void initializeList() throws Exception {
