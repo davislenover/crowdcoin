@@ -32,7 +32,8 @@ public class MainBoardController {
         CoinModel model = new CoinModel(12,"myDenomination","01/01/2002","myGrade","myCompany","01234","$101.93");
         SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coindata");
 
-        Tab testTab = new Tab(model,table);
+        // Test Tab 1
+        Tab testTab = new Tab(model,table,"testTab");
         testTab.setTabTableAction(new TabActionEvent() {
             @Override
             public void tableActionHandler(ColumnContainer columnContainer, InteractivePane pane) {
@@ -60,12 +61,40 @@ public class MainBoardController {
         testPane.addButton("Button1",testHandler);
         testPane.addButton("Button2", testHandler);
 
-        testTab.loadTab(mainTable,rightDisplay,buttonGrid);
+        // Test Tab 2
+        Tab testTab2 = new Tab(model,table,"testTab2");
+        testTab2.setTabTableAction(new TabActionEvent() {
+            @Override
+            public void tableActionHandler(ColumnContainer columnContainer, InteractivePane pane) {
+                System.out.println("This tab 2 was pressed!");
+            }
+        });
 
-        // Test removing elements
-        testPane.removeButton(0);
-        testPane.removeField(0);
-        testTab.loadTab(mainTable,rightDisplay,buttonGrid);
+        // an InteractivePane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
+        InteractivePane testPane2 = testTab2.getInteractivePane();
+        // Add fields to the pane
+        testPane2.addField("This is a test", "This is a test combo object for textfield combo's 1");
+        testPane2.addField("This is a test2", "This is a test combo object for textfield combo's 2");
+        testPane2.addField("This is a test3", "This is a test combo object for textfield combo's 3");
+        testPane2.addField("This is a test4", "This is a test combo object for textfield combo's 3");
+
+        // Testing buttons
+        // One can specify how they would like a button to handle an ActionEvent by defining it within a specific class or on the fly
+        InteractiveButtonActionEvent testHandler2 = new InteractiveButtonActionEvent() {
+            @Override
+            public void buttonActionHandler(ActionEvent event, Button button, InteractivePane pane) {
+                System.out.println(event.getEventType().getName());
+                System.out.println(button.getText() + " fired an event!");
+            }
+        };
+
+        testPane2.addButton("Button1",testHandler2);
+        testPane2.addButton("Button2", testHandler2);
+        testPane2.addButton("Button3", testHandler2);
+
+        TabBar testBar = new TabBar(tabBar,mainTable,rightDisplay,buttonGrid);
+        testBar.addTab(testTab);
+        testBar.addTab(testTab2);
 
         // Test adding MenuOptions
         MenuGroupContainer testContainer = new MenuGroupContainer(this.toolBar);
@@ -81,7 +110,7 @@ public class MainBoardController {
         testContainer.addMenuGroup(test1);
         testContainer.addMenuGroup(test2);
 
-        testContainer.removeMenuGroup(test2);
+
 
 
     }

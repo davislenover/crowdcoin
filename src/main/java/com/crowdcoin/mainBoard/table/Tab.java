@@ -24,6 +24,7 @@ public class Tab {
     private ModelClassFactory factory;
     private SQLTable sqlTable;
     private InteractivePane interactivePane;
+    private String tabID;
 
     // TabActionEvent is intended to allow arbitrary logic to be invoked when a user selects anything within the TableView object within the Tab
     // Basically provides a connection between the TableView and InteractivePane on the right beside the table (something happens in the Table, do something in the InteractivePane)
@@ -43,11 +44,12 @@ public class Tab {
      * Create a Tab object. Similar to a tab in a web browser, a Tab object stores a "state" of the TableView. Upon creation, a blank InteractivePane is available for use
      * @param classToModel an instance of the class to model for column data. This class will be used to get values for columns. To learn more, please see ModelClass and ModelClassFactory
      * @param sqlTable an SQLTable object which is responsible for gathering data of a specific table found within the database
+     * @param tabID a String identifier for the tab instance
      * @throws NotZeroArgumentException if the model class contains invokable methods that have more than zero parameters
      * @throws IncompatibleModelClassException if the model class does not contain the same number of invokable methods as there are columns within the given table within the database (as specified within the SQLTable object)
      * @throws ModelClassConstructorTypeException if the modelClass constructor contains an argument type mismatch to one or more columns within the database table. This could mean the constructor arguments of the modeling class are not in the correct order. Note that SQLTable returns a list where each element is a row of the database table sorted in ordinal position thus it is imperative to organize constructor parameters in the same position as column ordinal position
      */
-    public Tab(Object classToModel, SQLTable sqlTable) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException {
+    public Tab(Object classToModel, SQLTable sqlTable, String tabID) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException {
 
         // Create instances needed
         this.columnContainer = new ColumnContainer();
@@ -67,6 +69,8 @@ public class Tab {
         }
 
         setupTab();
+
+        this.tabID = tabID;
 
     }
 
@@ -196,4 +200,11 @@ public class Tab {
 
     }
 
+    /**
+     * Get the tabID
+     * @return the tabID as a String
+     */
+    public String getTabID() {
+        return tabID;
+    }
 }
