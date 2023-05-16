@@ -55,4 +55,11 @@ public class SQLDefaultQueries {
 
         return getAll+tableName+" LIMIT "+firstRow+","+maxRows;
     }
+
+    public static String getAllSpecific(String tableName, String columnNameWithData, String specificData, int maxRows) {
+
+        return getAll+tableName+" where " + columnNameWithData + " = '" + specificData + "'" + " LIMIT " + maxRows;
+
+    }
+
 }
