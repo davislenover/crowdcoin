@@ -15,7 +15,8 @@ import java.util.List;
 public class SQLTable {
 
     private String tableName;
-    // 0 corresponds to table name, 1 is data type as specified in SQL table, 2 specifies the ordinal position
+    // Within the String array (inside the list), index 0 corresponds to table name, 1 is data type as specified in SQL table, 2 specifies the ordinal position
+    // (List, NOT String array) It is important to NOT directly correspond indices of columns to ordinal positions as column indices within this list are ordered in RELATIVE ordinal position. Ordinal positions start at 1. This means index 0 would correspond to an ordinal position of 1, 1 to 2, 2 to 3, etc
     private List<String[]> tableColumns;
     private SQLConnection connection;
 
@@ -235,7 +236,7 @@ public class SQLTable {
      * @throws UnknownColumnNameException if either startColumn or endColumn do not exist within the table
      * @throws SQLException if a database access error occurred
      * @throws FailedQueryException if query failed to execute
-     * @Note if numberOfRows exceeds that of what is physically available in the database, up to and including the last row possible will be returned
+     * @Note if numberOfRows exceeds that of what is physically available in the database, up to and including the last row possible will be returned. Column indices are ordered in RELATIVE ordinal position. Ordinal positions start at 1. This means index 0 would correspond to an ordinal position of 1
      */
     public List<List<Object>> getSpecificRows(int columnWithDataIndex, String specificData, int numberOfRows, int startColumnIndex, int endColumnIndex) throws InvalidRangeException, FailedQueryException, SQLException {
 
