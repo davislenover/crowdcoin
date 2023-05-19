@@ -8,6 +8,7 @@ import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
@@ -22,6 +23,7 @@ public class Tab {
     private ColumnContainer columnContainer;
     private ModelClass modelClass;
     private ModelClassFactory factory;
+    private TableViewManager tableViewManager;
     private SQLTable sqlTable;
     private InteractivePane interactivePane;
     private String tabID;
@@ -49,7 +51,7 @@ public class Tab {
      * @throws IncompatibleModelClassException if the model class does not contain the same number of invokable methods as there are columns within the given table within the database (as specified within the SQLTable object)
      * @throws ModelClassConstructorTypeException if the modelClass constructor contains an argument type mismatch to one or more columns within the database table. This could mean the constructor arguments of the modeling class are not in the correct order. Note that SQLTable returns a list where each element is a row of the database table sorted in ordinal position thus it is imperative to organize constructor parameters in the same position as column ordinal position
      */
-    public Tab(Object classToModel, SQLTable sqlTable, String tabID) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException {
+    public Tab(Object classToModel, SQLTable sqlTable, String tabID) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException, FailedQueryException, SQLException, InvalidRangeException {
 
         // Create instances needed
         this.columnContainer = new ColumnContainer();
@@ -67,6 +69,8 @@ public class Tab {
         if (!checkTypes()) {
             throw new ModelClassConstructorTypeException();
         }
+
+        this.tableViewManager = new TableViewManager(this.sqlTable,this.columnContainer,this.modelClass,this.factory);
 
         setupTab();
 
@@ -162,38 +166,56 @@ public class Tab {
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public void loadTab(TableView destinationTable, GridPane fieldPane, GridPane buttonPane) throws FailedQueryException, SQLException, InvalidRangeException, NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void loadTab(TableView destinationTable, GridPane fieldPane, GridPane buttonPane, Button previous, Button next) throws FailedQueryException, SQLException, InvalidRangeException, NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         // Clear current data and columns
         destinationTable.getItems().clear();
         destinationTable.getColumns().clear();
 
         destinationTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
-
-        // Load columns within Tab to table
-        for (TableColumn column : this.columnContainer) {
-            destinationTable.getColumns().add(column);
-        }
+        // Set number of visible rows
+        //destinationTable.setFixedCellSize(this.defaultNumberOfRows);
 
         // Load data within Tab to table
-        // Get default starting data
-        List<List<Object>> rows = this.sqlTable.getRows(0,this.defaultNumberOfRows,0,this.sqlTable.getNumberOfColumns()-1);
-        for (List<Object> row : rows) {
-            // Basically, each table column doesn't know how to get data to display it other than that it is using a ModelClass type as input and Object type as output
-            // How to get data is specified by setting the cell value factory of each column, where in this case, it is set to get the ModelClass object and invoke the corresponding method
-            // Note that it is NOT a specific ModelClass, it simply specifies that once it receives a specific instance, it will do what it was told to do with any other ModelClass
-            // The corresponding method is at the same index as the current size of the column data list (at the time) thus if a ModelClass has 4 invokable methods, the first column will get data from method 1
-            // second from method 2 and so on
-            // Thus when we add a ModelClass here, to display the data we are simply invoking the corresponding method within the specific instance of the ModelClass at the given index
-            // This cloned ModelClass houses the row data from the table within the database and utilizes the specified methods (via @TableReadable annotation) to retrieve the data
-            destinationTable.getItems().add(this.factory.buildClone(this.modelClass,row.toArray()));
-        }
+        this.tableViewManager.applyCurrentRows(destinationTable);
 
         // Clear prior mouse clicked event before applying current Tab one (redundant but safer)
         destinationTable.setOnMouseClicked(null);
 
         // Change MouseCLicked event to the TableView object, to invoke the corresponding tableActionHandler method
         destinationTable.setOnMouseClicked(mouseEvent -> this.tableSelectHandler.tableActionHandler(this.columnContainer,this.interactivePane));
+
+        // Set previous and next button functionalities
+        previous.setOnAction(actionEvent -> {
+            try {
+                this.tableViewManager.applyPreviousRows(destinationTable);
+            } catch (NotZeroArgumentException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            } catch (InstantiationException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        next.setOnAction(actionEvent -> {
+            try {
+                this.tableViewManager.applyNextRows(destinationTable);
+            } catch (NotZeroArgumentException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            } catch (InstantiationException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         // Apply InteractivePane
         this.interactivePane.applyInteractivePane(fieldPane, buttonPane);
@@ -206,5 +228,20 @@ public class Tab {
      */
     public String getTabID() {
         return tabID;
+    }
+
+    /**
+     * Change the default number of rows that will be displayed in the TableView once the Tab is loaded
+     * @param numOfRows the new default number of rows as an integer
+     * @throws IllegalArgumentException if the default number is less than or equal to 0
+     */
+    public void changeDefaultRowView(int numOfRows) {
+
+        if (numOfRows > 0) {
+            this.defaultNumberOfRows = numOfRows;
+        } else {
+            throw new IllegalArgumentException("numOfRows must be greater than 0 (entered: " + numOfRows + ")");
+        }
+
     }
 }

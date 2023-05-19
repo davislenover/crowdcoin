@@ -4,6 +4,7 @@ import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
@@ -20,6 +21,8 @@ public class TabBar {
     private TableView mainTable;
     private GridPane fieldGrid;
     private GridPane buttonGrid;
+    private Button previous;
+    private Button next;
 
     /**
      * Creates a TabBar. Manages Tabs on screen
@@ -28,7 +31,7 @@ public class TabBar {
      * @param fieldGrid the JavaFX GridPane object to control for fields. This GridPane houses user interactable TextFields and is where Tabs will load their InteractiveTextFields into
      * @param buttonGrid the JavaFX GridPane object to control for buttons. This GridPane houses user interactable Buttons and is where Tabs will load their InteractiveButtons into
      */
-    public TabBar(TabPane controlTabPane, TableView mainTable, GridPane fieldGrid, GridPane buttonGrid) {
+    public TabBar(TabPane controlTabPane, TableView mainTable, GridPane fieldGrid, GridPane buttonGrid, Button previous, Button next) {
 
         this.controlBar = controlTabPane;
         this.controlBar.getTabs().clear();
@@ -37,6 +40,8 @@ public class TabBar {
         this.mainTable = mainTable;
         this.fieldGrid = fieldGrid;
         this.buttonGrid = buttonGrid;
+        this.previous = previous;
+        this.next = next;
 
         this.tabIDMap = new HashMap<>();
 
@@ -118,7 +123,7 @@ public class TabBar {
         Tab tabToLoad = this.tabIDMap.get(newlySelectedTab.getId());
 
         // Load the corresponding data Tab
-        tabToLoad.loadTab(this.mainTable,this.fieldGrid,this.buttonGrid);
+        tabToLoad.loadTab(this.mainTable,this.fieldGrid,this.buttonGrid,this.previous,this.next);
 
 
     }

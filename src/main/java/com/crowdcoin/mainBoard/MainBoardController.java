@@ -94,7 +94,7 @@ public class MainBoardController {
         testPane2.addButton("Button2", testHandler2);
         testPane2.addButton("Button3", testHandler2);
 
-        TabBar testBar = new TabBar(tabBar,mainTable,rightDisplay,buttonGrid);
+        TabBar testBar = new TabBar(tabBar,mainTable,rightDisplay,buttonGrid,prevTableViewButton,nextTableViewButton);
         testBar.addTab(testTab);
         testBar.addTab(testTab2);
 
