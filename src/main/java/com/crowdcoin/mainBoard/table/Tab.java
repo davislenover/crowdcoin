@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import java.lang.reflect.InvocationTargetException;
@@ -185,10 +186,36 @@ public class Tab {
         // Change MouseCLicked event to the TableView object, to invoke the corresponding tableActionHandler method
         destinationTable.setOnMouseClicked(mouseEvent -> this.tableSelectHandler.tableActionHandler(this.columnContainer,this.interactivePane));
 
+        // Set previous and forward button logic
+        if (this.tableViewManager.isAtLastRow()) {
+            next.setDisable(true);
+        } else {
+            next.setDisable(false);
+        }
+
+        if (this.tableViewManager.isAtFirstRow()) {
+            previous.setDisable(true);
+        } else {
+            previous.setDisable(false);
+        }
+
         // Set previous and next button functionalities
         previous.setOnAction(actionEvent -> {
             try {
                 this.tableViewManager.applyPreviousRows(destinationTable);
+
+                if (this.tableViewManager.isAtFirstRow()) {
+                    previous.setDisable(true);
+                } else {
+                    previous.setDisable(false);
+                }
+
+                if (this.tableViewManager.isAtLastRow()) {
+                    next.setDisable(true);
+                } else {
+                    next.setDisable(false);
+                }
+
             } catch (NotZeroArgumentException e) {
                 throw new RuntimeException(e);
             } catch (InvocationTargetException e) {
@@ -204,6 +231,19 @@ public class Tab {
         next.setOnAction(actionEvent -> {
             try {
                 this.tableViewManager.applyNextRows(destinationTable);
+
+                if (this.tableViewManager.isAtLastRow()) {
+                    next.setDisable(true);
+                } else {
+                    next.setDisable(false);
+                }
+
+                if (this.tableViewManager.isAtFirstRow()) {
+                    previous.setDisable(true);
+                } else {
+                    previous.setDisable(false);
+                }
+
             } catch (NotZeroArgumentException e) {
                 throw new RuntimeException(e);
             } catch (InvocationTargetException e) {

@@ -185,8 +185,20 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
         return false;
     }
 
+    /**
+     * Check if current set of rows is the first set within the SQL Table
+     * @return true if the set of rows is the first within the SQL Table, false otherwise
+     */
     public boolean isAtFirstRow() {
         return this.isFirstRow;
+    }
+
+    /**
+     * Check if current set of rows is the last set within the SQL Table
+     * @return true if the set of rows is the last within the SQL Table, false otherwise
+     */
+    public boolean isAtLastRow() {
+        return this.isLastRow;
     }
 
     /**
