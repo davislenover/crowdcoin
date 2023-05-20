@@ -15,6 +15,9 @@ import java.util.List;
 
 public class TableViewManager implements Iterator<List<List<Object>>> {
 
+    // The purpose of this class is to store the previous, current and next set of rows to display to the TableView object
+    // It aims to reduce queries by storing recently viewed portions of the TableView to memory
+
     private ModelClassFactory factory;
     private ModelClass modelClass;
     private SQLTable sqlTable;
