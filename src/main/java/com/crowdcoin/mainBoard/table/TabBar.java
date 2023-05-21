@@ -136,6 +136,8 @@ public class TabBar {
         this.mainTable.getColumns().clear();
         this.fieldGrid.getChildren().clear();
         this.buttonGrid.getChildren().clear();
+        this.previous.setDisable(true);
+        this.next.setDisable(true);
 
         this.mainTable.setOnMouseClicked(null);
 

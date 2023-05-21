@@ -341,7 +341,7 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
         destinationTable.setRowFactory(view -> {
             // Set the row factory to set each rows height such that all rows just fit in the total height of the TableView object
             TableRow<ModelClass> row = new TableRow<>();
-            row.heightProperty().addListener((obs,oldHeight,newHeight) -> {
+            row.heightProperty().addListener(changeListener -> {
                 row.setPrefHeight(destinationTable.getHeight()/destinationTable.getItems().size());
             });
             return row;
