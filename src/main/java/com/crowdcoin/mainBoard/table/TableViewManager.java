@@ -339,34 +339,16 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
     public void applyPrevNextButtons(TableView destinationTable, Button previous, Button next) {
 
         // Set button enable/disable (in case their state was changed by a different TableViewManager)
-        if (this.isAtLastRow()) {
-            next.setDisable(true);
-        } else {
-            next.setDisable(false);
-        }
-
-        if (this.isAtFirstRow()) {
-            previous.setDisable(true);
-        } else {
-            previous.setDisable(false);
-        }
+        next.setDisable(this.isAtLastRow());
+        previous.setDisable(this.isAtFirstRow());
 
         // Set previous and next button functionalities to invoke methods in this TableViewManager instance on action
         previous.setOnAction(actionEvent -> {
             try {
                 this.applyPreviousRows(destinationTable);
-
-                if (this.isAtFirstRow()) {
-                    previous.setDisable(true);
-                } else {
-                    previous.setDisable(false);
-                }
-
-                if (this.isAtLastRow()) {
-                    next.setDisable(true);
-                } else {
-                    next.setDisable(false);
-                }
+                // After changing the rows displayed, check if any first row or last row booleans were asserted and update button states accordingly
+                next.setDisable(this.isAtLastRow());
+                previous.setDisable(this.isAtFirstRow());
 
             } catch (NotZeroArgumentException e) {
                 throw new RuntimeException(e);
@@ -385,17 +367,8 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
             try {
                 this.applyNextRows(destinationTable);
 
-                if (this.isAtLastRow()) {
-                    next.setDisable(true);
-                } else {
-                    next.setDisable(false);
-                }
-
-                if (this.isAtFirstRow()) {
-                    previous.setDisable(true);
-                } else {
-                    previous.setDisable(false);
-                }
+                next.setDisable(this.isAtLastRow());
+                previous.setDisable(this.isAtFirstRow());
 
             } catch (NotZeroArgumentException e) {
                 throw new RuntimeException(e);
