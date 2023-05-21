@@ -104,6 +104,7 @@ public class MainBoardController {
         MenuGroup test1 = new MenuGroup("Test1");
         test1.addOption(new MenuOption("Exit", p -> Platform.exit()));
         test1.addOption(new MenuOption("Hello", p -> System.out.println("Hello world!")));
+        test1.addOption(new MenuOption("New Tab Test", p -> testBar.addTab(testTab)));
         MenuGroup test2 = new MenuGroup("Test2");
 
         // Note that options are cloned thus updates need to be made before adding to container (this might change in the future)
