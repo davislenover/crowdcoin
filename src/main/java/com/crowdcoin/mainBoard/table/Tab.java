@@ -174,8 +174,6 @@ public class Tab {
         destinationTable.getColumns().clear();
 
         destinationTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
-        // Set number of visible rows
-        //destinationTable.setFixedCellSize(this.defaultNumberOfRows);
 
         // Load data within Tab to table
         this.tableViewManager.applyCurrentRows(destinationTable);

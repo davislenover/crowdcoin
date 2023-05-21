@@ -6,6 +6,7 @@ import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 
 import java.lang.reflect.InvocationTargetException;
@@ -74,7 +75,7 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
     }
 
     /**
-     * Sets the number of rows that will be requested from the SQL database each query. It is not guaranteed that all queries will contain this many rows (i.e, the ending of the table). Changing this value will reset iteration of this instance back to the start of the table.
+     * Sets the number of rows that will be requested from the SQL database each query. It is not guaranteed that all queries will contain this many rows (i.e, the ending of the table). Changing this value will reset iteration of this instance back to the start of the table. Re-applying to a TableView object after invoking this method is strongly recommended
      * @param rowsPerRequest the number of rows to get per query as an integer
      * @throws FailedQueryException
      * @throws SQLException
@@ -307,7 +308,8 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
     }
 
     /**
-     * Applys the current rows stored to the given destination Table (no list shifting). The destination table has BOTH it's columns and items cleared before applying the current row (useful for remembering rows when switching Tabs)
+     * Applys the current rows stored to the given destination Table (no list shifting). The destination table has BOTH it's columns and items cleared before applying the current row (useful for remembering rows when switching Tabs).
+     * Resizes row height to fit all rows within the height of the destination TableView object
      * @param destinationTable the TableView object to apply the rows to
      * @throws NotZeroArgumentException
      * @throws InvocationTargetException
@@ -334,6 +336,17 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
         for (List<Object> row : rows) {
             destinationTable.getItems().add(this.factory.buildClone(this.modelClass,row.toArray()));
         }
+
+        // Set Table cell height to fit all items
+        destinationTable.setRowFactory(view -> {
+            // Set the row factory to set each rows height such that all rows just fit in the total height of the TableView object
+            TableRow<ModelClass> row = new TableRow<>();
+            row.heightProperty().addListener((obs,oldHeight,newHeight) -> {
+                row.setPrefHeight(destinationTable.getHeight()/destinationTable.getItems().size());
+            });
+            return row;
+        });
+
     }
 
     public void applyPrevNextButtons(TableView destinationTable, Button previous, Button next) {
