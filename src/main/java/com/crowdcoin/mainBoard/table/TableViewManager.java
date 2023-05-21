@@ -4,6 +4,7 @@ import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
@@ -333,6 +334,83 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
         for (List<Object> row : rows) {
             destinationTable.getItems().add(this.factory.buildClone(this.modelClass,row.toArray()));
         }
+    }
+
+    public void applyPrevNextButtons(TableView destinationTable, Button previous, Button next) {
+
+        // Set button enable/disable (in case their state was changed by a different TableViewManager)
+        if (this.isAtLastRow()) {
+            next.setDisable(true);
+        } else {
+            next.setDisable(false);
+        }
+
+        if (this.isAtFirstRow()) {
+            previous.setDisable(true);
+        } else {
+            previous.setDisable(false);
+        }
+
+        // Set previous and next button functionalities to invoke methods in this TableViewManager instance on action
+        previous.setOnAction(actionEvent -> {
+            try {
+                this.applyPreviousRows(destinationTable);
+
+                if (this.isAtFirstRow()) {
+                    previous.setDisable(true);
+                } else {
+                    previous.setDisable(false);
+                }
+
+                if (this.isAtLastRow()) {
+                    next.setDisable(true);
+                } else {
+                    next.setDisable(false);
+                }
+
+            } catch (NotZeroArgumentException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            } catch (InstantiationException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        next.setOnAction(actionEvent -> {
+            try {
+                this.applyNextRows(destinationTable);
+
+                if (this.isAtLastRow()) {
+                    next.setDisable(true);
+                } else {
+                    next.setDisable(false);
+                }
+
+                if (this.isAtFirstRow()) {
+                    previous.setDisable(true);
+                } else {
+                    previous.setDisable(false);
+                }
+
+            } catch (NotZeroArgumentException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            } catch (InstantiationException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+
     }
 
 }

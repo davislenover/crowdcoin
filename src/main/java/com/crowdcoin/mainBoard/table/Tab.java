@@ -186,76 +186,8 @@ public class Tab {
         // Change MouseCLicked event to the TableView object, to invoke the corresponding tableActionHandler method
         destinationTable.setOnMouseClicked(mouseEvent -> this.tableSelectHandler.tableActionHandler(this.columnContainer,this.interactivePane));
 
-        // Set previous and forward button logic
-        if (this.tableViewManager.isAtLastRow()) {
-            next.setDisable(true);
-        } else {
-            next.setDisable(false);
-        }
-
-        if (this.tableViewManager.isAtFirstRow()) {
-            previous.setDisable(true);
-        } else {
-            previous.setDisable(false);
-        }
-
-        // Set previous and next button functionalities
-        previous.setOnAction(actionEvent -> {
-            try {
-                this.tableViewManager.applyPreviousRows(destinationTable);
-
-                if (this.tableViewManager.isAtFirstRow()) {
-                    previous.setDisable(true);
-                } else {
-                    previous.setDisable(false);
-                }
-
-                if (this.tableViewManager.isAtLastRow()) {
-                    next.setDisable(true);
-                } else {
-                    next.setDisable(false);
-                }
-
-            } catch (NotZeroArgumentException e) {
-                throw new RuntimeException(e);
-            } catch (InvocationTargetException e) {
-                throw new RuntimeException(e);
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException(e);
-            } catch (InstantiationException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        next.setOnAction(actionEvent -> {
-            try {
-                this.tableViewManager.applyNextRows(destinationTable);
-
-                if (this.tableViewManager.isAtLastRow()) {
-                    next.setDisable(true);
-                } else {
-                    next.setDisable(false);
-                }
-
-                if (this.tableViewManager.isAtFirstRow()) {
-                    previous.setDisable(true);
-                } else {
-                    previous.setDisable(false);
-                }
-
-            } catch (NotZeroArgumentException e) {
-                throw new RuntimeException(e);
-            } catch (InvocationTargetException e) {
-                throw new RuntimeException(e);
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException(e);
-            } catch (InstantiationException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        // Set previous and forward button logic for TableViewManager instance
+        this.tableViewManager.applyPrevNextButtons(destinationTable,previous,next);
 
         // Apply InteractivePane
         this.interactivePane.applyInteractivePane(fieldPane, buttonPane);
