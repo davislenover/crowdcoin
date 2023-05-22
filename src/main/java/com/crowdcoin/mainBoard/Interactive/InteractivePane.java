@@ -10,7 +10,7 @@ import java.util.List;
 public class InteractivePane {
 
     // The idea is to have some object which can be passed into a Tab that defines how a tab interacts with the right display (intractable display)
-    private List<InteractiveTextField> fieldsList;
+    private List<InputField> fieldsList;
     private List<InteractiveButton> buttonList;
 
     /**
@@ -32,7 +32,7 @@ public class InteractivePane {
     public boolean addField(String header, String description) {
 
         // Create a new InteractiveTextField object containing the corresponding header and description
-        InteractiveTextField newField = new InteractiveTextField(header,description);
+        InputField newField = new InteractiveTextField(header,description);
         // Attempt to store in list
         return this.fieldsList.add(newField);
     }
@@ -45,6 +45,13 @@ public class InteractivePane {
     public void removeField(int fieldIndex) throws IndexOutOfBoundsException {
 
         this.fieldsList.remove(fieldIndex);
+
+    }
+
+    public boolean addChoiceField(String header, String description) {
+
+        InputField newField = new InteractiveChoiceBox(header,description);
+        return this.fieldsList.add(newField);
 
     }
 
@@ -124,7 +131,7 @@ public class InteractivePane {
         // Apply fields
         for (int fieldIndex = 0; fieldIndex < this.fieldsList.size(); fieldIndex++) {
             // Get field
-            InteractiveTextField currentField = this.fieldsList.get(fieldIndex);
+            InputField currentField = this.fieldsList.get(fieldIndex);
             // Apply to GirdPane in corresponding index location (same as fieldsList index)
             currentField.applyPane(parentFieldGridPane,fieldIndex);
         }
@@ -148,7 +155,7 @@ public class InteractivePane {
 
         List<String> returnList = new ArrayList<>();
 
-        for (InteractiveTextField field : this.fieldsList) {
+        for (InputField field : this.fieldsList) {
 
             returnList.add(field.getInput());
 
