@@ -80,7 +80,7 @@ public class MainBoardController {
         testPane2.addField("This is a test3", "This is a test combo object for textfield combo's 3");
         testPane2.addField("This is a test4", "This is a test combo object for textfield combo's 3");
         // Add choice field
-        testPane2.addChoiceField("This is a choice field", "This is a test combo object for textfield combo's 4");
+        testPane2.addChoiceField("This is a choice field", "This is a test combo object for textfield combo's 4", "Option1","Option2","Option3");
 
         // Testing buttons
         // One can specify how they would like a button to handle an ActionEvent by defining it within a specific class or on the fly

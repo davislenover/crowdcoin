@@ -48,9 +48,12 @@ public class InteractivePane {
 
     }
 
-    public boolean addChoiceField(String header, String description) {
+    public boolean addChoiceField(String header, String description, String ... options) {
 
-        InputField newField = new InteractiveChoiceBox(header,description);
+        InteractiveChoiceBox newField = new InteractiveChoiceBox(header,description);
+        for (String option : options) {
+            newField.addValue(option);
+        }
         return this.fieldsList.add(newField);
 
     }
