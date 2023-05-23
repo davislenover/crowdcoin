@@ -48,9 +48,17 @@ public class InteractivePane {
 
     }
 
+    /**
+     * Add a field to the GridPane (Choice box). When applyInteractivePane() is called, all fields added will be applied to the corresponding field GridPane
+     * @param header the top text to appear with the ChoiceBox
+     * @param description the text below the header. Typically used to convey what the ChoiceBox is used for
+     * @param options the options ChoiceBox will display in its dropdown for the user to select
+     * @return true if a new field was added, false otherwise
+     */
     public boolean addChoiceField(String header, String description, String ... options) {
 
         InteractiveChoiceBox newField = new InteractiveChoiceBox(header,description);
+        // Add all options to ChoiceBox
         for (String option : options) {
             newField.addValue(option);
         }

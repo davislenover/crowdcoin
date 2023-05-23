@@ -29,6 +29,12 @@ public class InteractiveChoiceBox implements InputField {
     private Text fieldHeader;
     private Text fieldDescription;
 
+    /**
+     * Houses three node objects which are used in a single row on a GridPane
+     * @param header the header for the column
+     * @param description the description of what the ChoiceBox field (user input) is used for
+     * @Note this is the lower level object used in InteractivePane's
+     */
     public InteractiveChoiceBox(String header, String description) {
 
         this.choiceBox = new ChoiceBox<>();
@@ -53,6 +59,11 @@ public class InteractiveChoiceBox implements InputField {
 
     }
 
+    /**
+     * Add an option (as a String) to ChoiceBox. Option cannot be named the same as an option already added
+     * @param value the option to add
+     * @return true if the option was added, false otherwise
+     */
     public boolean addValue(String value) {
 
         if (this.choiceBox.getItems().contains(value)) {
@@ -64,6 +75,11 @@ public class InteractiveChoiceBox implements InputField {
 
     }
 
+    /**
+     * Remove an option (as a String) from ChoiceBox
+     * @param value the option to remove
+     * @return true if the option was removed, false otherwise
+     */
     public boolean removeValue(String value) {
 
         if (this.choiceBox.getItems().contains(value)) {
@@ -75,11 +91,20 @@ public class InteractiveChoiceBox implements InputField {
 
     }
 
+    /**
+     * Add object to a GridPane
+     * @param targetPane the GridPane object to add the object to
+     * @param targetRow the target row of the GridPane object to add the object to
+     */
     @Override
     public void applyPane(GridPane targetPane, int targetRow) {
         targetPane.add(this.containerPane,0,targetRow);
     }
 
+    /**
+     * Gets the current text present within the ChoiceBox
+     * @return the text present as a String
+     */
     @Override
     public String getInput() {
         return this.choiceBox.getValue();
