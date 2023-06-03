@@ -18,4 +18,5 @@ Status: Pending (P), Started (S), Blocked (B), Done (D)
 | F03 | Tabs define how sidebar logic works                 | Davis Lenover      | 2023-05-03 | 2023-05-06 | D      |
 | F04 | Menu bar is defined by groups of buttons            | Davis Lenover      | 2023-05-08 | 2023-05-10 | D      |
 | F05 | Previous and Forward functionality for TableView    | Davis Lenover      | 2023-05-16 | 2023-05-20 | D      |
-| F06 | Additional User Input Objects for sidebar grid      | Davis Lenover      | 2023-05-22 |  | S      |
+| F06 | Additional User Input Objects for sidebar grid      | Davis Lenover      | 2023-05-22 |  | B      |
+| F07 | Write to table from SQL database                    | Davis Lenover      | 2023-06-03 |  | S      |
