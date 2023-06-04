@@ -1,5 +1,6 @@
 package com.crowdcoin.mainBoard.Interactive;
 
+import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
@@ -12,14 +13,17 @@ public class InteractivePane {
     // The idea is to have some object which can be passed into a Tab that defines how a tab interacts with the right display (intractable display)
     private List<InputField> fieldsList;
     private List<InteractiveButton> buttonList;
+    private SQLTable sqlTable;
 
     /**
      * Creates an InteractivePane object. InteractivePane's define how a Tab interacts with the rightmost display beside the TableView (by convention).
      * This object is typically used in tandem with a Tab object (as a Tab handles invocation of applying InteractivePane to GridPanes)
+     * @param table the SQLTable object which communicates with the SQL database, typically defined by the Tab
      */
-    public InteractivePane() {
+    public InteractivePane(SQLTable table) {
         this.fieldsList = new ArrayList<>();
         this.buttonList = new ArrayList<>();
+        this.sqlTable = table;
     }
 
     /**
@@ -174,6 +178,14 @@ public class InteractivePane {
 
         return returnList;
 
+    }
+
+    /**
+     * Gets the corresponding SQLTable object for communicating with the SQL database
+     * @return SQLTable object
+     */
+    public SQLTable getSqlTable() {
+        return this.sqlTable;
     }
 
 

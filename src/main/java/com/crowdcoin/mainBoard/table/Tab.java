@@ -58,7 +58,7 @@ public class Tab {
         this.columnContainer = new ColumnContainer();
         this.factory = new ModelClassFactory();
         this.sqlTable = sqlTable;
-        this.interactivePane = new InteractivePane();
+        this.interactivePane = new InteractivePane(sqlTable);
         // Build model class from model reference
         this.modelClass = this.factory.build(classToModel);
 

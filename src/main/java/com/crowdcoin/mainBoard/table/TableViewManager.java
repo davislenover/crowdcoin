@@ -164,7 +164,7 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
 
     }
 
-    public void checkRowPosition() {
+    private void checkRowPosition() {
         // If the currentRowSet size is less than what can be displayed at maximum then currentRowSet contains the end of the rows in the database
         // It is possible for currentRowSet to also contain exactly the maximum thus we check if the nextRowSet is empty which also says that currentRowSet contains the last rows
         if (this.currentRowSet.size() < this.numOfRowsPerRequest || this.nextRowSet.isEmpty()) {
