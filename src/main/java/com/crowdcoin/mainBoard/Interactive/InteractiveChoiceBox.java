@@ -33,7 +33,7 @@ public class InteractiveChoiceBox implements InputField {
      * Houses three node objects which are used in a single row on a GridPane
      * @param header the header for the column
      * @param description the description of what the ChoiceBox field (user input) is used for
-     * @Note this is the lower level object used in InteractivePane's
+     * @Note this is the lower level object used in InteractiveTabPane's
      */
     public InteractiveChoiceBox(String header, String description) {
 

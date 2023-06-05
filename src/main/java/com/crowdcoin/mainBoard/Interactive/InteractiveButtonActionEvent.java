@@ -14,6 +14,6 @@ public interface InteractiveButtonActionEvent {
      * @param button the button which was interacted with
      * @param pane the pane parent which the button will be utilized in
      */
-    void buttonActionHandler(ActionEvent event, Button button, InteractivePane pane);
+    void buttonActionHandler(ActionEvent event, Button button, InteractiveTabPane pane);
 
 }

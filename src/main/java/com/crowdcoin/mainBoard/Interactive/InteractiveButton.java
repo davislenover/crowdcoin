@@ -7,16 +7,16 @@ public class InteractiveButton {
 
     private Button button;
     private InteractiveButtonActionEvent interactiveButtonActionEvent;
-    private InteractivePane parentPane;
+    private InteractiveTabPane parentPane;
 
     /**
      * Houses a button object on a column of a GridPane. Sets button to invoke corresponding method in InteractiveButtonActionEvent class upon interaction event is fired from Button object
      * @param buttonText the text displayed by the button
      * @param buttonActionHandler the class which contains an invokable method by the Button (as specified by the InteractiveButtonActionEvent interface). Intended to allow for a variety of different logic to be executed for any given Button
-     * @param pane the InteractivePane object to house the InteractiveButton object (i.e., the parent)
-     * @Note this is the lower level object used in InteractivePane's
+     * @param pane the InteractiveTabPane object to house the InteractiveButton object (i.e., the parent)
+     * @Note this is the lower level object used in InteractiveTabPane's
      */
-    public InteractiveButton(String buttonText, InteractiveButtonActionEvent buttonActionHandler, InteractivePane pane) {
+    public InteractiveButton(String buttonText, InteractiveButtonActionEvent buttonActionHandler, InteractiveTabPane pane) {
 
         // Create a new button with specified text
         this.button = new Button(buttonText);

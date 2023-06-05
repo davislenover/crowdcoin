@@ -8,7 +8,7 @@ import javafx.scene.layout.RowConstraints;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InteractivePane {
+public class InteractiveTabPane {
 
     // The idea is to have some object which can be passed into a Tab that defines how a tab interacts with the right display (intractable display)
     private List<InputField> fieldsList;
@@ -16,11 +16,11 @@ public class InteractivePane {
     private SQLTable sqlTable;
 
     /**
-     * Creates an InteractivePane object. InteractivePane's define how a Tab interacts with the rightmost display beside the TableView (by convention).
-     * This object is typically used in tandem with a Tab object (as a Tab handles invocation of applying InteractivePane to GridPanes)
+     * Creates an InteractiveTabPane object. InteractiveTabPane's define how a Tab interacts with the rightmost display beside the TableView (by convention).
+     * This object is typically used in tandem with a Tab object (as a Tab handles invocation of applying InteractiveTabPane to GridPanes)
      * @param table the SQLTable object which communicates with the SQL database, typically defined by the Tab
      */
-    public InteractivePane(SQLTable table) {
+    public InteractiveTabPane(SQLTable table) {
         this.fieldsList = new ArrayList<>();
         this.buttonList = new ArrayList<>();
         this.sqlTable = table;
@@ -42,8 +42,8 @@ public class InteractivePane {
     }
 
     /**
-     * Removes a specified field from the InteractivePane. Note removal change does NOT take effect on GridPane until application method is invoked
-     * @param fieldIndex the index within the InteractivePane of the field to remove
+     * Removes a specified field from the InteractiveTabPane. Note removal change does NOT take effect on GridPane until application method is invoked
+     * @param fieldIndex the index within the InteractiveTabPane of the field to remove
      * @throws IndexOutOfBoundsException if fieldIndex is not within the range of the list
      */
     public void removeField(int fieldIndex) throws IndexOutOfBoundsException {
@@ -89,7 +89,7 @@ public class InteractivePane {
     }
 
     /**
-     * Add a button to InteractivePane. When applyInteractivePane() is called, all buttons added will be applied to the corresponding button GridPane
+     * Add a button to InteractiveTabPane. When applyInteractivePane() is called, all buttons added will be applied to the corresponding button GridPane
      * @param buttonText the text to be displayed by the Button
      * @param eventHandler the class containing an invokable method by the Button to perform arbitrary logic upon firing of an ActionEvent by the Button. Intended to allow users to execute arbitrary logic for each button and not singular unified logic
      * @return true if a new field was added, false otherwise
@@ -101,8 +101,8 @@ public class InteractivePane {
     }
 
     /**
-     * Removes a specified button from the InteractivePane. Note removal change does NOT take effect on GridPane until application method is invoked
-     * @param buttonIndex the index within the InteractivePane of the button to remove
+     * Removes a specified button from the InteractiveTabPane. Note removal change does NOT take effect on GridPane until application method is invoked
+     * @param buttonIndex the index within the InteractiveTabPane of the button to remove
      * @throws IndexOutOfBoundsException if buttonIndex is not within the range of the list
      */
     public void removeButton(int buttonIndex) throws IndexOutOfBoundsException {

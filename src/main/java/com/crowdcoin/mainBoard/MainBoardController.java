@@ -1,14 +1,12 @@
 package com.crowdcoin.mainBoard;
 
-import com.crowdcoin.mainBoard.Interactive.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.InteractiveButtonActionEvent;
-import com.crowdcoin.mainBoard.Interactive.InteractivePane;
+import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
 import com.crowdcoin.mainBoard.Interactive.InteractiveTextField;
 import com.crowdcoin.mainBoard.table.*;
 import com.crowdcoin.mainBoard.toolBar.MenuGroup;
 import com.crowdcoin.mainBoard.toolBar.MenuGroupContainer;
 import com.crowdcoin.mainBoard.toolBar.MenuOption;
-import com.crowdcoin.mainBoard.toolBar.MenuOptionActionEvent;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.SQLData;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
@@ -42,13 +40,13 @@ public class MainBoardController {
         Tab testTab = new Tab(model,table,"testTab");
         testTab.setTabTableAction(new TabActionEvent() {
             @Override
-            public void tableActionHandler(ColumnContainer columnContainer, InteractivePane pane) {
+            public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane) {
                 System.out.println("This tab was pressed!");
             }
         });
 
-        // an InteractivePane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
-        InteractivePane testPane = testTab.getInteractivePane();
+        // an InteractiveTabPane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
+        InteractiveTabPane testPane = testTab.getInteractivePane();
         // Add fields to the pane
         testPane.addField("This is a test", "This is a test combo object for textfield combo's 1");
         testPane.addField("This is a test2", "This is a test combo object for textfield combo's 2");
@@ -58,7 +56,7 @@ public class MainBoardController {
         // One can specify how they would like a button to handle an ActionEvent by defining it within a specific class or on the fly
         InteractiveButtonActionEvent testHandler = new InteractiveButtonActionEvent() {
             @Override
-            public void buttonActionHandler(ActionEvent event, Button button, InteractivePane pane) {
+            public void buttonActionHandler(ActionEvent event, Button button, InteractiveTabPane pane) {
                 System.out.println(event.getEventType().getName());
                 System.out.println(button.getText() + " fired an event!");
             }
@@ -71,13 +69,13 @@ public class MainBoardController {
         Tab testTab2 = new Tab(model,table,"testTab2");
         testTab2.setTabTableAction(new TabActionEvent() {
             @Override
-            public void tableActionHandler(ColumnContainer columnContainer, InteractivePane pane) {
+            public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane) {
                 System.out.println("This tab 2 was pressed!");
             }
         });
 
-        // an InteractivePane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
-        InteractivePane testPane2 = testTab2.getInteractivePane();
+        // an InteractiveTabPane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
+        InteractiveTabPane testPane2 = testTab2.getInteractivePane();
         // Add fields to the pane
         testPane2.addField("This is a test", "This is a test combo object for textfield combo's 1");
         testPane2.addField("This is a test2", "This is a test combo object for textfield combo's 2");
@@ -90,7 +88,7 @@ public class MainBoardController {
         // One can specify how they would like a button to handle an ActionEvent by defining it within a specific class or on the fly
         InteractiveButtonActionEvent testHandler2 = new InteractiveButtonActionEvent() {
             @Override
-            public void buttonActionHandler(ActionEvent event, Button button, InteractivePane pane) {
+            public void buttonActionHandler(ActionEvent event, Button button, InteractiveTabPane pane) {
                 System.out.println(event.getEventType().getName());
                 System.out.println(button.getText() + " fired an event!");
             }

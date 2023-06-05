@@ -5,14 +5,13 @@ import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.tab.IncompatibleModelClassException;
 import com.crowdcoin.exceptions.tab.ModelClassConstructorTypeException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
-import com.crowdcoin.mainBoard.Interactive.InteractivePane;
+import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import java.lang.reflect.InvocationTargetException;
@@ -26,15 +25,15 @@ public class Tab {
     private ModelClassFactory factory;
     private TableViewManager tableViewManager;
     private SQLTable sqlTable;
-    private InteractivePane interactivePane;
+    private InteractiveTabPane interactiveTabPane;
     private String tabID;
 
     // TabActionEvent is intended to allow arbitrary logic to be invoked when a user selects anything within the TableView object within the Tab
-    // Basically provides a connection between the TableView and InteractivePane on the right beside the table (something happens in the Table, do something in the InteractivePane)
+    // Basically provides a connection between the TableView and InteractiveTabPane on the right beside the table (something happens in the Table, do something in the InteractiveTabPane)
     // On instantiation, set action event to default
     private TabActionEvent tableSelectHandler = new TabActionEvent() {
         @Override
-        public void tableActionHandler(ColumnContainer columnContainer, InteractivePane pane) {
+        public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane) {
             return;
         }
     };;
@@ -44,7 +43,7 @@ public class Tab {
     private double totalWidth;
 
     /**
-     * Create a Tab object. Similar to a tab in a web browser, a Tab object stores a "state" of the TableView. Upon creation, a blank InteractivePane is available for use
+     * Create a Tab object. Similar to a tab in a web browser, a Tab object stores a "state" of the TableView. Upon creation, a blank InteractiveTabPane is available for use
      * @param classToModel an instance of the class to model for column data. This class will be used to get values for columns. To learn more, please see ModelClass and ModelClassFactory
      * @param sqlTable an SQLTable object which is responsible for gathering data of a specific table found within the database
      * @param tabID a String identifier for the tab instance
@@ -58,7 +57,7 @@ public class Tab {
         this.columnContainer = new ColumnContainer();
         this.factory = new ModelClassFactory();
         this.sqlTable = sqlTable;
-        this.interactivePane = new InteractivePane(sqlTable);
+        this.interactiveTabPane = new InteractiveTabPane(sqlTable);
         // Build model class from model reference
         this.modelClass = this.factory.build(classToModel);
 
@@ -138,11 +137,11 @@ public class Tab {
     }
 
     /**
-     * Gets the associated InteractivePane created upon instantiation of a Tab object.
-     * @return the associated InteractivePane object. The object is live.
+     * Gets the associated InteractiveTabPane created upon instantiation of a Tab object.
+     * @return the associated InteractiveTabPane object. The object is live.
      */
-    public InteractivePane getInteractivePane() {
-        return this.interactivePane;
+    public InteractiveTabPane getInteractivePane() {
+        return this.interactiveTabPane;
     }
 
     /**
@@ -182,13 +181,13 @@ public class Tab {
         destinationTable.setOnMouseClicked(null);
 
         // Change MouseCLicked event to the TableView object, to invoke the corresponding tableActionHandler method
-        destinationTable.setOnMouseClicked(mouseEvent -> this.tableSelectHandler.tableActionHandler(this.columnContainer,this.interactivePane));
+        destinationTable.setOnMouseClicked(mouseEvent -> this.tableSelectHandler.tableActionHandler(this.columnContainer,this.interactiveTabPane));
 
         // Set previous and forward button logic for TableViewManager instance
         this.tableViewManager.applyPrevNextButtons(destinationTable,previous,next);
 
-        // Apply InteractivePane
-        this.interactivePane.applyInteractivePane(fieldPane, buttonPane);
+        // Apply InteractiveTabPane
+        this.interactiveTabPane.applyInteractivePane(fieldPane, buttonPane);
 
     }
 
