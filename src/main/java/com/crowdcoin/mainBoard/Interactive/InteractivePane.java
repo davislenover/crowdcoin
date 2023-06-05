@@ -156,7 +156,7 @@ public class InteractivePane {
             // Get Button
             InteractiveButton currentButton = this.buttonList.get(buttonIndex);
             // Apply to GirdPane in corresponding index location (same as buttonList index)
-            currentButton.applyPane(parentButtonGridPane,buttonIndex);
+            currentButton.applyPane(parentButtonGridPane,buttonIndex,0);
         }
 
 

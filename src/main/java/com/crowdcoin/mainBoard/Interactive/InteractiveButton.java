@@ -37,8 +37,8 @@ public class InteractiveButton {
      * @param targetPane the GridPane object to add the object to
      * @param targetColumn the target column of the GridPane object to add the object to. Note that Button's are added horizontally and NOT vertically like InteractiveTextField's
      */
-    public void applyPane(GridPane targetPane, int targetColumn) {
-        targetPane.add(this.button,targetColumn,0);
+    public void applyPane(GridPane targetPane, int targetColumn, int targetRow) {
+        targetPane.add(this.button,targetColumn,targetRow);
     }
 
 

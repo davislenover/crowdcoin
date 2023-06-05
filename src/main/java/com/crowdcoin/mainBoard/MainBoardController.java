@@ -1,12 +1,15 @@
 package com.crowdcoin.mainBoard;
 
+import com.crowdcoin.mainBoard.Interactive.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.InteractiveButtonActionEvent;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
+import com.crowdcoin.mainBoard.Interactive.InteractiveTextField;
 import com.crowdcoin.mainBoard.table.*;
 import com.crowdcoin.mainBoard.toolBar.MenuGroup;
 import com.crowdcoin.mainBoard.toolBar.MenuGroupContainer;
 import com.crowdcoin.mainBoard.toolBar.MenuOption;
 import com.crowdcoin.mainBoard.toolBar.MenuOptionActionEvent;
+import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.SQLData;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.application.Platform;
@@ -15,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import com.crowdcoin.mainBoard.table.Tab;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 
 public class MainBoardController {
 
@@ -107,6 +111,15 @@ public class MainBoardController {
         test1.addOption(new MenuOption("Exit", p -> Platform.exit()));
         test1.addOption(new MenuOption("Hello", p -> System.out.println("Hello world!")));
         test1.addOption(new MenuOption("New Tab Test", p -> testBar.addTab(testTab)));
+        test1.addOption(new MenuOption("New Entry",p-> {
+            try {
+                PopWindow window = new PopWindow("New Entry");
+                window.addInputField(new InteractiveTextField("Test","This is a test!"));
+                window.start(new Stage());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }));
         MenuGroup test2 = new MenuGroup("Test2");
 
         // Note that options are cloned thus updates need to be made before adding to container (this might change in the future)
