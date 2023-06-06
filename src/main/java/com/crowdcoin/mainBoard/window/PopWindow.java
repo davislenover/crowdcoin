@@ -2,12 +2,16 @@ package com.crowdcoin.mainBoard.window;
 
 import com.crowdcoin.mainBoard.Interactive.InputField;
 import com.crowdcoin.mainBoard.Interactive.InteractiveButton;
+import com.crowdcoin.mainBoard.Interactive.InteractiveWindowPane;
+import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -17,42 +21,44 @@ import java.util.List;
 public class PopWindow extends Application {
 
     private String windowName;
-    private List<InputField> windowElements;
-    private List<InteractiveButton> windowActionButtons;
+    private InteractiveWindowPane parentPane;
+    private GridPane fieldPane;
+    private GridPane buttonPane;
 
-    public PopWindow(String windowName) {
+    public PopWindow(String windowName, SQLTable table) {
         this.windowName = windowName;
-        this.windowElements = new ArrayList<>();
-        this.windowActionButtons = new ArrayList<>();
+        this.parentPane = new InteractiveWindowPane(table);
+
+        this.fieldPane = new GridPane();
+        this.buttonPane = new GridPane();
+
     }
 
-    public boolean addInputField(InputField field) {
-        return this.windowElements.add(field);
-    }
-
-    public boolean addInteractiveButton(InteractiveButton button) {
-        return this.windowActionButtons.add(button);
+    public InteractiveWindowPane getWindowPane() {
+        return this.parentPane;
     }
 
     @Override
     public void start(Stage stage) throws Exception {
 
-        // Base layer of window, this GridPane contains one column and X amount of rows
-        // The last row is where all the buttons are
-        GridPane paneRoot = new GridPane();
+        VBox root = new VBox();
+        root.getChildren().addAll(fieldPane,buttonPane);
 
-        // Apply input fields to GridPane
-        for (int row = 0; row < this.windowElements.size(); row++) {
-            this.windowElements.get(row).applyPane(paneRoot,row);
-        }
+        // Set space between GridPanes
+        root.setSpacing(10);
 
-        // Apply interactive buttons to bottom of GridPane
-        for (InteractiveButton button : this.windowActionButtons) {
-            button.applyPane(paneRoot,0, paneRoot.getRowCount());
-        }
+        // This sets fieldPane to always take up any remaining space in the vbox (as button pane will be placed at the bottom so get fieldPane to fill the rest)
+        VBox.setVgrow(fieldPane, Priority.ALWAYS);
+        VBox.setVgrow(buttonPane,Priority.NEVER);
+        // Set buttonPane to be added at the bottom center
+        root.setAlignment(Pos.BOTTOM_CENTER);
+
+        this.parentPane.applyInteractivePane(fieldPane,buttonPane);
+
 
         stage.setTitle(this.windowName);
-        stage.setScene(new Scene(paneRoot,300,200));
+        // Set width, height
+        stage.setScene(new Scene(root,425,200));
         stage.show();
 
     }

@@ -111,8 +111,10 @@ public class MainBoardController {
         test1.addOption(new MenuOption("New Tab Test", p -> testBar.addTab(testTab)));
         test1.addOption(new MenuOption("New Entry",p-> {
             try {
-                PopWindow window = new PopWindow("New Entry");
-                window.addInputField(new InteractiveTextField("Test","This is a test!"));
+                PopWindow window = new PopWindow("New Entry",table);
+                window.getWindowPane().addButton("Window button", (test2,test3,test4)-> System.out.println("Hello Window!"));
+                window.getWindowPane().addChoiceField("Test","Testing window choice field","Option1","Option2","Option3");
+                window.getWindowPane().addField("Test","This is a field test");
                 window.start(new Stage());
             } catch (Exception e) {
                 throw new RuntimeException(e);
