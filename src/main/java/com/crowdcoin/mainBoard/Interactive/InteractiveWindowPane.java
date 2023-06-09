@@ -25,8 +25,8 @@ public class InteractiveWindowPane extends InteractivePane {
      */
     public boolean addButton(String buttonText, InteractiveButtonActionEvent eventHandler) {
         // Overriding addButton enables pass-through of the InteractiveWindowPane to InteractiveButton
-        // This way, when setting the eventHandler, the parent pane points to the WindowPane rather than the TabPane for correctness
-        // If the arbitrary logic requires calling methods from the parent TabPane, then it can still do as WindowPane is a child class of TabPane
+        // This way, when setting the eventHandler, the parent pane points to the WindowPane rather than the parent Pane for correctness
+        // If the arbitrary logic requires calling methods from the parent TabPane, then it can still do as WindowPane is a child class of parent Pane
         InteractiveButton newButton = new InteractiveButton(buttonText,eventHandler,this);
         return super.addButton(newButton);
     }
