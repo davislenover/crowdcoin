@@ -61,9 +61,9 @@ public class PopWindow extends Application {
 
         this.parentPane.applyInteractivePane(this.fieldPane,this.buttonPane);
 
+        // Create row constraint for button height
         RowConstraints bottomConstraint = new RowConstraints();
         bottomConstraint.setPrefHeight(this.buttonHeight);
-
         this.buttonPane.getRowConstraints().add(bottomConstraint);
 
         stage.setTitle(this.windowName);
@@ -73,20 +73,42 @@ public class PopWindow extends Application {
 
     }
 
-
+    /**
+     * Sets the width of pop up window.
+     * @param windowWidth the window width as an Integer. Must be greater than 0
+     */
     public void setWindowWidth(int windowWidth) {
+
+        if (windowWidth <= 0) {
+            throw new IllegalArgumentException("Button height cannot be less than or equal to 0");
+        }
+
         this.windowWidth = windowWidth;
     }
 
+    /**
+     * Sets the height of pop up window.
+     * @param windowHeight the window height as an Integer. Must be greater than 0
+     */
     public void setWindowHeight(int windowHeight) {
+
+        if (windowHeight <= 0) {
+            throw new IllegalArgumentException("Window height cannot be less than or equal to 0");
+        }
+
         this.windowHeight = windowHeight;
     }
 
     /**
      * Sets the height of the button's within the Button GridPane. This affects how much space the field pane has.
-     * @param buttonHeight the button height as an Integer
+     * @param buttonHeight the button height as an Integer. Must be greater than 0
      */
     public void setButtonHeight(int buttonHeight) {
+
+        if (buttonHeight <= 0) {
+            throw new IllegalArgumentException("Button height cannot be less than or equal to 0");
+        }
+
         this.buttonHeight = buttonHeight;
     }
 
