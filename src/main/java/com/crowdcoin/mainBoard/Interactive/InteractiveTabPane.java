@@ -2,6 +2,9 @@ package com.crowdcoin.mainBoard.Interactive;
 
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 
+/**
+ * InteractiveTabPane is an extension of InteractivePane. TabPanes dictate how the user interacts with the right side of a Tab
+ */
 public class InteractiveTabPane extends InteractivePane {
 
     // The idea is to have some object which can be passed into a Tab that defines how a tab interacts with the right display (intractable display)

@@ -3,7 +3,7 @@ package com.crowdcoin.mainBoard.Interactive;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 
 /**
- * InteractiveWindowPane is an extension of InteractiveTabPane. Both behave in a similar manner except WindowPanes dictate how the user interacts with a PopWindow
+ * InteractiveWindowPane is an extension of InteractivePane. WindowPanes dictate how the user interacts with a PopWindow
  */
 public class InteractiveWindowPane extends InteractivePane {
 
