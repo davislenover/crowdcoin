@@ -1,8 +1,6 @@
 package com.crowdcoin.mainBoard;
 
-import com.crowdcoin.mainBoard.Interactive.InteractiveButtonActionEvent;
-import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
-import com.crowdcoin.mainBoard.Interactive.InteractiveTextField;
+import com.crowdcoin.mainBoard.Interactive.*;
 import com.crowdcoin.mainBoard.table.*;
 import com.crowdcoin.mainBoard.toolBar.MenuGroup;
 import com.crowdcoin.mainBoard.toolBar.MenuGroupContainer;
@@ -17,6 +15,8 @@ import javafx.scene.control.*;
 import com.crowdcoin.mainBoard.table.Tab;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+
+import java.util.Arrays;
 
 public class MainBoardController {
 
@@ -56,7 +56,7 @@ public class MainBoardController {
         // One can specify how they would like a button to handle an ActionEvent by defining it within a specific class or on the fly
         InteractiveButtonActionEvent testHandler = new InteractiveButtonActionEvent() {
             @Override
-            public void buttonActionHandler(ActionEvent event, Button button, InteractiveTabPane pane) {
+            public void buttonActionHandler(ActionEvent event, Button button, InteractivePane pane) {
                 System.out.println(event.getEventType().getName());
                 System.out.println(button.getText() + " fired an event!");
             }
@@ -88,7 +88,7 @@ public class MainBoardController {
         // One can specify how they would like a button to handle an ActionEvent by defining it within a specific class or on the fly
         InteractiveButtonActionEvent testHandler2 = new InteractiveButtonActionEvent() {
             @Override
-            public void buttonActionHandler(ActionEvent event, Button button, InteractiveTabPane pane) {
+            public void buttonActionHandler(ActionEvent event, Button button, InteractivePane pane) {
                 System.out.println(event.getEventType().getName());
                 System.out.println(button.getText() + " fired an event!");
             }
@@ -113,7 +113,10 @@ public class MainBoardController {
             try {
                 PopWindow window = new PopWindow("New Entry",table);
                 window.getWindowPane().addButton("Window button", (test2,test3,test4)-> System.out.println("Hello Window!"));
-                window.getWindowPane().addButton("Window button2", (test2,test3,test4)-> System.out.println("Hello Window!"));
+                window.getWindowPane().addButton("Window button2", (test2,test3,test4)-> {System.out.println("Hello Window!");
+                    InteractiveWindowPane testWindowPane = (InteractiveWindowPane) test4;
+                    System.out.println(Arrays.toString(testWindowPane.getAllInput().toArray()));
+                });
                 window.getWindowPane().addChoiceField("Test","Testing window choice field","Option1","Option2","Option3");
                 window.getWindowPane().addField("Test","This is a field test");
                 window.start(new Stage());
