@@ -113,6 +113,7 @@ public class MainBoardController {
             try {
                 PopWindow window = new PopWindow("New Entry",table);
                 window.getWindowPane().addButton("Window button", (test2,test3,test4)-> System.out.println("Hello Window!"));
+                window.getWindowPane().addButton("Window button2", (test2,test3,test4)-> System.out.println("Hello Window!"));
                 window.getWindowPane().addChoiceField("Test","Testing window choice field","Option1","Option2","Option3");
                 window.getWindowPane().addField("Test","This is a field test");
                 window.start(new Stage());

@@ -101,6 +101,15 @@ public class InteractiveTabPane {
     }
 
     /**
+     * Add an already created InteractiveButton to the InteractiveTabPane. Also used by child classes to add buttons to parent class
+     * @param newButton the button to add as an InteractiveButton object
+     * @return
+     */
+    public boolean addButton(InteractiveButton newButton) {
+        return this.buttonList.add(newButton);
+    }
+
+    /**
      * Removes a specified button from the InteractiveTabPane. Note removal change does NOT take effect on GridPane until application method is invoked
      * @param buttonIndex the index within the InteractiveTabPane of the button to remove
      * @throws IndexOutOfBoundsException if buttonIndex is not within the range of the list
