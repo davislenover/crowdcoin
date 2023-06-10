@@ -5,6 +5,7 @@ import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.exceptions.table.UnknownColumnNameException;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;

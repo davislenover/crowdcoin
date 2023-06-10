@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToolBar?>
@@ -55,5 +56,6 @@
             <Insets left="100.0" />
          </GridPane.margin>
       </Button>
+      <SplitMenuButton fx:id="filters" mnemonicParsing="false" text="SplitMenuButton" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
    </children>
 </GridPane>

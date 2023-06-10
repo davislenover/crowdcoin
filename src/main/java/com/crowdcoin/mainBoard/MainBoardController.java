@@ -29,6 +29,7 @@ public class MainBoardController {
     @FXML private TabPane tabBar;
     @FXML private Button prevTableViewButton;
     @FXML private Button nextTableViewButton;
+    @FXML private SplitMenuButton filters;
 
     // Method to initialize coin list on startup
     public void initializeList() throws Exception {
