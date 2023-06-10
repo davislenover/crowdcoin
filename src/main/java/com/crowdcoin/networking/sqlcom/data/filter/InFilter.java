@@ -7,12 +7,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Creates an IN SQL WHERE statement. IN is effectively an OR statement, for each row, it looks within a specified column for certain values
+ */
 public class InFilter implements Filter {
 
     private ExtendedFilterOperators operator = ExtendedFilterOperators.IN;
     private String columnName;
     private List<Object> values;
 
+    /**
+     * Creates an In filter
+     * @param columnName the column name within the SQL database to search for specified values
+     * @param values the values to look for inside the column
+     * @Note Values will be converted to strings (as specified by the Object super class)
+     */
     public InFilter(String columnName, Collection<Object> values) {
         this.columnName = columnName;
         this.values = new ArrayList<>() {{
