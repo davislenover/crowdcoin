@@ -32,4 +32,22 @@ public class GeneralFilter implements Filter {
     public FilterOperators getOperator() {
         return this.operator;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        try {
+            Filter filterToTest = (Filter) obj;
+            // To test if filter is the same, check if both the operator and SQL query string are the same between Filters
+            if (filterToTest.getOperator().equals(this.operator) && filterToTest.getFilterString().equals(this.getFilterString())) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }
