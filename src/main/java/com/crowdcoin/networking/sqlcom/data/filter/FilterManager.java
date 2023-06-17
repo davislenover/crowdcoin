@@ -129,4 +129,36 @@ public class FilterManager implements Collection<Filter> {
     public void clear() {
         this.filterList.clear();
     }
+
+    /**
+     * Get combined WHERE query of all filters within the collection with AND statements
+     * @return the combined WHERE query SQL statement as a string
+     */
+    public String getCombinedQuery() {
+
+        String returnQuery = " WHERE";
+        int size = this.filterList.size();
+
+        // Loop through each filter in list
+        for (int index = 0; index < size; index++) {
+
+            // Check if getting last filter (to not add " AND" at the end)
+            if (index == (size - 1)) {
+
+                returnQuery += this.filterList.get(index).getBareString();
+
+            } else {
+
+                returnQuery += this.filterList.get(index).getBareString();
+                returnQuery += " AND";
+
+            }
+
+        }
+
+        return returnQuery;
+
+    }
+
+
 }

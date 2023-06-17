@@ -34,13 +34,18 @@ public class NotInFilter implements Filter {
         String filter = " WHERE " + this.columnName + " " + operator.getOperatorString() + " (";
         for (int index = 0; index < values.size(); index++) {
             if (index != (values.size() - 1)){
-                filter += values.get(index).toString() + ", ";
+                filter += "'" + values.get(index).toString() + "'" + ", ";
             } else {
-                filter += values.get(index).toString() + ")";
+                filter += "'" + values.get(index).toString() + "'" + ")";
             }
         }
 
         return filter;
+    }
+
+    @Override
+    public String getBareString() {
+        return getFilterString().substring(6);
     }
 
     @Override

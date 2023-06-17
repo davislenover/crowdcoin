@@ -25,7 +25,12 @@ public class GeneralFilter implements Filter {
     }
     @Override
     public String getFilterString() {
-        return " WHERE " + columnName + " " + operator.getOperatorString() + this.value.toString();
+        return " WHERE " + columnName + " " + operator.getOperatorString() + " " + "'" + this.value.toString() + "'";
+    }
+
+    @Override
+    public String getBareString() {
+        return getFilterString().substring(6);
     }
 
     @Override

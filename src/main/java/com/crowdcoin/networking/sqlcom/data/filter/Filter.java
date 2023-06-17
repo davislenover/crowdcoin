@@ -14,6 +14,13 @@ public interface Filter {
     String getFilterString();
 
     /**
+     * Gets the filter as an SQL WHERE statement WITHOUT THE INCLUSION OF "WHERE" as a String object. This is intended to be used to combined multiple filters together.
+     * The String returned should start with a blank (space) character
+     * @return a String object containing the SQL statement
+     */
+    String getBareString();
+
+    /**
      * Gets the operator of the filter as a FilterOperators object
      * @return the filter operator as a FilterOperators object. These are operators found as operators for the SQL WHERE statement
      */

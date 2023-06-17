@@ -27,7 +27,12 @@ public class BetweenFilter implements Filter {
 
     @Override
     public String getFilterString() {
-        return " WHERE " + this.columnName + " " + operator.getOperatorString() + " " + value1.toString() + " AND " + value2.toString();
+        return " WHERE " + this.columnName + " " + operator.getOperatorString() + " " + "'" + value1.toString() + "'" + " AND " + "'" + value2.toString() + "'";
+    }
+
+    @Override
+    public String getBareString() {
+        return getFilterString().substring(6);
     }
 
     @Override
