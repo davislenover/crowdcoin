@@ -5,6 +5,7 @@ import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.exceptions.table.UnknownColumnNameException;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
+import com.crowdcoin.networking.sqlcom.data.filter.FilterManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,6 +21,7 @@ public class SQLTable {
     // (List, NOT String array) It is important to NOT directly correspond indices of columns to ordinal positions as column indices within this list are ordered in RELATIVE ordinal position. Ordinal positions start at 1. This means index 0 would correspond to an ordinal position of 1, 1 to 2, 2 to 3, etc
     private List<String[]> tableColumns;
     private SQLConnection connection;
+    private FilterManager filterManager;
 
     /**
      * An object to get information from an SQL database
@@ -34,6 +36,7 @@ public class SQLTable {
         this.connection = connection;
         this.tableName = tableName;
         getTableData();
+        this.filterManager = new FilterManager();
 
     }
 
@@ -144,7 +147,7 @@ public class SQLTable {
     }
 
     /**
-     * Get a list of data between two columns corresponding to given rows in the SQL table (NOT Table object). Results are returned in ordinal position of columns as specified in database
+     * Get a list of data between two columns corresponding to given rows in the SQL table (NOT Table object). Method is affected by FilterManager, any filter is applied. Results are returned in ordinal position of columns as specified in database
      * @param rowIndex the corresponding starting row within the SQL table to get data from
      * @param numberOfRows how many rows (starting from row given in rowIndex) to get. e.g., specifying a rowIndex of 0 and numberOfRows as 3 will get the first 3 rows
      * @param startColumn the starting column in the row to begin reading data from (inclusive) where the column string is the same as that found within the table. Note the ordering of the columns is via ordinal position
@@ -160,7 +163,8 @@ public class SQLTable {
 
         // Get query result
         // Specifies to get a specific row of all data from table
-        ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllWithLimit(this.tableName,rowIndex,numberOfRows));
+        // Get combined query string to add filters
+        ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllWithFilterAndLimit(this.tableName,this.filterManager.getCombinedQuery(),rowIndex,numberOfRows));
         List<List<Object>> returnRows = new ArrayList<>();
 
         // Get list of all column names in the desired column range to return data from
@@ -185,7 +189,7 @@ public class SQLTable {
     }
 
     /**
-     * Get a list of data between two columns corresponding to given rows in the SQL table (NOT Table object). Results are returned in ordinal position of columns as specified in database
+     * Get a list of data between two columns corresponding to given rows in the SQL table (NOT Table object). Method is affected by FilterManager, any filter is applied. Results are returned in ordinal position of columns as specified in database
      * @param rowIndex the corresponding starting row within the SQL table to get data from
      * @param numberOfRows how many rows (starting from row given in rowIndex) to get. e.g., specifying a rowIndex of 0 and numberOfRows as 3 will get the first 3 rows
      * @param startColumnIndex the starting column in the row to begin reading data from (inclusive) where the integer corresponds to the position of the column as found within the table (upwards). Note the ordering of the columns is via ordinal position
@@ -203,7 +207,7 @@ public class SQLTable {
             throw new InvalidRangeException(String.valueOf(startColumnIndex),String.valueOf(endColumnIndex));
         }
 
-        ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllWithLimit(this.tableName,rowIndex,numberOfRows));
+        ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllWithFilterAndLimit(this.tableName,this.filterManager.getCombinedQuery(),rowIndex,numberOfRows));
         List<List<Object>> returnRows = new ArrayList<>();
 
         while (result.next()) {
@@ -409,6 +413,14 @@ public class SQLTable {
 
         return returnList;
 
+    }
+
+    /**
+     * Gets the filter manager for the given SQLTable object. Used to add filters to SQL queries. The FilterManager returned is live, thus modifying its contents will automatically apply within the SQLTable object
+     * @return the FilterManager object for the SQLTable
+     */
+    public FilterManager getFilterManager() {
+        return this.filterManager;
     }
 
 }

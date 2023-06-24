@@ -131,13 +131,19 @@ public class FilterManager implements Collection<Filter> {
     }
 
     /**
-     * Get combined WHERE query of all filters within the collection with AND statements
-     * @return the combined WHERE query SQL statement as a string
+     * Get combined WHERE query of all filters within the collection with AND statements.
+     * @return the combined WHERE query SQL statement as a string, starting with a space character. If no filters exist within the collection, an empty String object is returned
      */
     public String getCombinedQuery() {
 
-        String returnQuery = " WHERE";
+
         int size = this.filterList.size();
+
+        if (size == 0) {
+            return "";
+        }
+
+        String returnQuery = " WHERE";
 
         // Loop through each filter in list
         for (int index = 0; index < size; index++) {

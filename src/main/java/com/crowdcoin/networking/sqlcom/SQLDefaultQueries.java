@@ -54,12 +54,17 @@ public class SQLDefaultQueries {
 
     public static String getAllWithLimit(String tableName, int firstRow, int maxRows) {
 
-        return getAll+tableName+" LIMIT "+firstRow+","+maxRows;
+        return getAll + tableName + " LIMIT " + firstRow + "," + maxRows;
+    }
+
+    public static String getAllWithFilterAndLimit(String tableName, String filter, int firstRow, int maxRows) {
+
+        return getAll + tableName + filter + " LIMIT " + firstRow + "," + maxRows;
     }
 
     public static String getAllSpecific(String tableName, String columnNameWithData, String specificData, int maxRows) {
 
-        return getAll+tableName+" where " + columnNameWithData + " = '" + specificData + "'" + " LIMIT " + maxRows;
+        return getAll + tableName + " where " + columnNameWithData + " = '" + specificData + "'" + " LIMIT " + maxRows;
 
     }
 
