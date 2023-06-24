@@ -54,6 +54,11 @@ public class NotInFilter implements Filter {
     }
 
     @Override
+    public String getTargetColumnName() {
+        return this.columnName;
+    }
+
+    @Override
     public boolean equals(Object obj) {
 
         try {

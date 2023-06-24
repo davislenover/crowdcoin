@@ -1,5 +1,8 @@
 package com.crowdcoin.networking.sqlcom.data.filter;
 
+import javafx.scene.Node;
+import javafx.scene.control.MenuItem;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -163,6 +166,29 @@ public class FilterManager implements Collection<Filter> {
         }
 
         return returnQuery;
+
+    }
+
+    /**
+     * Gets a list of MenuItem objects representing each filter within the FilterManager object
+     * @return a list of MenuItem objects
+     */
+    public List<MenuItem> getFilterNodes() {
+
+        List<MenuItem> returnList = new ArrayList<>();
+
+        for (Filter filter : this.filterList) {
+
+            MenuItem filterMenuItem = new MenuItem();
+            filterMenuItem.setText(filter.getTargetColumnName());
+
+            // TODO Set filterAction
+
+            returnList.add(filterMenuItem);
+
+        }
+
+        return returnList;
 
     }
 

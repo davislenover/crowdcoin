@@ -9,7 +9,9 @@ import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.filter.Filter;
+import com.crowdcoin.networking.sqlcom.data.filter.FilterFXController;
 import javafx.scene.control.Button;
+import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
@@ -27,6 +29,7 @@ public class Tab {
     private TableViewManager tableViewManager;
     private SQLTable sqlTable;
     private InteractiveTabPane interactiveTabPane;
+    private FilterFXController filterController;
     private String tabID;
 
     // TabActionEvent is intended to allow arbitrary logic to be invoked when a user selects anything within the TableView object within the Tab
@@ -58,6 +61,7 @@ public class Tab {
         this.columnContainer = new ColumnContainer();
         this.factory = new ModelClassFactory();
         this.sqlTable = sqlTable;
+        this.filterController = new FilterFXController();
         this.interactiveTabPane = new InteractiveTabPane(sqlTable);
         // Build model class from model reference
         this.modelClass = this.factory.build(classToModel);
@@ -167,7 +171,7 @@ public class Tab {
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public void loadTab(TableView destinationTable, GridPane fieldPane, GridPane buttonPane, Button previous, Button next) throws FailedQueryException, SQLException, InvalidRangeException, NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void loadTab(TableView destinationTable, GridPane fieldPane, GridPane buttonPane, Button previous, Button next, SplitMenuButton filterButton) throws FailedQueryException, SQLException, InvalidRangeException, NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         // Clear current data and columns
         destinationTable.getItems().clear();
@@ -189,6 +193,9 @@ public class Tab {
 
         // Apply InteractiveTabPane
         this.interactiveTabPane.applyInteractivePane(fieldPane, buttonPane);
+
+        // Apply filters
+        this.filterController.applyFilters(filterButton,this.sqlTable.getFilterManager());
 
     }
 

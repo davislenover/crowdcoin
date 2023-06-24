@@ -5,6 +5,7 @@ import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
@@ -24,6 +25,8 @@ public class TabBar {
     private Button previous;
     private Button next;
 
+    private SplitMenuButton filterButton;
+
     /**
      * Creates a TabBar. Manages Tabs on screen
      * @param controlTabPane the JavaFX TabPane object to control. This is where users will be able to select and delete Tabs
@@ -31,7 +34,7 @@ public class TabBar {
      * @param fieldGrid the JavaFX GridPane object to control for fields. This GridPane houses user interactable TextFields and is where Tabs will load their InteractiveTextFields into
      * @param buttonGrid the JavaFX GridPane object to control for buttons. This GridPane houses user interactable Buttons and is where Tabs will load their InteractiveButtons into
      */
-    public TabBar(TabPane controlTabPane, TableView mainTable, GridPane fieldGrid, GridPane buttonGrid, Button previous, Button next) {
+    public TabBar(TabPane controlTabPane, TableView mainTable, GridPane fieldGrid, GridPane buttonGrid, Button previous, Button next, SplitMenuButton filterButton) {
 
         this.controlBar = controlTabPane;
         this.controlBar.getTabs().clear();
@@ -42,6 +45,7 @@ public class TabBar {
         this.buttonGrid = buttonGrid;
         this.previous = previous;
         this.next = next;
+        this.filterButton = filterButton;
 
         this.tabIDMap = new HashMap<>();
 
@@ -123,7 +127,7 @@ public class TabBar {
         Tab tabToLoad = this.tabIDMap.get(newlySelectedTab.getId());
 
         // Load the corresponding data Tab
-        tabToLoad.loadTab(this.mainTable,this.fieldGrid,this.buttonGrid,this.previous,this.next);
+        tabToLoad.loadTab(this.mainTable,this.fieldGrid,this.buttonGrid,this.previous,this.next,this.filterButton);
 
 
     }
@@ -138,6 +142,7 @@ public class TabBar {
         this.buttonGrid.getChildren().clear();
         this.previous.setDisable(true);
         this.next.setDisable(true);
+        this.filterButton.setDisable(true);
 
         this.mainTable.setOnMouseClicked(null);
 

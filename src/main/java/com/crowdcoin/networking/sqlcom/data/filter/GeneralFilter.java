@@ -3,6 +3,10 @@ package com.crowdcoin.networking.sqlcom.data.filter;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.GeneralFilterOperators;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * A general purpose filter to construct an SQL WHERE statement using GeneralFilterOperator objects
  */
@@ -36,6 +40,11 @@ public class GeneralFilter implements Filter {
     @Override
     public FilterOperators getOperator() {
         return this.operator;
+    }
+
+    @Override
+    public String getTargetColumnName() {
+        return this.columnName;
     }
 
     @Override
