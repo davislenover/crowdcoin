@@ -5,15 +5,13 @@ import com.crowdcoin.mainBoard.Interactive.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.InteractiveWindowPane;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;

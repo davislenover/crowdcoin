@@ -195,7 +195,7 @@ public class Tab {
         this.interactiveTabPane.applyInteractivePane(fieldPane, buttonPane);
 
         // Apply filters
-        this.filterController.applyFilters(filterButton,this.sqlTable.getFilterManager());
+        this.filterController.applyFilters(filterButton,this.sqlTable.getFilterManager(),this.sqlTable);
 
     }
 

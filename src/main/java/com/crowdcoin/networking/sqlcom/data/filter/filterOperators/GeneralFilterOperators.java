@@ -1,6 +1,8 @@
 package com.crowdcoin.networking.sqlcom.data.filter.filterOperators;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * GeneralFilterOperators class contains SQL operators from the SQL WHERE statement that only require one value. ExtendedFilterOperators stores special SQL operators that may or may not require more than one value
@@ -20,6 +22,18 @@ public enum GeneralFilterOperators implements FilterOperators {
     @Override
     public String getOperatorString() {
         return lookupOperators.get(this);
+    }
+
+
+    public static List<String> getNames() {
+
+        List<String> returnList = new ArrayList<>();
+
+        for (FilterOperators operator : values()) {
+            returnList.add(operator.getOperatorString());
+        }
+
+        return returnList;
     }
 
 }
