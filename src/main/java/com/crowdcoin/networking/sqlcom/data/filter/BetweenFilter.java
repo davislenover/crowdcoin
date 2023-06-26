@@ -1,7 +1,14 @@
 package com.crowdcoin.networking.sqlcom.data.filter;
 
+import com.crowdcoin.mainBoard.Interactive.FieldActionDummyEvent;
+import com.crowdcoin.mainBoard.Interactive.InputField;
+import com.crowdcoin.mainBoard.Interactive.InteractivePane;
+import com.crowdcoin.mainBoard.Interactive.InteractiveTextField;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.ExtendedFilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Creates a BETWEEN SQL WHERE statement. BETWEEN specifies to obtain rows with values in a specific column only between two values
@@ -25,6 +32,13 @@ public class BetweenFilter implements Filter {
         this.value2 = value2;
     }
 
+    /**
+     * Creates a blank BetweenFilter object
+     */
+    public BetweenFilter() {
+
+    }
+
     @Override
     public String getFilterString() {
         return " WHERE " + this.columnName + " " + operator.getOperatorString() + " " + "'" + value1.toString() + "'" + " AND " + "'" + value2.toString() + "'";
@@ -43,6 +57,16 @@ public class BetweenFilter implements Filter {
     @Override
     public String getTargetColumnName() {
         return this.columnName;
+    }
+
+    @Override
+    public List<InputField> getInputFieldsForPane(InteractivePane targetPane) {
+        List<InputField> fields = new ArrayList<>() {{
+            add(new InteractiveTextField("First value","The lower value within the between operator",targetPane,new FieldActionDummyEvent()));
+            add(new InteractiveTextField("Second value","The higher value within the between operator",targetPane,new FieldActionDummyEvent()));
+        }};
+
+        return fields;
     }
 
     @Override

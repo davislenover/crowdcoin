@@ -1,5 +1,8 @@
 package com.crowdcoin.networking.sqlcom.data.filter.filterOperators;
 
+import com.crowdcoin.networking.sqlcom.data.filter.Filter;
+import com.crowdcoin.networking.sqlcom.data.filter.GeneralFilter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,11 +22,16 @@ public enum GeneralFilterOperators implements FilterOperators {
        put(NOTEQUAL,"<>");
     }};
 
+
     @Override
     public String getOperatorString() {
         return lookupOperators.get(this);
     }
 
+    @Override
+    public Class getOperatorClass() {
+        return GeneralFilter.class;
+    }
 
     public static List<String> getNames() {
 

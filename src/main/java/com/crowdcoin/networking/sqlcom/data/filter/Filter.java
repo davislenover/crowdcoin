@@ -1,5 +1,7 @@
 package com.crowdcoin.networking.sqlcom.data.filter;
 
+import com.crowdcoin.mainBoard.Interactive.InputField;
+import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 
 import java.util.Collection;
@@ -34,5 +36,11 @@ public interface Filter {
      * @return the column name as a String object
      */
     String getTargetColumnName();
+
+    /**
+     * Gets the input fields needed as InputField objects for a given InteractivePane object, typically for the filter creation window.
+     * @return InputField objects needed in a list
+     */
+    List<InputField> getInputFieldsForPane(InteractivePane targetPane);
 
 }

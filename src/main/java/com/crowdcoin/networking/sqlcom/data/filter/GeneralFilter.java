@@ -1,5 +1,9 @@
 package com.crowdcoin.networking.sqlcom.data.filter;
 
+import com.crowdcoin.mainBoard.Interactive.FieldActionDummyEvent;
+import com.crowdcoin.mainBoard.Interactive.InputField;
+import com.crowdcoin.mainBoard.Interactive.InteractivePane;
+import com.crowdcoin.mainBoard.Interactive.InteractiveTextField;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.GeneralFilterOperators;
 
@@ -27,6 +31,14 @@ public class GeneralFilter implements Filter {
         this.operator = operator;
         this.value = value;
     }
+
+    /**
+     * Creates a blank GeneralFilter object
+     */
+    public GeneralFilter() {
+
+    }
+
     @Override
     public String getFilterString() {
         return " WHERE " + columnName + " " + operator.getOperatorString() + " " + "'" + this.value.toString() + "'";
@@ -45,6 +57,15 @@ public class GeneralFilter implements Filter {
     @Override
     public String getTargetColumnName() {
         return this.columnName;
+    }
+
+    @Override
+    public List<InputField> getInputFieldsForPane(InteractivePane targetPane) {
+        List<InputField> fields = new ArrayList<>() {{
+            add(new InteractiveTextField("Value","The value used in conjunction with the operator",targetPane,new FieldActionDummyEvent()));
+        }};
+
+        return fields;
     }
 
     @Override

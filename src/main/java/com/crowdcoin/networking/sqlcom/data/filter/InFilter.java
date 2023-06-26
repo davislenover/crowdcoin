@@ -1,5 +1,6 @@
 package com.crowdcoin.networking.sqlcom.data.filter;
 
+import com.crowdcoin.mainBoard.Interactive.*;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.ExtendedFilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 
@@ -29,6 +30,13 @@ public class InFilter implements Filter {
         }};
     }
 
+    /**
+     * Creates a blank InFilter object
+     */
+    public InFilter() {
+
+    }
+
     @Override
     public String getFilterString() {
         String filter = " WHERE " + this.columnName + " " + operator.getOperatorString() + " (";
@@ -56,6 +64,15 @@ public class InFilter implements Filter {
     @Override
     public String getTargetColumnName() {
         return this.columnName;
+    }
+
+    @Override
+    public List<InputField> getInputFieldsForPane(InteractivePane targetPane) {
+        List<InputField> fields = new ArrayList<>() {{
+            add(new InteractiveTextArea("Values","All values IN the given column separated by new lines",targetPane,new FieldActionDummyEvent()));
+        }};
+
+        return fields;
     }
 
     @Override

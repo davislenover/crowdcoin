@@ -1,9 +1,6 @@
 package com.crowdcoin.networking.sqlcom.data.filter;
 
-import com.crowdcoin.mainBoard.Interactive.InteractiveButtonActionEvent;
-import com.crowdcoin.mainBoard.Interactive.InteractiveFieldActionEvent;
-import com.crowdcoin.mainBoard.Interactive.InteractivePane;
-import com.crowdcoin.mainBoard.Interactive.InteractiveWindowPane;
+import com.crowdcoin.mainBoard.Interactive.*;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.ExtendedFilterOperators;
@@ -11,14 +8,12 @@ import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperato
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.GeneralFilterOperators;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Control;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SplitMenuButton;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -46,9 +41,6 @@ public class FilterFXController {
             }
         };
 
-        // Crude Implementation of PopWindow for Filters (primarily for testing)
-        // Will need to give more flexibility to creating windows (i.e., ability to set spacing between text and fields in fieldPane)
-        // This may require adding a HBox/VBox to nodes within the same row and inserting the HBoxes into the fieldPane
         newFilter.setOnAction(event -> {
 
             PopWindow newWindow = new PopWindow("New Filter",table);
@@ -57,12 +49,24 @@ public class FilterFXController {
 
             newPane.addChoiceField("Target Column","The column to apply the filter to",dummyEvent,table.getColumnNames().toArray(new String[0]));
             List<String> allOperators = new ArrayList<>() {{
-               addAll(GeneralFilterOperators.getNames());
-               addAll(ExtendedFilterOperators.getNames());
+                addAll(GeneralFilterOperators.getNames());
+                addAll(ExtendedFilterOperators.getNames());
             }};
-            newPane.addChoiceField("Operation", "Operation applied to target column to compare values", dummyEvent,allOperators.toArray(new String[0]));
+            newPane.addChoiceField("Operation", "Operation applied to target column to compare values", (action,field,pane) -> {
+
+                // Reset to two fields
+                newPane.retainAllFields(new ArrayList<>() {{
+                    add(newPane.getInputField(0));
+                    add(newPane.getInputField(1));
+                }});
+
+                ChoiceBox choiceBox = (ChoiceBox) field;
+                newPane.addAllInputFields(FilterFactory.constructBlankFilter(FilterFactory.getOperatorEnum(choiceBox.getValue().toString())).getInputFieldsForPane(newPane));
+                newWindow.updateWindow();
+
+
+            },allOperators.toArray(new String[0]));
             newPane.getInputField(1).setDescWrappingWidth(180);
-            newPane.addField("Target value", "The value used alongside the operator",dummyEvent);
 
             newPane.addButton("OK", new InteractiveButtonActionEvent() {
                 @Override

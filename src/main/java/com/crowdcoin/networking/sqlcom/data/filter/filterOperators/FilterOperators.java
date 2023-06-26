@@ -1,5 +1,7 @@
 package com.crowdcoin.networking.sqlcom.data.filter.filterOperators;
 
+import com.crowdcoin.mainBoard.Interactive.InputField;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,4 +14,11 @@ public interface FilterOperators {
      * @return
      */
     String getOperatorString();
+
+    /**
+     * Gets the class (not enum) of the given enum operator
+     * @return the Class of the given enum operator
+     */
+    Class getOperatorClass();
+
 }

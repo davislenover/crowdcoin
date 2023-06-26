@@ -1,5 +1,9 @@
 package com.crowdcoin.networking.sqlcom.data.filter.filterOperators;
 
+import com.crowdcoin.networking.sqlcom.data.filter.BetweenFilter;
+import com.crowdcoin.networking.sqlcom.data.filter.InFilter;
+import com.crowdcoin.networking.sqlcom.data.filter.NotInFilter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,9 +21,20 @@ public enum ExtendedFilterOperators implements FilterOperators {
         put(NOTIN,"NOT IN");
     }};
 
+    private static HashMap<FilterOperators,Class> lookupOperatorsClass = new HashMap<>() {{
+        put(BETWEEN,BetweenFilter.class);
+        put(IN,InFilter.class);
+        put(NOTIN,NotInFilter.class);
+    }};
+
     @Override
     public String getOperatorString() {
         return lookupOperators.get(this);
+    }
+
+    @Override
+    public Class getOperatorClass() {
+        return lookupOperatorsClass.get(this);
     }
 
 

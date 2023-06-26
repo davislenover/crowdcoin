@@ -14,7 +14,7 @@ public class InteractiveButton {
      * @param buttonText the text displayed by the button
      * @param buttonActionHandler the class which contains an invokable method by the Button (as specified by the InteractiveButtonActionEvent interface). Intended to allow for a variety of different logic to be executed for any given Button
      * @param pane the InteractiveTabPane object to house the InteractiveButton object (i.e., the parent)
-     * @Note this is the lower level object used in InteractiveTabPane's
+     * @Note this is the lower level object used in InteractivePane's
      */
     public InteractiveButton(String buttonText, InteractiveButtonActionEvent buttonActionHandler, InteractivePane pane) {
 

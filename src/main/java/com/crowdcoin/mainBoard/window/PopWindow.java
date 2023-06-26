@@ -29,12 +29,20 @@ public class PopWindow extends Application {
     private int windowWidth = 425;
     private int windowHeight = 200;
 
+    // Scene
+    private Stage stage;
+    private Scene scene;
+    private VBox root;
+
     public PopWindow(String windowName, SQLTable table) {
         this.windowName = windowName;
         this.parentPane = new InteractiveWindowPane(table);
 
         this.fieldPane = new GridPane();
         this.buttonPane = new GridPane();
+
+        this.root = new VBox();
+        this.scene = new Scene(root,this.windowWidth,this.windowHeight);
 
     }
 
@@ -45,17 +53,18 @@ public class PopWindow extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        VBox root = new VBox();
-        root.getChildren().addAll(this.fieldPane,this.buttonPane);
+        this.stage = stage;
+
+        this.root.getChildren().addAll(this.fieldPane,this.buttonPane);
 
         // Set space between GridPanes
-        root.setSpacing(10);
+        this.root.setSpacing(10);
 
         // This sets fieldPane to always take up any remaining space in the vbox (as button pane will be placed at the bottom so get fieldPane to fill the rest)
         VBox.setVgrow(this.fieldPane, Priority.ALWAYS);
         VBox.setVgrow(this.buttonPane,Priority.NEVER);
         // Set buttonPane to be added at the bottom center
-        root.setAlignment(Pos.BOTTOM_CENTER);
+        this.root.setAlignment(Pos.BOTTOM_CENTER);
 
         this.parentPane.applyInteractivePane(this.fieldPane,this.buttonPane);
 
@@ -64,10 +73,10 @@ public class PopWindow extends Application {
         bottomConstraint.setPrefHeight(this.buttonHeight);
         this.buttonPane.getRowConstraints().add(bottomConstraint);
 
-        stage.setTitle(this.windowName);
+        this.stage.setTitle(this.windowName);
         // Set width, height
-        stage.setScene(new Scene(root,this.windowWidth,this.windowHeight));
-        stage.show();
+        this.stage.setScene(this.scene);
+        this.stage.show();
 
     }
 
@@ -108,6 +117,18 @@ public class PopWindow extends Application {
         }
 
         this.buttonHeight = buttonHeight;
+    }
+
+    /**
+     * Apply any updates to the window to the screen
+     */
+    public void updateWindow() {
+        // Note that manually calling a window refresh is less computationally intensive than observing changes as if more than one change is needed, applyInteractivePane() will be invoked multiple times, wasting resources
+        // Update window dimensions
+        this.stage.setHeight(this.windowHeight);
+        this.stage.setWidth(this.windowWidth);
+        // Re-apply interactive pane (this will add any newly added buttons/fields to the window)
+        this.parentPane.applyInteractivePane(this.fieldPane,this.buttonPane);
     }
 
 

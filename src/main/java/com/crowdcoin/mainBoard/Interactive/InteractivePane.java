@@ -6,6 +6,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class InteractivePane {
@@ -42,6 +43,24 @@ public class InteractivePane {
     }
 
     /**
+     * Add an already created InputField to the InteractivePane
+     * @param newField the InputField object to add
+     * @return true if the InputField object was added, false otherwise
+     */
+    public boolean addInputField(InputField newField) {
+        return this.fieldsList.add(newField);
+    }
+
+    /**
+     * Add already created InputFields to the InteractivePane
+     * @param newFields the InputField objects to add
+     * @return true if the list was changed as a result of InputField objects being added, false otherwise
+     */
+    public boolean addAllInputFields(Collection<InputField> newFields) {
+        return this.fieldsList.addAll(newFields);
+    }
+
+    /**
      * Removes a specified field from the InteractivePane. Note removal change does NOT take effect on GridPane until application method is invoked
      * @param fieldIndex the index within the InteractivePane of the field to remove
      * @throws IndexOutOfBoundsException if fieldIndex is not within the range of the list
@@ -50,6 +69,14 @@ public class InteractivePane {
 
         this.fieldsList.remove(fieldIndex);
 
+    }
+
+    /**
+     * Retains all fields within the given InputField collection, discards the rest
+     * @param fieldsToRetain the InputField collection to retain
+     */
+    public void retainAllFields(Collection<InputField> fieldsToRetain) {
+        this.fieldsList.retainAll(fieldsToRetain);
     }
 
     /**
@@ -78,12 +105,26 @@ public class InteractivePane {
      */
     public boolean addChoiceField(String header, String description, InteractiveFieldActionEvent eventHandler, String ... options) {
 
-        InteractiveChoiceBox newField = new InteractiveChoiceBox(header,description, this, eventHandler);
+        InteractiveChoiceBox newField = new InteractiveChoiceBox(header,description,this, eventHandler);
         // Add all options to ChoiceBox
         for (String option : options) {
             newField.addValue(option);
         }
         return this.fieldsList.add(newField);
+
+    }
+
+    /**
+     * Add a field to the GridPane (Text Area). When applyInteractivePane() is called, all fields added will be applied to the corresponding field GridPane
+     * @param header the top text to appear with the TextArea
+     * @param description the text below the header. Typically used to convey what the TextArea is used for
+     * @param eventHandler the class containing an invokable method by the field to perform arbitrary logic upon firing of an ActionEvent by the field. Intended to allow users to execute arbitrary logic for each button and not singular unified logic
+     * @return true if a new field was added, false otherwise
+     */
+    public boolean addAreaField(String header, String description, InteractiveFieldActionEvent eventHandler) {
+
+        InteractiveTextArea newAreaField = new InteractiveTextArea(header,description,this, eventHandler);
+        return this.fieldsList.add(newAreaField);
 
     }
 
