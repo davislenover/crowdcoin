@@ -29,13 +29,17 @@ public class InteractiveTextField implements InputField {
     private Text fieldHeader;
     private Text fieldDescription;
 
+    // Event
+    private InteractiveFieldActionEvent interactiveFieldActionEvent;
+    private InteractivePane parentPane;
+
     /**
      * Houses three node objects which are used in a single row on a GridPane
      * @param header the header for the column
      * @param description the description of what the text field (user input) is used for
      * @Note this is the lower level object used in InteractiveTabPane's
      */
-    public InteractiveTextField(String header, String description) {
+    public InteractiveTextField(String header, String description, InteractivePane pane, InteractiveFieldActionEvent actionEvent) {
 
         // All these objects are housed in a parent pane, a StackPane for organization
         this.textField = new TextField();
@@ -64,6 +68,11 @@ public class InteractiveTextField implements InputField {
         this.containerPane.setAlignment(this.fieldDescription,Pos.CENTER_LEFT);
         this.fieldDescription.setTranslateX(fieldDescTranslateX);
         this.fieldDescription.setWrappingWidth(fieldDescWrappingWidth);
+
+        // Set event logic
+        this.parentPane = pane;
+        this.interactiveFieldActionEvent = actionEvent;
+        this.textField.setOnAction(event -> this.interactiveFieldActionEvent.fieldActionHandler(event,this.textField,this.parentPane));
 
     }
 

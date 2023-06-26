@@ -37,6 +37,14 @@ public class MainBoardController {
         CoinModel model = new CoinModel(12,"myDenomination","01/01/2002","myGrade","myCompany","01234","$101.93");
         SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coindata");
 
+        // Dummy field action handler
+        InteractiveFieldActionEvent dummyEvent = new InteractiveFieldActionEvent() {
+            @Override
+            public void fieldActionHandler(ActionEvent event, Control field, InteractivePane pane) {
+                return;
+            }
+        };
+
         // Test Tab 1
         Tab testTab = new Tab(model,table,"testTab");
         testTab.setTabTableAction(new TabActionEvent() {
@@ -49,9 +57,9 @@ public class MainBoardController {
         // an InteractiveTabPane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
         InteractiveTabPane testPane = testTab.getInteractivePane();
         // Add fields to the pane
-        testPane.addField("This is a test", "This is a test combo object for textfield combo's 1");
-        testPane.addField("This is a test2", "This is a test combo object for textfield combo's 2");
-        testPane.addField("This is a test3", "This is a test combo object for textfield combo's 3");
+        testPane.addField("This is a test", "This is a test combo object for textfield combo's 1",dummyEvent);
+        testPane.addField("This is a test2", "This is a test combo object for textfield combo's 2", dummyEvent);
+        testPane.addField("This is a test3", "This is a test combo object for textfield combo's 3", dummyEvent);
 
         // Testing buttons
         // One can specify how they would like a button to handle an ActionEvent by defining it within a specific class or on the fly
@@ -78,12 +86,12 @@ public class MainBoardController {
         // an InteractiveTabPane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
         InteractiveTabPane testPane2 = testTab2.getInteractivePane();
         // Add fields to the pane
-        testPane2.addField("This is a test", "This is a test combo object for textfield combo's 1");
-        testPane2.addField("This is a test2", "This is a test combo object for textfield combo's 2");
-        testPane2.addField("This is a test3", "This is a test combo object for textfield combo's 3");
-        testPane2.addField("This is a test4", "This is a test combo object for textfield combo's 3");
+        testPane2.addField("This is a test", "This is a test combo object for textfield combo's 1", dummyEvent);
+        testPane2.addField("This is a test2", "This is a test combo object for textfield combo's 2", dummyEvent);
+        testPane2.addField("This is a test3", "This is a test combo object for textfield combo's 3", dummyEvent);
+        testPane2.addField("This is a test4", "This is a test combo object for textfield combo's 3", dummyEvent);
         // Add choice field
-        testPane2.addChoiceField("This is a choice field", "This is a test combo object for textfield combo's 4", "Option1","Option2","Option3");
+        testPane2.addChoiceField("This is a choice field", "This is a test combo object for textfield combo's 4", dummyEvent,"Option1","Option2","Option3");
 
         // Testing buttons
         // One can specify how they would like a button to handle an ActionEvent by defining it within a specific class or on the fly
@@ -118,8 +126,8 @@ public class MainBoardController {
                     InteractiveWindowPane testWindowPane = (InteractiveWindowPane) test4;
                     System.out.println(Arrays.toString(testWindowPane.getAllInput().toArray()));
                 });
-                window.getWindowPane().addChoiceField("Test","Testing window choice field","Option1","Option2","Option3");
-                window.getWindowPane().addField("Test","This is a field test");
+                window.getWindowPane().addChoiceField("Test","Testing window choice field",dummyEvent,"Option1","Option2","Option3");
+                window.getWindowPane().addField("Test","This is a field test",dummyEvent);
                 window.start(new Stage());
             } catch (Exception e) {
                 throw new RuntimeException(e);

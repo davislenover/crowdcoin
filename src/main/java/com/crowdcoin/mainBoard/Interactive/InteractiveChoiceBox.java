@@ -30,13 +30,17 @@ public class InteractiveChoiceBox implements InputField {
     private Text fieldHeader;
     private Text fieldDescription;
 
+    // Event
+    private InteractiveFieldActionEvent interactiveFieldActionEvent;
+    private InteractivePane parentPane;
+
     /**
      * Houses three node objects which are used in a single row on a GridPane
      * @param header the header for the column
      * @param description the description of what the ChoiceBox field (user input) is used for
      * @Note this is the lower level object used in InteractiveTabPane's
      */
-    public InteractiveChoiceBox(String header, String description) {
+    public InteractiveChoiceBox(String header, String description, InteractivePane pane, InteractiveFieldActionEvent actionEvent) {
 
         this.choiceBox = new ChoiceBox<>();
         this.fieldHeader = new Text(header);
@@ -57,6 +61,10 @@ public class InteractiveChoiceBox implements InputField {
         this.containerPane.setAlignment(this.fieldDescription,Pos.CENTER_LEFT);
         this.fieldDescription.setTranslateX(fieldDescTranslateX);
         this.fieldDescription.setWrappingWidth(fieldDescWrappingWidth);
+
+        this.parentPane = pane;
+        this.interactiveFieldActionEvent = actionEvent;
+        this.choiceBox.setOnAction(event -> this.interactiveFieldActionEvent.fieldActionHandler(event,this.choiceBox,this.parentPane));
 
     }
 

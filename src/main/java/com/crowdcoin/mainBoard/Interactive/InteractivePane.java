@@ -29,13 +29,14 @@ public class InteractivePane {
      * Add a field to the GridPane. When applyInteractivePane() is called, all fields added will be applied to the corresponding field GridPane
      * @param header the top text to appear with the TextField
      * @param description the text below the header. Typically used to convey what the TextField is used for
+     * @param eventHandler the class containing an invokable method by the field to perform arbitrary logic upon firing of an ActionEvent by the field. Intended to allow users to execute arbitrary logic for each button and not singular unified logic
      * @return true if a new field was added, false otherwise
      * @Note by convention, Fields are added above the Button Grid vertically
      */
-    public boolean addField(String header, String description) {
+    public boolean addField(String header, String description, InteractiveFieldActionEvent eventHandler) {
 
         // Create a new InteractiveTextField object containing the corresponding header and description
-        InputField newField = new InteractiveTextField(header,description);
+        InputField newField = new InteractiveTextField(header,description,this,eventHandler);
         // Attempt to store in list
         return this.fieldsList.add(newField);
     }
@@ -71,12 +72,13 @@ public class InteractivePane {
      * Add a field to the GridPane (Choice box). When applyInteractivePane() is called, all fields added will be applied to the corresponding field GridPane
      * @param header the top text to appear with the ChoiceBox
      * @param description the text below the header. Typically used to convey what the ChoiceBox is used for
+     * @param eventHandler the class containing an invokable method by the field to perform arbitrary logic upon firing of an ActionEvent by the field. Intended to allow users to execute arbitrary logic for each button and not singular unified logic
      * @param options the options ChoiceBox will display in its dropdown for the user to select
      * @return true if a new field was added, false otherwise
      */
-    public boolean addChoiceField(String header, String description, String ... options) {
+    public boolean addChoiceField(String header, String description, InteractiveFieldActionEvent eventHandler, String ... options) {
 
-        InteractiveChoiceBox newField = new InteractiveChoiceBox(header,description);
+        InteractiveChoiceBox newField = new InteractiveChoiceBox(header,description, this, eventHandler);
         // Add all options to ChoiceBox
         for (String option : options) {
             newField.addValue(option);

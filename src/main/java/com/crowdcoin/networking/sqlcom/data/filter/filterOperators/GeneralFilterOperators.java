@@ -30,7 +30,7 @@ public enum GeneralFilterOperators implements FilterOperators {
         List<String> returnList = new ArrayList<>();
 
         for (FilterOperators operator : values()) {
-            returnList.add(operator.getOperatorString());
+            returnList.add(operator.toString());
         }
 
         return returnList;
