@@ -4,6 +4,7 @@ import com.crowdcoin.mainBoard.Interactive.FieldActionDummyEvent;
 import com.crowdcoin.mainBoard.Interactive.InputField;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.InteractiveTextField;
+import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.ExtendedFilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 
@@ -60,13 +61,10 @@ public class BetweenFilter implements Filter {
     }
 
     @Override
-    public List<InputField> getInputFieldsForPane(InteractivePane targetPane) {
-        List<InputField> fields = new ArrayList<>() {{
-            add(new InteractiveTextField("First value","The lower value within the between operator",targetPane,new FieldActionDummyEvent()));
-            add(new InteractiveTextField("Second value","The higher value within the between operator",targetPane,new FieldActionDummyEvent()));
-        }};
-
-        return fields;
+    public void applyInputFieldsOnWindow(InteractivePane targetPane, PopWindow targetWindow) {
+        targetPane.addField("First value","The lower value within the between operator",new FieldActionDummyEvent());
+        targetPane.addField("Second value","The higher value within the between operator",new FieldActionDummyEvent());
+        targetWindow.setWindowHeight(400);
     }
 
     @Override

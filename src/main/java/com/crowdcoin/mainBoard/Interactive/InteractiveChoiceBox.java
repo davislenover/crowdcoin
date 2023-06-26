@@ -23,7 +23,7 @@ public class InteractiveChoiceBox implements InputField {
 
     // ChoiceBox description
     private static int fieldDescTranslateX = 20;
-    private static int fieldDescWrappingWidth = 200;
+    private static int fieldDescWrappingWidth = 180;
 
     private StackPane containerPane;
     private ChoiceBox<String> choiceBox;

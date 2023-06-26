@@ -4,6 +4,7 @@ import com.crowdcoin.mainBoard.Interactive.FieldActionDummyEvent;
 import com.crowdcoin.mainBoard.Interactive.InputField;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.InteractiveTextField;
+import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.GeneralFilterOperators;
 
@@ -60,12 +61,9 @@ public class GeneralFilter implements Filter {
     }
 
     @Override
-    public List<InputField> getInputFieldsForPane(InteractivePane targetPane) {
-        List<InputField> fields = new ArrayList<>() {{
-            add(new InteractiveTextField("Value","The value used in conjunction with the operator",targetPane,new FieldActionDummyEvent()));
-        }};
-
-        return fields;
+    public void applyInputFieldsOnWindow(InteractivePane targetPane, PopWindow targetWindow) {
+        targetPane.addField("Value","The value used in conjunction with the operator",new FieldActionDummyEvent());
+        targetWindow.setWindowHeight(350);
     }
 
     @Override

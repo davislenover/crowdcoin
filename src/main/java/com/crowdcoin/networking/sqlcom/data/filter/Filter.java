@@ -2,6 +2,7 @@ package com.crowdcoin.networking.sqlcom.data.filter;
 
 import com.crowdcoin.mainBoard.Interactive.InputField;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
+import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 
 import java.util.Collection;
@@ -38,9 +39,9 @@ public interface Filter {
     String getTargetColumnName();
 
     /**
-     * Gets the input fields needed as InputField objects for a given InteractivePane object, typically for the filter creation window.
-     * @return InputField objects needed in a list
+     * Apply the input fields needed for a given InteractivePane object, set any Window preferences.
+     * This method assumes the given InteractivePane does not already contain the specified InputFields within the method. This method will NOT call any update to prompt a visual change to the window.
      */
-    List<InputField> getInputFieldsForPane(InteractivePane targetPane);
+    void applyInputFieldsOnWindow(InteractivePane targetPane, PopWindow targetWindow);
 
 }

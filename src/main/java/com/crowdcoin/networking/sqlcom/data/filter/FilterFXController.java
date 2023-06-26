@@ -61,7 +61,7 @@ public class FilterFXController {
                 }});
 
                 ChoiceBox choiceBox = (ChoiceBox) field;
-                newPane.addAllInputFields(FilterFactory.constructBlankFilter(FilterFactory.getOperatorEnum(choiceBox.getValue().toString())).getInputFieldsForPane(newPane));
+                FilterFactory.constructBlankFilter(FilterFactory.getOperatorEnum(choiceBox.getValue().toString())).applyInputFieldsOnWindow(newPane,newWindow);
                 newWindow.updateWindow();
 
 

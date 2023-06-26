@@ -4,6 +4,7 @@ import com.crowdcoin.mainBoard.Interactive.FieldActionDummyEvent;
 import com.crowdcoin.mainBoard.Interactive.InputField;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.InteractiveTextArea;
+import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.ExtendedFilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 
@@ -70,12 +71,9 @@ public class NotInFilter implements Filter {
     }
 
     @Override
-    public List<InputField> getInputFieldsForPane(InteractivePane targetPane) {
-        List<InputField> fields = new ArrayList<>() {{
-            add(new InteractiveTextArea("Values","All values NOT IN the given column separated by new lines",targetPane,new FieldActionDummyEvent()));
-        }};
-
-        return fields;
+    public void applyInputFieldsOnWindow(InteractivePane targetPane, PopWindow targetWindow) {
+        targetPane.addAreaField("Values","All values NOT IN the given column separated by new lines",new FieldActionDummyEvent());
+        targetWindow.setWindowHeight(350);
     }
 
     @Override
