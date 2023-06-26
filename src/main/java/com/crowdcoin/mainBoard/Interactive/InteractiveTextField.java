@@ -88,4 +88,16 @@ public class InteractiveTextField implements InputField {
         return this.textField.getText();
     }
 
+    @Override
+    public void setSpacing(int spacing) {
+        this.textField.setTranslateX(textFieldTranslateX+spacing);
+        this.fieldHeader.setTranslateX(fieldHeaderTranslateX+(-1)*spacing);
+        this.fieldDescription.setTranslateX(fieldDescTranslateX+(-1)*spacing);
+    }
+
+    @Override
+    public void setDescWrappingWidth(int wrappingWidth) {
+        this.fieldDescription.setWrappingWidth(wrappingWidth);
+    }
+
 }

@@ -4,6 +4,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
@@ -108,5 +109,17 @@ public class InteractiveChoiceBox implements InputField {
     @Override
     public String getInput() {
         return this.choiceBox.getValue();
+    }
+
+    @Override
+    public void setSpacing(int spacing) {
+        this.choiceBox.setTranslateX(choiceBoxTranslateX+spacing);
+        this.fieldHeader.setTranslateX(fieldHeaderTranslateX+(-1)*spacing);
+        this.fieldDescription.setTranslateX(fieldDescTranslateX+(-1)*spacing);
+    }
+
+    @Override
+    public void setDescWrappingWidth(int wrappingWidth) {
+        this.fieldDescription.setWrappingWidth(wrappingWidth);
     }
 }

@@ -18,4 +18,16 @@ public interface InputField {
      */
     String getInput();
 
+    /**
+     * Sets the spacing between all text and the field. Text and field are translated from original creation position (i.e., original position +- spacing)
+     * @param spacing the spacing as an integer
+     */
+    void setSpacing(int spacing);
+
+    /**
+     * Sets the maximum with of a single line of text before moving to a new line
+     * @param wrappingWidth the width as an integer
+     */
+    void setDescWrappingWidth(int wrappingWidth);
+
 }

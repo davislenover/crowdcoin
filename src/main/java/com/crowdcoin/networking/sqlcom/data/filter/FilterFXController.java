@@ -44,7 +44,8 @@ public class FilterFXController {
             InteractiveWindowPane newPane = newWindow.getWindowPane();
 
             newPane.addChoiceField("Target Column","The column to apply the filter to",table.getColumnNames().toArray(new String[0]));
-            newPane.addChoiceField("Operation", "Operation to compare values", GeneralFilterOperators.getNames().toArray(new String[0]));
+            newPane.addChoiceField("Operation", "Operation applied to target column to compare values", GeneralFilterOperators.getNames().toArray(new String[0]));
+            newPane.getInputField(1).setDescWrappingWidth(180);
             newPane.addField("Target value", "The value used alongside the operator");
 
             newPane.addButton("OK", new InteractiveButtonActionEvent() {

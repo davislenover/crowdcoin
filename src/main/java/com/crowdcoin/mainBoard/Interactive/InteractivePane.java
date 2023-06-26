@@ -52,6 +52,22 @@ public class InteractivePane {
     }
 
     /**
+     * Gets a InputField object stored at the specified index position
+     * @param fieldIndex the index position as an integer
+     * @return an InputField object at the specified index position
+     * @throws IndexOutOfBoundsException if fieldIndex is not within the range of the list
+     */
+    public InputField getInputField(int fieldIndex) {
+
+        if (fieldIndex > this.fieldsList.size() - 1) {
+            throw new IndexOutOfBoundsException("Index of " + fieldIndex + " is out of range for size " + this.fieldsList.size());
+        }
+
+        return this.fieldsList.get(fieldIndex);
+
+    }
+
+    /**
      * Add a field to the GridPane (Choice box). When applyInteractivePane() is called, all fields added will be applied to the corresponding field GridPane
      * @param header the top text to appear with the ChoiceBox
      * @param description the text below the header. Typically used to convey what the ChoiceBox is used for
