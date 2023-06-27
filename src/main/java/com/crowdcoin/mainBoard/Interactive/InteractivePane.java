@@ -7,6 +7,7 @@ import javafx.scene.layout.RowConstraints;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 public class InteractivePane {
@@ -40,6 +41,14 @@ public class InteractivePane {
         InputField newField = new InteractiveTextField(header,description,this,eventHandler);
         // Attempt to store in list
         return this.fieldsList.add(newField);
+    }
+
+    /**
+     * Gets the size (count) of all InputFields within the InteractivePane
+     * @return the size as an integer
+     */
+    public int getFieldsSize() {
+        return this.fieldsList.size();
     }
 
     /**
@@ -253,6 +262,14 @@ public class InteractivePane {
      */
     public SQLTable getSqlTable() {
         return this.sqlTable;
+    }
+
+    /**
+     * Gets the iterator for all InputFields
+     * @return an Iterator object
+     */
+    public Iterator<InputField> getIterator() {
+        return this.fieldsList.iterator();
     }
 
 }

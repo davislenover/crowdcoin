@@ -33,6 +33,9 @@ public class InteractiveTextField implements InputField {
     private InteractiveFieldActionEvent interactiveFieldActionEvent;
     private InteractivePane parentPane;
 
+    // Info
+    private InfoBox infoBox;
+
     /**
      * Houses three node objects which are used in a single row on a GridPane
      * @param header the header for the column
@@ -74,6 +77,9 @@ public class InteractiveTextField implements InputField {
         this.interactiveFieldActionEvent = actionEvent;
         this.textField.setOnAction(event -> this.interactiveFieldActionEvent.fieldActionHandler(event,this.textField,this.parentPane));
 
+        // Set default info box
+        this.infoBox = new InfoBox("Default message");
+
     }
 
     /**
@@ -95,6 +101,21 @@ public class InteractiveTextField implements InputField {
      */
     public String getInput() {
         return this.textField.getText();
+    }
+
+    @Override
+    public InfoBox getInfoBox() {
+        return this.infoBox;
+    }
+
+    @Override
+    public void showInfo() {
+        this.infoBox.applyInfoBox(this);
+    }
+
+    @Override
+    public void hideInfo() {
+        this.infoBox.removeInfoBox(this);
     }
 
     @Override

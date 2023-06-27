@@ -70,6 +70,7 @@ public class InFilter implements Filter {
     @Override
     public void applyInputFieldsOnWindow(InteractivePane targetPane, PopWindow targetWindow) {
         targetPane.addAreaField("Values","All values IN the given column separated by new lines",new FieldActionDummyEvent());
+        targetPane.getInputField(targetPane.getFieldsSize()-1).getInfoBox().setInfoText("This field cannot be empty!");
         targetWindow.setWindowHeight(350);
     }
 

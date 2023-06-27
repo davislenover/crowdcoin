@@ -63,6 +63,7 @@ public class GeneralFilter implements Filter {
     @Override
     public void applyInputFieldsOnWindow(InteractivePane targetPane, PopWindow targetWindow) {
         targetPane.addField("Value","The value used in conjunction with the operator",new FieldActionDummyEvent());
+        targetPane.getInputField(targetPane.getFieldsSize()-1).getInfoBox().setInfoText("This field cannot be empty!");
         targetWindow.setWindowHeight(350);
     }
 

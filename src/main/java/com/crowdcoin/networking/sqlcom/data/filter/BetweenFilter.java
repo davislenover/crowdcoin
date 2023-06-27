@@ -63,7 +63,9 @@ public class BetweenFilter implements Filter {
     @Override
     public void applyInputFieldsOnWindow(InteractivePane targetPane, PopWindow targetWindow) {
         targetPane.addField("First value","The lower value within the between operator",new FieldActionDummyEvent());
+        targetPane.getInputField(targetPane.getFieldsSize()-1).getInfoBox().setInfoText("This field cannot be empty!");
         targetPane.addField("Second value","The higher value within the between operator",new FieldActionDummyEvent());
+        targetPane.getInputField(targetPane.getFieldsSize()-1).getInfoBox().setInfoText("This field cannot be empty!");
         targetWindow.setWindowHeight(400);
     }
 

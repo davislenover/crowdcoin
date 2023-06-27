@@ -1,6 +1,7 @@
 package com.crowdcoin.mainBoard.Interactive;
 
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 
 public interface InputField {
 
@@ -13,10 +14,31 @@ public interface InputField {
     void applyPane(GridPane targetPane, int targetRow);
 
     /**
+     * Gets the corresponding JavaFX pane from the given InputField
+     * @return a InputFields corresponding JavaFX Pane object
+     */
+    Pane getPane();
+
+    /**
      * Method invoked to get the current user input text (or selection) within the InputField object
      * @return the text (or selection) present as a String
      */
     String getInput();
+
+    /**
+     * Gets the InfoBox object used by the InputField. An info box appears underneath the InputField, used to provide helpful additional messaging
+     */
+    InfoBox getInfoBox();
+
+    /**
+     * Display the info box. By default, the info box is displayed below the InputField. To configure its message, use setInfo()
+     */
+    void showInfo();
+
+    /**
+     * Hide the info box.
+     */
+    void hideInfo();
 
     /**
      * Sets the spacing between all text and the field. Text and field are translated from original creation position (i.e., original position +- spacing)

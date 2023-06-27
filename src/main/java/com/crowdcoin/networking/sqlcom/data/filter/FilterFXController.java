@@ -11,10 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 
 /**
  * A class responsible for loading filters into SplitMenuButton objects
@@ -41,6 +38,7 @@ public class FilterFXController {
 
             // Add fields
             newPane.addChoiceField("Target Column","The column to apply the filter to",new FieldActionDummyEvent(),table.getColumnNames().toArray(new String[0]));
+            newPane.getInputField(newPane.getFieldsSize()-1).getInfoBox().setInfoText("This field cannot be empty!");
             List<String> allOperators = new ArrayList<>() {{
                 addAll(GeneralFilterOperators.getNames());
                 addAll(ExtendedFilterOperators.getNames());
@@ -65,9 +63,23 @@ public class FilterFXController {
 
             },allOperators.toArray(new String[0]));
 
+            newPane.getInputField(newPane.getFieldsSize()-1).getInfoBox().setInfoText("This field cannot be empty!");
+
             newPane.addButton("OK", ((actionEvent, button, pane) -> {
 
-                if (!pane.getInputField(0).getInput().isBlank() && !pane.getInputField(1).getInput().isBlank()) {
+                boolean areFieldsGood = true;
+
+                for (Iterator<InputField> it = pane.getIterator(); it.hasNext();) {
+                    InputField field = it.next();
+                    if (field.getInput() == null || field.getInput().isBlank()) {
+                        areFieldsGood = false;
+                        field.showInfo();
+                    } else {
+                        field.hideInfo();
+                    }
+                }
+
+                if (areFieldsGood) {
                     // Using input from InteractivePane, call factory to construct corresponding filter
                     Filter filterToAdd = FilterFactory.constructFilter(pane.getAllInput());
                     System.out.println(filterToAdd.getFilterString());

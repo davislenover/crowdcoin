@@ -8,6 +8,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
@@ -36,6 +37,9 @@ public class InteractiveTextArea implements InputField {
     // Event
     private InteractiveFieldActionEvent interactiveFieldActionEvent;
     private InteractivePane parentPane;
+
+    // Info
+    private InfoBox infoBox;
 
     /**
      * Houses three node objects which are used in a single row on a GridPane
@@ -72,6 +76,9 @@ public class InteractiveTextArea implements InputField {
             actionEvent.fieldActionHandler(new ActionEvent(),textArea,pane);
         });
 
+        // Set default info box
+        this.infoBox = new InfoBox("Default message");
+
     }
 
     /**
@@ -84,6 +91,10 @@ public class InteractiveTextArea implements InputField {
         targetPane.add(this.containerPane,0,targetRow);
     }
 
+    public Pane getPane() {
+        return this.containerPane;
+    }
+
     /**
      * Gets the current text present within the TextArea
      * @return the text present as a String
@@ -91,6 +102,21 @@ public class InteractiveTextArea implements InputField {
     @Override
     public String getInput() {
         return this.textArea.getText();
+    }
+
+    @Override
+    public InfoBox getInfoBox() {
+        return this.infoBox;
+    }
+
+    @Override
+    public void showInfo() {
+        this.infoBox.applyInfoBox(this);
+    }
+
+    @Override
+    public void hideInfo() {
+        this.infoBox.removeInfoBox(this);
     }
 
     @Override

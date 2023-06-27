@@ -5,6 +5,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
@@ -33,6 +34,9 @@ public class InteractiveChoiceBox implements InputField {
     // Event
     private InteractiveFieldActionEvent interactiveFieldActionEvent;
     private InteractivePane parentPane;
+
+    // Info
+    private InfoBox infoBox;
 
     /**
      * Houses three node objects which are used in a single row on a GridPane
@@ -65,6 +69,9 @@ public class InteractiveChoiceBox implements InputField {
         this.parentPane = pane;
         this.interactiveFieldActionEvent = actionEvent;
         this.choiceBox.setOnAction(event -> this.interactiveFieldActionEvent.fieldActionHandler(event,this.choiceBox,this.parentPane));
+
+        // Set default info box
+        this.infoBox = new InfoBox("Default message");
 
     }
 
@@ -110,6 +117,10 @@ public class InteractiveChoiceBox implements InputField {
         targetPane.add(this.containerPane,0,targetRow);
     }
 
+    public Pane getPane() {
+        return this.containerPane;
+    }
+
     /**
      * Gets the current text present within the ChoiceBox
      * @return the text present as a String
@@ -117,6 +128,21 @@ public class InteractiveChoiceBox implements InputField {
     @Override
     public String getInput() {
         return this.choiceBox.getValue();
+    }
+
+    @Override
+    public InfoBox getInfoBox() {
+        return this.infoBox;
+    }
+
+    @Override
+    public void showInfo() {
+        this.infoBox.applyInfoBox(this);
+    }
+
+    @Override
+    public void hideInfo() {
+        this.infoBox.removeInfoBox(this);
     }
 
     @Override
