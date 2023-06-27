@@ -1,10 +1,6 @@
 package com.crowdcoin.networking.sqlcom.data.filter.filterOperators;
 
-import com.crowdcoin.mainBoard.Interactive.InputField;
 import com.crowdcoin.networking.sqlcom.data.filter.build.FilterBuilder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A class to contain a specific group of SQL operators. Classes that implement this interface should be enum's

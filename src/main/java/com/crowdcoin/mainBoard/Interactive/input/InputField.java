@@ -1,4 +1,4 @@
-package com.crowdcoin.mainBoard.Interactive;
+package com.crowdcoin.mainBoard.Interactive.input;
 
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;

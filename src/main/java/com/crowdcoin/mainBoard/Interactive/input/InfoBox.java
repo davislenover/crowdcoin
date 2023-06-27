@@ -1,8 +1,8 @@
-package com.crowdcoin.mainBoard.Interactive;
+package com.crowdcoin.mainBoard.Interactive.input;
 
+import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
 /**

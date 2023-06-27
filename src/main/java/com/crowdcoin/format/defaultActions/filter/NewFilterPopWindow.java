@@ -1,7 +1,7 @@
 package com.crowdcoin.format.defaultActions.filter;
 
 import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
-import com.crowdcoin.mainBoard.Interactive.InputField;
+import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;

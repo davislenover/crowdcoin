@@ -1,12 +1,10 @@
-package com.crowdcoin.mainBoard.Interactive;
+package com.crowdcoin.mainBoard.Interactive.input;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import com.crowdcoin.mainBoard.Interactive.InteractiveFieldActionEvent;
+import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;

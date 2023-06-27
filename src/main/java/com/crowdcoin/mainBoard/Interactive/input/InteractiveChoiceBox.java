@@ -1,31 +1,33 @@
-package com.crowdcoin.mainBoard.Interactive;
+package com.crowdcoin.mainBoard.Interactive.input;
 
+import com.crowdcoin.mainBoard.Interactive.InteractiveFieldActionEvent;
+import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import javafx.geometry.Pos;
-import javafx.scene.control.TextField;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
-public class InteractiveTextField implements InputField {
+public class InteractiveChoiceBox implements InputField {
 
     // Defaults
 
-    // TextField (user input)
-    private static int textFieldWidth = 200;
-    private static int textFieldTranslateX = 200;
+    // ChoiceBox (user input)
+    private static int choiceBoxWidth = 200;
+    private static int choiceBoxTranslateX = 200;
 
-    // TextField header
+    // ChoiceBox header
     private static int fieldHeaderTranslateX = 20;
     private static int fieldHeaderTranslateY = -30;
     private static int fieldHeaderWrappingWidth = 100;
 
-    // TextField description
+    // ChoiceBox description
     private static int fieldDescTranslateX = 20;
     private static int fieldDescWrappingWidth = 180;
 
     private StackPane containerPane;
-    private TextField textField;
+    private ChoiceBox<String> choiceBox;
     private Text fieldHeader;
     private Text fieldDescription;
 
@@ -39,46 +41,69 @@ public class InteractiveTextField implements InputField {
     /**
      * Houses three node objects which are used in a single row on a GridPane
      * @param header the header for the column
-     * @param description the description of what the text field (user input) is used for
-     * @Note this is the lower level object used in InteractivePane's
+     * @param description the description of what the ChoiceBox field (user input) is used for
+     * @Note this is the lower level object used in InteractiveTabPane's
      */
-    public InteractiveTextField(String header, String description, InteractivePane pane, InteractiveFieldActionEvent actionEvent) {
+    public InteractiveChoiceBox(String header, String description, InteractivePane pane, InteractiveFieldActionEvent actionEvent) {
 
-        // All these objects are housed in a parent pane, a StackPane for organization
-        this.textField = new TextField();
+        this.choiceBox = new ChoiceBox<>();
         this.fieldHeader = new Text(header);
         this.fieldDescription = new Text(description);
 
         this.containerPane = new StackPane();
         this.containerPane.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
-        // By default, items are added to the center of the StackPane and the node (as in the JavaFX object like TextField or Text) will be stretched to fit the entire available space
-        this.containerPane.getChildren().addAll(this.textField,this.fieldHeader,this.fieldDescription);
+        this.containerPane.getChildren().addAll(this.choiceBox,this.fieldHeader,this.fieldDescription);
 
-        // Set max width relative to position in StackPlane (currently center)
-        this.textField.setMaxWidth(textFieldWidth);
-        // Shift the TextField by X pixels to the right from original position in StackPlane
-        this.textField.setTranslateX(textFieldTranslateX);
+        this.choiceBox.setMaxWidth(choiceBoxWidth);
+        this.choiceBox.setTranslateX(choiceBoxTranslateX);
 
-        // Likewise for header
-        // First set its relative position from default (center) to center left
-        this.containerPane.setAlignment(this.fieldHeader,Pos.CENTER_LEFT);
-        // Negative y is up
+        this.containerPane.setAlignment(this.fieldHeader, Pos.CENTER_LEFT);
         this.fieldHeader.setTranslateY(fieldHeaderTranslateY);
         this.fieldHeader.setTranslateX(fieldHeaderTranslateX);
-        // Wrapping width defines how long a single line of text can be before moving to a new line
         this.fieldHeader.setWrappingWidth(fieldHeaderWrappingWidth);
 
         this.containerPane.setAlignment(this.fieldDescription,Pos.CENTER_LEFT);
         this.fieldDescription.setTranslateX(fieldDescTranslateX);
         this.fieldDescription.setWrappingWidth(fieldDescWrappingWidth);
 
-        // Set event logic
         this.parentPane = pane;
         this.interactiveFieldActionEvent = actionEvent;
-        this.textField.setOnAction(event -> this.interactiveFieldActionEvent.fieldActionHandler(event,this.textField,this.parentPane));
+        this.choiceBox.setOnAction(event -> this.interactiveFieldActionEvent.fieldActionHandler(event,this.choiceBox,this.parentPane));
 
         // Set default info box
         this.infoBox = new InfoBox("Default message");
+
+    }
+
+    /**
+     * Add an option (as a String) to ChoiceBox. Option cannot be named the same as an option already added
+     * @param value the option to add
+     * @return true if the option was added, false otherwise
+     */
+    public boolean addValue(String value) {
+
+        if (this.choiceBox.getItems().contains(value)) {
+            return false;
+        } else {
+            this.choiceBox.getItems().add(value);
+            return true;
+        }
+
+    }
+
+    /**
+     * Remove an option (as a String) from ChoiceBox
+     * @param value the option to remove
+     * @return true if the option was removed, false otherwise
+     */
+    public boolean removeValue(String value) {
+
+        if (this.choiceBox.getItems().contains(value)) {
+            this.choiceBox.getItems().remove(value);
+            return true;
+        } else {
+            return false;
+        }
 
     }
 
@@ -87,6 +112,7 @@ public class InteractiveTextField implements InputField {
      * @param targetPane the GridPane object to add the object to
      * @param targetRow the target row of the GridPane object to add the object to
      */
+    @Override
     public void applyPane(GridPane targetPane, int targetRow) {
         targetPane.add(this.containerPane,0,targetRow);
     }
@@ -96,11 +122,12 @@ public class InteractiveTextField implements InputField {
     }
 
     /**
-     * Gets the current text present within the TextField
+     * Gets the current text present within the ChoiceBox
      * @return the text present as a String
      */
+    @Override
     public String getInput() {
-        return this.textField.getText();
+        return this.choiceBox.getValue();
     }
 
     @Override
@@ -120,7 +147,7 @@ public class InteractiveTextField implements InputField {
 
     @Override
     public void setSpacing(int spacing) {
-        this.textField.setTranslateX(textFieldTranslateX+spacing);
+        this.choiceBox.setTranslateX(choiceBoxTranslateX+spacing);
         this.fieldHeader.setTranslateX(fieldHeaderTranslateX+(-1)*spacing);
         this.fieldDescription.setTranslateX(fieldDescTranslateX+(-1)*spacing);
     }
@@ -129,5 +156,4 @@ public class InteractiveTextField implements InputField {
     public void setDescWrappingWidth(int wrappingWidth) {
         this.fieldDescription.setWrappingWidth(wrappingWidth);
     }
-
 }

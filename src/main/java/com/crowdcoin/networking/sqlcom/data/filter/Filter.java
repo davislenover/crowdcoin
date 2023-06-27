@@ -1,12 +1,8 @@
 package com.crowdcoin.networking.sqlcom.data.filter;
 
-import com.crowdcoin.mainBoard.Interactive.InputField;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * A filter class to construct a specific SQL WHERE statement with a specific SQL operator
