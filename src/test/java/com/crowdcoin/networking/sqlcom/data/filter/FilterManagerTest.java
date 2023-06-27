@@ -27,7 +27,10 @@ class FilterManagerTest {
         }};
 
         // Create filter objects
-        Filter filter1 = new BetweenFilter("betweenTestColumn", 1, 5);
+        Filter filter1 = new BetweenFilter("betweenTestColumn", new ArrayList<>() {{
+            add(1);
+            add(5);
+        }});
         Filter filter2 = new InFilter("InFilterTestColumn",testStrings);
         Filter filter3 = new NotInFilter("NotInFilterTestColumn",testStrings2);
         Filter filter4 = new GeneralFilter("generalColumn", GeneralFilterOperators.GREATERTHAN,3);

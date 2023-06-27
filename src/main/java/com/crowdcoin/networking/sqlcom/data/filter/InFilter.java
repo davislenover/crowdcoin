@@ -21,7 +21,7 @@ public class InFilter implements Filter {
     /**
      * Creates an In filter
      * @param columnName the column name within the SQL database to search for specified values
-     * @param values the values to look for inside the column
+     * @param values the values to look for inside the column. Each value should be in its own index position
      * @Note Values will be converted to strings (as specified by the Object super class)
      */
     public InFilter(String columnName, Collection<Object> values) {

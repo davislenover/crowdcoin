@@ -3,11 +3,12 @@ package com.crowdcoin.networking.sqlcom.data.filter;
 import com.crowdcoin.mainBoard.Interactive.*;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
+import com.crowdcoin.networking.sqlcom.data.filter.build.BlankFilterBuilder;
+import com.crowdcoin.networking.sqlcom.data.filter.build.FilterBuildDirector;
+import com.crowdcoin.networking.sqlcom.data.filter.build.FilterOperatorTools;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.ExtendedFilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.GeneralFilterOperators;
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
@@ -55,8 +56,11 @@ public class FilterFXController {
 
                 // Downcast to choice box (to get value)
                 ChoiceBox choiceBox = (ChoiceBox) field;
-                // Call FilterFactory to construct blank Filter and call method within to apply fields needed to pane/window
-                FilterFactory.constructBlankFilter(FilterFactory.getOperatorEnum(choiceBox.getValue().toString())).applyInputFieldsOnWindow(newPane,newWindow);
+                // Create a new filter build director
+                FilterBuildDirector buildDirector = new FilterBuildDirector(new BlankFilterBuilder());
+                // Call buildDirector to construct blank Filter and call method within to apply fields needed to pane/window
+                System.out.println(FilterOperatorTools.getEnum(choiceBox.getValue().toString()));
+                buildDirector.createFilter(FilterOperatorTools.getEnum(choiceBox.getValue().toString()),null,null).applyInputFieldsOnWindow(newPane,newWindow);
                 // applyInput does not update the window (not it's responsibility) thus call update
                 newWindow.updateWindow();
 
@@ -80,8 +84,19 @@ public class FilterFXController {
                 }
 
                 if (areFieldsGood) {
+
+                    // Parse all input (i.e., organize into ordered list)
+                    List<Object> parsedInput = FilterOperatorTools.parseInput(pane.getAllInput());
+
+                    // Get the corresponding operator enum
+                    FilterOperators operator = FilterOperatorTools.getEnum((String) parsedInput.get(1));
+
+                    // Create a new filter build director
+                    // Get the corresponding builder by calling operator enum
+                    FilterBuildDirector buildDirector = new FilterBuildDirector(operator.getOperatorBuilder());
+
                     // Using input from InteractivePane, call factory to construct corresponding filter
-                    Filter filterToAdd = FilterFactory.constructFilter(pane.getAllInput());
+                    Filter filterToAdd = buildDirector.createFilter(operator,(String) parsedInput.get(0), (List<Object>) parsedInput.get(2));
                     System.out.println(filterToAdd.getFilterString());
                     //newWindow.closeWindow();
                 }

@@ -3,6 +3,8 @@ package com.crowdcoin.networking.sqlcom.data.filter.filterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.BetweenFilter;
 import com.crowdcoin.networking.sqlcom.data.filter.InFilter;
 import com.crowdcoin.networking.sqlcom.data.filter.NotInFilter;
+import com.crowdcoin.networking.sqlcom.data.filter.build.ExtendedFilterBuilder;
+import com.crowdcoin.networking.sqlcom.data.filter.build.FilterBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +37,11 @@ public enum ExtendedFilterOperators implements FilterOperators {
     @Override
     public Class getOperatorClass() {
         return lookupOperatorsClass.get(this);
+    }
+
+    @Override
+    public FilterBuilder getOperatorBuilder() {
+        return new ExtendedFilterBuilder();
     }
 
 

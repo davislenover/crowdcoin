@@ -2,6 +2,9 @@ package com.crowdcoin.networking.sqlcom.data.filter.filterOperators;
 
 import com.crowdcoin.networking.sqlcom.data.filter.Filter;
 import com.crowdcoin.networking.sqlcom.data.filter.GeneralFilter;
+import com.crowdcoin.networking.sqlcom.data.filter.build.ExtendedFilterBuilder;
+import com.crowdcoin.networking.sqlcom.data.filter.build.FilterBuilder;
+import com.crowdcoin.networking.sqlcom.data.filter.build.GeneralFilterBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +34,11 @@ public enum GeneralFilterOperators implements FilterOperators {
     @Override
     public Class getOperatorClass() {
         return GeneralFilter.class;
+    }
+
+    @Override
+    public FilterBuilder getOperatorBuilder() {
+        return new GeneralFilterBuilder();
     }
 
     public static List<String> getNames() {

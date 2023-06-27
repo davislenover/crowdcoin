@@ -9,6 +9,7 @@ import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.ExtendedFilte
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -23,14 +24,19 @@ public class BetweenFilter implements Filter {
     /**
      * Creates a Between Filter
      * @param columnName the name of the column with the SQL database to look for values in-between of
-     * @param value1 the first (smaller) value
-     * @param value2 the second (larger) value
+     * @param values the two values to use in the filter. The first value in the collection is the smaller and the second is the larger, all other values in the collection are ignored.
      * @Note Both values will be converted to strings (as specified by the Object super class)
      */
-    public BetweenFilter(String columnName, Object value1, Object value2) {
+    public BetweenFilter(String columnName, Collection<Object> values) {
         this.columnName = columnName;
-        this.value1 = value1;
-        this.value2 = value2;
+
+        // Place collection into list for extraction
+        List<Object> inputValues = new ArrayList<>() {{
+            addAll(values);
+        }};
+
+        this.value1 = inputValues.get(0);
+        this.value2 = inputValues.get(1);
     }
 
     /**

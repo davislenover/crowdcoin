@@ -1,6 +1,7 @@
 package com.crowdcoin.networking.sqlcom.data.filter.filterOperators;
 
 import com.crowdcoin.mainBoard.Interactive.InputField;
+import com.crowdcoin.networking.sqlcom.data.filter.build.FilterBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,5 +21,11 @@ public interface FilterOperators {
      * @return the Class of the given enum operator
      */
     Class getOperatorClass();
+
+    /**
+     * Gets the corresponding FilterBuilder for the given enum. Typically used to find the correct builder for a FilterBuilderDirector
+     * @return a FilterBuilder object
+     */
+    FilterBuilder getOperatorBuilder();
 
 }
