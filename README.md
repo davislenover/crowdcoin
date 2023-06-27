@@ -22,3 +22,4 @@ Status: Pending (P), Started (S), Blocked (B), Done (D)
 | F07 | Write to table from SQL database                   | Davis Lenover      | 2023-06-03 | 2023-06-07 | B (This is technically complete but may require more functionality) |
 | F08 | Pop-up Windows                                     | Davis Lenover      | 2023-06-05 | 2023-06-10 | D                                                                   |
 | F09 | Filters for Tabs                                   | Davis Lenover      | 2023-06-10 |            | S                                                                   |
+| F10 | Input Checking for Fields                          | Davis Lenover      | 2023-06-27 |            | S                                                                   |

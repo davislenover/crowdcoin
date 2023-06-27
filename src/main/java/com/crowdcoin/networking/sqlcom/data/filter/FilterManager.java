@@ -2,6 +2,7 @@ package com.crowdcoin.networking.sqlcom.data.filter;
 
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitMenuButton;
 
 import java.util.ArrayList;
 import java.util.Collection;

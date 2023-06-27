@@ -36,6 +36,7 @@ public class MainBoardController {
 
         CoinModel model = new CoinModel(12,"myDenomination","01/01/2002","myGrade","myCompany","01234","$101.93");
         SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coindata");
+        SQLTable table2 = new SQLTable(SQLData.getSqlConnection(),"coindata");
 
         // Dummy field action handler
         InteractiveFieldActionEvent dummyEvent = new InteractiveFieldActionEvent() {
@@ -75,7 +76,7 @@ public class MainBoardController {
         testPane.addButton("Button2", testHandler);
 
         // Test Tab 2
-        Tab testTab2 = new Tab(model,table,"testTab2");
+        Tab testTab2 = new Tab(model,table2,"testTab2");
         testTab2.setTabTableAction(new TabActionEvent() {
             @Override
             public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane) {

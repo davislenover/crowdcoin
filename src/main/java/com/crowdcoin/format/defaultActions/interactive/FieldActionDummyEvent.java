@@ -1,5 +1,7 @@
-package com.crowdcoin.mainBoard.Interactive;
+package com.crowdcoin.format.defaultActions.interactive;
 
+import com.crowdcoin.mainBoard.Interactive.InteractiveFieldActionEvent;
+import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Control;
 
