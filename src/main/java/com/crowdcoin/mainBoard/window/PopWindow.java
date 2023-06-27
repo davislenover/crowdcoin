@@ -131,5 +131,12 @@ public class PopWindow extends Application {
         this.parentPane.applyInteractivePane(this.fieldPane,this.buttonPane);
     }
 
+    /**
+     * Close window
+     */
+    public void closeWindow() {
+        this.stage.close();
+    }
+
 
 }
