@@ -9,7 +9,11 @@ import java.util.List;
 
 public class ValidatorManager implements Collection<InputValidator> {
 
-    private List<InputValidator> inputValidatorList = new ArrayList<>();
+    private List<InputValidator> inputValidatorList;
+
+    public ValidatorManager() {
+        this.inputValidatorList = new ArrayList<>();
+    }
 
     @Override
     public int size() {

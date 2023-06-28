@@ -1,5 +1,7 @@
 package com.crowdcoin.mainBoard.Interactive.input;
 
+import com.crowdcoin.exceptions.validation.ValidationException;
+import com.crowdcoin.mainBoard.Interactive.input.validation.InputValidator;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
@@ -51,5 +53,24 @@ public interface InputField {
      * @param wrappingWidth the width as an integer
      */
     void setDescWrappingWidth(int wrappingWidth);
+
+    /**
+     * Add a new input validator to the InputField
+     * @param validator the given validator as an InputValidator object
+     */
+    void addValidator(InputValidator validator);
+
+    /**
+     * Remove a validator at a given index
+     * @param index the index to request to remove. May throw IndexOutOfRangeException if improper index is passed
+     */
+    void removeValidator(int index);
+
+    /**
+     * Validates the current fields' input
+     * @return true if field input is validated
+     * @throws ValidationException if field input could not be validated, exception message will state where input failed
+     */
+    boolean validateField() throws ValidationException;
 
 }

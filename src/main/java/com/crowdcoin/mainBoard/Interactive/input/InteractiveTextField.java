@@ -1,7 +1,10 @@
 package com.crowdcoin.mainBoard.Interactive.input;
 
+import com.crowdcoin.exceptions.validation.ValidationException;
 import com.crowdcoin.mainBoard.Interactive.InteractiveFieldActionEvent;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
+import com.crowdcoin.mainBoard.Interactive.input.validation.InputValidator;
+import com.crowdcoin.mainBoard.Interactive.input.validation.ValidatorManager;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -37,6 +40,9 @@ public class InteractiveTextField implements InputField {
 
     // Info
     private InfoBox infoBox;
+
+    // Input validators
+    private ValidatorManager validatorManager;
 
     /**
      * Houses three node objects which are used in a single row on a GridPane
@@ -81,6 +87,9 @@ public class InteractiveTextField implements InputField {
 
         // Set default info box
         this.infoBox = new InfoBox("Default message");
+
+        // Create new input validator manager
+        this.validatorManager = new ValidatorManager();
 
     }
 
@@ -130,6 +139,28 @@ public class InteractiveTextField implements InputField {
     @Override
     public void setDescWrappingWidth(int wrappingWidth) {
         this.fieldDescription.setWrappingWidth(wrappingWidth);
+    }
+
+    @Override
+    public void addValidator(InputValidator validator) {
+        this.validatorManager.add(validator);
+    }
+
+    @Override
+    public void removeValidator(int index) {
+        int removalIndex = 0;
+        for(InputValidator validator : this.validatorManager) {
+            if (removalIndex == index) {
+                this.validatorManager.remove(validator);
+                break;
+            }
+            removalIndex++;
+        }
+    }
+
+    @Override
+    public boolean validateField() throws ValidationException {
+        return this.validatorManager.validateInput(this.getInput());
     }
 
 }
