@@ -19,6 +19,7 @@ import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.GeneralFilter
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
 import javafx.stage.Stage;
 
@@ -118,6 +119,13 @@ public class NewFilterPopWindow implements EventHandler {
 
                 filterButton.getItems().clear();
                 filterButton.getItems().addAll(filterManager.getFilterNodes());
+
+                // TODO make sure application of filters is on ONE tab
+                // TODO This is a very hacky way of applying filters
+                MenuItem newFilter = new MenuItem();
+                newFilter.setText("New Filter...");
+                newFilter.setOnAction(this);
+                filterButton.getItems().add(newFilter);
             }
 
 
