@@ -2,6 +2,8 @@ package com.crowdcoin.networking.sqlcom.data.filter;
 
 import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
 import com.crowdcoin.mainBoard.Interactive.*;
+import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextArea;
+import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.ExtendedFilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
@@ -70,8 +72,9 @@ public class InFilter implements Filter {
 
     @Override
     public void applyInputFieldsOnWindow(InteractivePane targetPane, PopWindow targetWindow) {
-        targetPane.addAreaField("Values","All values IN the given column separated by new lines",new FieldActionDummyEvent());
-        targetPane.getInputField(targetPane.getFieldsSize()-1).getInfoBox().setInfoText("This field cannot be empty!");
+        InteractiveTextArea field = new InteractiveTextArea("Values","All values IN the given column separated by new lines",targetPane,new FieldActionDummyEvent());
+        field.addValidator(new LengthValidator(1));
+        targetPane.addInputField(field);
         targetWindow.setWindowHeight(350);
     }
 

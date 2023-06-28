@@ -1,8 +1,11 @@
 package com.crowdcoin.format.defaultActions.filter;
 
+import com.crowdcoin.exceptions.validation.ValidationException;
 import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
+import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
+import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.filter.Filter;
@@ -29,6 +32,11 @@ public class NewFilterPopWindow implements EventHandler {
     private FilterManager filterManager;
     private SplitMenuButton filterButton;
 
+    private List<String> allOperators = new ArrayList<>() {{
+        addAll(GeneralFilterOperators.getNames());
+        addAll(ExtendedFilterOperators.getNames());
+    }};
+
     public NewFilterPopWindow(SplitMenuButton filterButton, FilterManager filterManager, SQLTable table) {
         this.filterButton = filterButton;
         this.filterManager = filterManager;
@@ -42,16 +50,15 @@ public class NewFilterPopWindow implements EventHandler {
         PopWindow newWindow = new PopWindow("New Filter",this.table);
         InteractivePane newPane = newWindow.getWindowPane();
 
-        // Add fields
-        newPane.addChoiceField("Target Column","The column to apply the filter to",new FieldActionDummyEvent(),this.table.getColumnNames().toArray(new String[0]));
-        newPane.getInputField(newPane.getFieldsSize()-1).getInfoBox().setInfoText("This field cannot be empty!");
-        List<String> allOperators = new ArrayList<>() {{
-            addAll(GeneralFilterOperators.getNames());
-            addAll(ExtendedFilterOperators.getNames());
-        }};
+        // Add target column name field
+        InteractiveChoiceBox choiceBoxColumns = new InteractiveChoiceBox("Target column","The column to apply the filter to",newPane,new FieldActionDummyEvent());
+        choiceBoxColumns.addAllValues(this.table.getColumnNames());
+        choiceBoxColumns.addValidator(new LengthValidator(1));
+        newPane.addInputField(choiceBoxColumns);
 
+        // Add operation field
         // Operation field requires more logic as arbitrary logic will be to be invoked given specific operator selection
-        newPane.addChoiceField("Operation", "Operation applied to target column to compare values", (action,field,pane) -> {
+        InteractiveChoiceBox choiceBoxOperation = new InteractiveChoiceBox("Operation","Operation applied to target column to compare values",newPane,(action,field,pane) -> {
 
             // Reset to two fields in pane (to remove potentially old fields from previous filter operator selection)
             newPane.retainAllFields(new ArrayList<>() {{
@@ -69,21 +76,24 @@ public class NewFilterPopWindow implements EventHandler {
             newWindow.updateWindow();
 
 
-        },allOperators.toArray(new String[0]));
+        });
 
-        newPane.getInputField(newPane.getFieldsSize()-1).getInfoBox().setInfoText("This field cannot be empty!");
+        choiceBoxOperation.addAllValues(allOperators);
+        choiceBoxOperation.addValidator(new LengthValidator(1));
+        newPane.addInputField(choiceBoxOperation);
 
         newPane.addButton("OK", ((actionEvent, button, pane) -> {
 
             boolean areFieldsGood = true;
 
-            for (Iterator<InputField> it = pane.getIterator(); it.hasNext();) {
-                InputField field = it.next();
-                if (field.getInput() == null || field.getInput().isBlank()) {
-                    areFieldsGood = false;
-                    field.showInfo();
-                } else {
+            for (InputField field : newPane) {
+                try {
+                    field.validateField();
                     field.hideInfo();
+                } catch (ValidationException e) {
+                    field.getInfoBox().setInfoText(e.getMessage());
+                    field.showInfo();
+                    areFieldsGood = false;
                 }
             }
 

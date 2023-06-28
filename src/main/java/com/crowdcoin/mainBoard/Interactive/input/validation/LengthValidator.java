@@ -18,8 +18,12 @@ public class LengthValidator implements InputValidator {
     @Override
     public boolean isInputValid(String input) throws ValidationException {
 
-        if (input.length() <= this.strLength) {
-            return true;
+        try {
+            if (input.length() >= this.strLength) {
+                return true;
+            }
+        } catch (Exception e) {
+
         }
 
         throw new ValidationException(invalidMessage + strLength + " or more characters long");

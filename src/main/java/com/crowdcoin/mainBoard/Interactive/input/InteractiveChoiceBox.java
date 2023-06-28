@@ -103,6 +103,22 @@ public class InteractiveChoiceBox implements InputField {
     }
 
     /**
+     * Add options (as Strings) to ChoiceBox. Option cannot be named the same as an option already added
+     * @param values the options to add
+     * @return true if the options were added, false otherwise
+     */
+    public boolean addAllValues(Collection<String> values) {
+        // First check if any values already exist within the ChoiceBox
+        for (String value : values) {
+            if (this.choiceBox.getItems().contains(value)) {
+                // If yes, return, nothing will be added
+                return false;
+            }
+        }
+        return this.choiceBox.getItems().addAll(values);
+    }
+
+    /**
      * Remove an option (as a String) from ChoiceBox
      * @param value the option to remove
      * @return true if the option was removed, false otherwise

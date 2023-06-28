@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-public class InteractivePane {
+public class InteractivePane implements Iterable<InputField> {
 
     // The idea is to have some object which can be passed into a GUI that defines how said GUI interacts with the user
     private List<InputField> fieldsList;
@@ -272,8 +272,8 @@ public class InteractivePane {
      * Gets the iterator for all InputFields
      * @return an Iterator object
      */
-    public Iterator<InputField> getIterator() {
+    @Override
+    public Iterator<InputField> iterator() {
         return this.fieldsList.iterator();
     }
-
 }
