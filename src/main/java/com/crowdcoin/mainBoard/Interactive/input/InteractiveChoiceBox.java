@@ -13,6 +13,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
 import java.util.Collection;
+import java.util.List;
 
 public class InteractiveChoiceBox implements InputField {
 
@@ -82,6 +83,49 @@ public class InteractiveChoiceBox implements InputField {
 
         // Create new input validator manager
         this.validatorManager = new ValidatorManager();
+
+    }
+
+    /**
+     * Houses three node objects which are used in a single row on a GridPane
+     * @param header the header for the column
+     * @param description the description of what the ChoiceBox field (user input) is used for
+     * @param values add any values into the choice box
+     * @Note this is the lower level object used in InteractiveTabPane's
+     */
+    public InteractiveChoiceBox(String header, String description, InteractiveFieldActionEvent actionEvent, String ... values) {
+
+        this.choiceBox = new ChoiceBox<>();
+        this.fieldHeader = new Text(header);
+        this.fieldDescription = new Text(description);
+
+        this.containerPane = new StackPane();
+        this.containerPane.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
+        this.containerPane.getChildren().addAll(this.choiceBox,this.fieldHeader,this.fieldDescription);
+
+        this.choiceBox.setMaxWidth(choiceBoxWidth);
+        this.choiceBox.setTranslateX(choiceBoxTranslateX);
+
+        this.containerPane.setAlignment(this.fieldHeader, Pos.CENTER_LEFT);
+        this.fieldHeader.setTranslateY(fieldHeaderTranslateY);
+        this.fieldHeader.setTranslateX(fieldHeaderTranslateX);
+        this.fieldHeader.setWrappingWidth(fieldHeaderWrappingWidth);
+
+        this.containerPane.setAlignment(this.fieldDescription,Pos.CENTER_LEFT);
+        this.fieldDescription.setTranslateX(fieldDescTranslateX);
+        this.fieldDescription.setWrappingWidth(fieldDescWrappingWidth);
+
+        this.interactiveFieldActionEvent = actionEvent;
+        this.choiceBox.setOnAction(event -> this.interactiveFieldActionEvent.fieldActionHandler(event,this.choiceBox,this.parentPane));
+
+        // Set default info box
+        this.infoBox = new InfoBox("Default message");
+
+        // Create new input validator manager
+        this.validatorManager = new ValidatorManager();
+
+        // Add values
+        this.addAllValues(List.of(values));
 
     }
 
