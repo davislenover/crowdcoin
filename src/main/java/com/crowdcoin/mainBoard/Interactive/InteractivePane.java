@@ -32,22 +32,6 @@ public class InteractivePane implements Iterable<InputField> {
     }
 
     /**
-     * Add a field to the GridPane. When applyInteractivePane() is called, all fields added will be applied to the corresponding field GridPane
-     * @param header the top text to appear with the TextField
-     * @param description the text below the header. Typically used to convey what the TextField is used for
-     * @param eventHandler the class containing an invokable method by the field to perform arbitrary logic upon firing of an ActionEvent by the field. Intended to allow users to execute arbitrary logic for each button and not singular unified logic
-     * @return true if a new field was added, false otherwise
-     * @Note by convention, Fields are added above the Button Grid vertically
-     */
-    public boolean addField(String header, String description, InteractiveFieldActionEvent eventHandler) {
-
-        // Create a new InteractiveTextField object containing the corresponding header and description
-        InputField newField = new InteractiveTextField(header,description,this,eventHandler);
-        // Attempt to store in list
-        return this.fieldsList.add(newField);
-    }
-
-    /**
      * Gets the size (count) of all InputFields within the InteractivePane
      * @return the size as an integer
      */
@@ -56,12 +40,17 @@ public class InteractivePane implements Iterable<InputField> {
     }
 
     /**
-     * Add an already created InputField to the InteractivePane
+     * Add an InputField to the InteractivePane. Sets the parent pane of the InputField to this instance of InteractivePane
      * @param newField the InputField object to add
      * @return true if the InputField object was added, false otherwise
      */
     public boolean addInputField(InputField newField) {
-        return this.fieldsList.add(newField);
+
+        if (this.fieldsList.add(newField)) {
+            newField.setInteractivePane(this);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -70,7 +59,15 @@ public class InteractivePane implements Iterable<InputField> {
      * @return true if the list was changed as a result of InputField objects being added, false otherwise
      */
     public boolean addAllInputFields(Collection<InputField> newFields) {
-        return this.fieldsList.addAll(newFields);
+
+        if (this.fieldsList.addAll(newFields)) {
+            for (InputField field : newFields) {
+                field.setInteractivePane(this);
+            }
+            return true;
+        }
+        return false;
+
     }
 
     /**
@@ -89,7 +86,11 @@ public class InteractivePane implements Iterable<InputField> {
      * @param fieldsToRetain the InputField collection to retain
      */
     public void retainAllFields(Collection<InputField> fieldsToRetain) {
-        this.fieldsList.retainAll(fieldsToRetain);
+        if (this.fieldsList.retainAll(fieldsToRetain)) {
+            for(InputField field : fieldsToRetain) {
+                field.setInteractivePane(this);
+            }
+        }
     }
 
     /**
@@ -105,39 +106,6 @@ public class InteractivePane implements Iterable<InputField> {
         }
 
         return this.fieldsList.get(fieldIndex);
-
-    }
-
-    /**
-     * Add a field to the GridPane (Choice box). When applyInteractivePane() is called, all fields added will be applied to the corresponding field GridPane
-     * @param header the top text to appear with the ChoiceBox
-     * @param description the text below the header. Typically used to convey what the ChoiceBox is used for
-     * @param eventHandler the class containing an invokable method by the field to perform arbitrary logic upon firing of an ActionEvent by the field. Intended to allow users to execute arbitrary logic for each button and not singular unified logic
-     * @param options the options ChoiceBox will display in its dropdown for the user to select
-     * @return true if a new field was added, false otherwise
-     */
-    public boolean addChoiceField(String header, String description, InteractiveFieldActionEvent eventHandler, String ... options) {
-
-        InteractiveChoiceBox newField = new InteractiveChoiceBox(header,description,this, eventHandler);
-        // Add all options to ChoiceBox
-        for (String option : options) {
-            newField.addValue(option);
-        }
-        return this.fieldsList.add(newField);
-
-    }
-
-    /**
-     * Add a field to the GridPane (Text Area). When applyInteractivePane() is called, all fields added will be applied to the corresponding field GridPane
-     * @param header the top text to appear with the TextArea
-     * @param description the text below the header. Typically used to convey what the TextArea is used for
-     * @param eventHandler the class containing an invokable method by the field to perform arbitrary logic upon firing of an ActionEvent by the field. Intended to allow users to execute arbitrary logic for each button and not singular unified logic
-     * @return true if a new field was added, false otherwise
-     */
-    public boolean addAreaField(String header, String description, InteractiveFieldActionEvent eventHandler) {
-
-        InteractiveTextArea newAreaField = new InteractiveTextArea(header,description,this, eventHandler);
-        return this.fieldsList.add(newAreaField);
 
     }
 

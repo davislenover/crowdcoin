@@ -51,7 +51,7 @@ public class InteractiveTextArea implements InputField {
      * @param description the description of what the text area (user input) is used for
      * @Note this is the lower level object used in InteractivePane's
      */
-    public InteractiveTextArea(String header, String description, InteractivePane pane, InteractiveFieldActionEvent actionEvent) {
+    public InteractiveTextArea(String header, String description, InteractiveFieldActionEvent actionEvent) {
 
         this.textArea = new TextArea();
         this.fieldHeader = new Text(header);
@@ -73,11 +73,10 @@ public class InteractiveTextArea implements InputField {
         this.fieldDescription.setTranslateX(fieldDescTranslateX);
         this.fieldDescription.setWrappingWidth(fieldDescWrappingWidth);
 
-        this.parentPane = pane;
         this.interactiveFieldActionEvent = actionEvent;
         this.textArea.textProperty().addListener(observable -> {
             // TODO Create custom action event
-            actionEvent.fieldActionHandler(new ActionEvent(),textArea,pane);
+            actionEvent.fieldActionHandler(new ActionEvent(),textArea,this.parentPane);
         });
 
         // Set default info box
@@ -158,6 +157,11 @@ public class InteractiveTextArea implements InputField {
     @Override
     public boolean validateField() throws ValidationException {
         return this.validatorManager.validateInput(this.getInput());
+    }
+
+    @Override
+    public void setInteractivePane(InteractivePane pane) {
+        this.parentPane = pane;
     }
 
 }

@@ -59,7 +59,7 @@ public class GeneralFilter implements Filter {
 
     @Override
     public void applyInputFieldsOnWindow(InteractivePane targetPane, PopWindow targetWindow) {
-        InputField field = new InteractiveTextField("Value","The value used in conjunction with the operator",targetPane,new FieldActionDummyEvent());
+        InputField field = new InteractiveTextField("Value","The value used in conjunction with the operator",new FieldActionDummyEvent());
         field.addValidator(new LengthValidator(1));
         targetPane.addInputField(field);
         targetWindow.setWindowHeight(350);

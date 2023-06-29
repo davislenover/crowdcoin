@@ -52,14 +52,14 @@ public class NewFilterPopWindow implements EventHandler {
         InteractivePane newPane = newWindow.getWindowPane();
 
         // Add target column name field
-        InteractiveChoiceBox choiceBoxColumns = new InteractiveChoiceBox("Target column","The column to apply the filter to",newPane,new FieldActionDummyEvent());
+        InteractiveChoiceBox choiceBoxColumns = new InteractiveChoiceBox("Target column","The column to apply the filter to",new FieldActionDummyEvent());
         choiceBoxColumns.addAllValues(this.table.getColumnNames());
         choiceBoxColumns.addValidator(new LengthValidator(1));
         newPane.addInputField(choiceBoxColumns);
 
         // Add operation field
         // Operation field requires more logic as arbitrary logic will be to be invoked given specific operator selection
-        InteractiveChoiceBox choiceBoxOperation = new InteractiveChoiceBox("Operation","Operation applied to target column to compare values",newPane,(action,field,pane) -> {
+        InteractiveChoiceBox choiceBoxOperation = new InteractiveChoiceBox("Operation","Operation applied to target column to compare values",(action,field,pane) -> {
 
             // Reset to two fields in pane (to remove potentially old fields from previous filter operator selection)
             newPane.retainAllFields(new ArrayList<>() {{

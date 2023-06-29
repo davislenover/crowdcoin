@@ -50,7 +50,7 @@ public class InteractiveTextField implements InputField {
      * @param description the description of what the text field (user input) is used for
      * @Note this is the lower level object used in InteractivePane's
      */
-    public InteractiveTextField(String header, String description, InteractivePane pane, InteractiveFieldActionEvent actionEvent) {
+    public InteractiveTextField(String header, String description, InteractiveFieldActionEvent actionEvent) {
 
         // All these objects are housed in a parent pane, a StackPane for organization
         this.textField = new TextField();
@@ -81,7 +81,6 @@ public class InteractiveTextField implements InputField {
         this.fieldDescription.setWrappingWidth(fieldDescWrappingWidth);
 
         // Set event logic
-        this.parentPane = pane;
         this.interactiveFieldActionEvent = actionEvent;
         this.textField.setOnAction(event -> this.interactiveFieldActionEvent.fieldActionHandler(event,this.textField,this.parentPane));
 
@@ -161,6 +160,11 @@ public class InteractiveTextField implements InputField {
     @Override
     public boolean validateField() throws ValidationException {
         return this.validatorManager.validateInput(this.getInput());
+    }
+
+    @Override
+    public void setInteractivePane(InteractivePane pane) {
+        this.parentPane = pane;
     }
 
 }

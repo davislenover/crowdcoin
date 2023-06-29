@@ -52,7 +52,7 @@ public class InteractiveChoiceBox implements InputField {
      * @param description the description of what the ChoiceBox field (user input) is used for
      * @Note this is the lower level object used in InteractiveTabPane's
      */
-    public InteractiveChoiceBox(String header, String description, InteractivePane pane, InteractiveFieldActionEvent actionEvent) {
+    public InteractiveChoiceBox(String header, String description, InteractiveFieldActionEvent actionEvent) {
 
         this.choiceBox = new ChoiceBox<>();
         this.fieldHeader = new Text(header);
@@ -74,7 +74,6 @@ public class InteractiveChoiceBox implements InputField {
         this.fieldDescription.setTranslateX(fieldDescTranslateX);
         this.fieldDescription.setWrappingWidth(fieldDescWrappingWidth);
 
-        this.parentPane = pane;
         this.interactiveFieldActionEvent = actionEvent;
         this.choiceBox.setOnAction(event -> this.interactiveFieldActionEvent.fieldActionHandler(event,this.choiceBox,this.parentPane));
 
@@ -204,5 +203,10 @@ public class InteractiveChoiceBox implements InputField {
     @Override
     public boolean validateField() throws ValidationException {
         return this.validatorManager.validateInput(this.getInput());
+    }
+
+    @Override
+    public void setInteractivePane(InteractivePane pane) {
+        this.parentPane = pane;
     }
 }

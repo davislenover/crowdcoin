@@ -1,6 +1,7 @@
 package com.crowdcoin.mainBoard.Interactive.input;
 
 import com.crowdcoin.exceptions.validation.ValidationException;
+import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.validation.InputValidator;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -72,5 +73,12 @@ public interface InputField {
      * @throws ValidationException if field input could not be validated, exception message will state where input failed
      */
     boolean validateField() throws ValidationException;
+
+
+    /**
+     * Sets the InteractivePane the field belongs to. This pane will be passed on InteractiveFieldActionEvent trigger
+     * @param pane
+     */
+    void setInteractivePane(InteractivePane pane);
 
 }

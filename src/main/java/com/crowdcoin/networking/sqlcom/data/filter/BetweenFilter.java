@@ -72,11 +72,11 @@ public class BetweenFilter implements Filter {
 
     @Override
     public void applyInputFieldsOnWindow(InteractivePane targetPane, PopWindow targetWindow) {
-        InputField field = new InteractiveTextField("First value","The lower value within the between operator",targetPane,new FieldActionDummyEvent());
+        InputField field = new InteractiveTextField("First value","The lower value within the between operator",new FieldActionDummyEvent());
         field.addValidator(new LengthValidator(1));
         field.addValidator(new TypeValidator(Integer.class));
         targetPane.addInputField(field);
-        InputField field2 = new InteractiveTextField("Second value","The higher value within the between operator",targetPane,new FieldActionDummyEvent());
+        InputField field2 = new InteractiveTextField("Second value","The higher value within the between operator",new FieldActionDummyEvent());
         field2.addValidator(new LengthValidator(1));
         field2.addValidator(new TypeValidator(Integer.class));
         // Specify comparator with reference to other field to compare values

@@ -72,7 +72,7 @@ public class NotInFilter implements Filter {
 
     @Override
     public void applyInputFieldsOnWindow(InteractivePane targetPane, PopWindow targetWindow) {
-        InteractiveTextArea field = new InteractiveTextArea("Values","All values NOT IN the given column separated by new lines",targetPane,new FieldActionDummyEvent());
+        InteractiveTextArea field = new InteractiveTextArea("Values","All values NOT IN the given column separated by new lines",new FieldActionDummyEvent());
         field.addValidator(new LengthValidator(1));
         targetPane.addInputField(field);
         targetWindow.setWindowHeight(350);
