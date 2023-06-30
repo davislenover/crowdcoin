@@ -16,7 +16,7 @@ public class FilterFXController {
      * @param filterButton the target SplitMenuButton
      * @param filterManager the FilterManager object to get the Filter objects from
      */
-    public void applyFilters(SplitMenuButton filterButton, FilterManager filterManager, SQLTable table, Tab tabInvoking) {
+    public void applyFilters(SplitMenuButton filterButton, FilterManager filterManager, SQLTable table) {
         filterButton.getItems().clear();
         filterButton.getItems().addAll(filterManager.getFilterNodes());
 

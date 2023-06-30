@@ -10,10 +10,8 @@ public class InteractiveWindowPane extends InteractivePane {
     /**
      * Creates an InteractiveWindowPane object. InteractiveWindowPane's define how a user acts with a specific pop up window (by convention).
      * This object is typically used in tandem with a PopWindow object (as a PopWindow handles invocation of applying InteractiveWindowPane to GridPanes)
-     * @param table the SQLTable object which communicates with the SQL database, typically defined by the PopWindow
      */
-    public InteractiveWindowPane(SQLTable table) {
-        super(table);
+    public InteractiveWindowPane() {
     }
 
     /**

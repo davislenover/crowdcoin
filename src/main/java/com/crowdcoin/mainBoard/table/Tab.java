@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Note Tabs are observable as they can change things that other classes may need to react to, such as application of new filters
-public class Tab implements Observable<Tab> {
+public class Tab implements Observable<Tab>, Observer<SQLTable> {
 
     private ColumnContainer columnContainer;
     private ModelClass modelClass;
@@ -49,7 +49,7 @@ public class Tab implements Observable<Tab> {
     private double totalWidth;
 
     // Observer list
-    private List<Observer> subscriptionList;
+    private List<Observer<Tab>> subscriptionList;
 
     /**
      * Create a Tab object. Similar to a tab in a web browser, a Tab object stores a "state" of the TableView. Upon creation, a blank InteractiveTabPane is available for use
@@ -67,7 +67,7 @@ public class Tab implements Observable<Tab> {
         this.factory = new ModelClassFactory();
         this.sqlTable = sqlTable;
         this.filterController = new FilterFXController();
-        this.interactiveTabPane = new InteractiveTabPane(sqlTable);
+        this.interactiveTabPane = new InteractiveTabPane();
         // Build model class from model reference
         this.modelClass = this.factory.build(classToModel);
 
@@ -88,6 +88,10 @@ public class Tab implements Observable<Tab> {
 
         // The "subscription list" will be defined by an ArrayList
         this.subscriptionList = new ArrayList<>();
+
+        // Tab will observe the SQLTable for changes
+        // TODO the only problem I have with this is that this may cause a form of memory leak. SQLTable currently has no way of knowing when a Tab is deleted thus it will hold the Tab reference as an observer indefinitely
+        sqlTable.addObserver(this);
 
     }
 
@@ -203,7 +207,7 @@ public class Tab implements Observable<Tab> {
         this.interactiveTabPane.applyInteractivePane(fieldPane, buttonPane);
 
         // Apply filters
-        this.filterController.applyFilters(filterButton,this.sqlTable.getFilterManager(),this.sqlTable,this);
+        this.filterController.applyFilters(filterButton,this.sqlTable.getFilterManager(),this.sqlTable);
 
     }
 
@@ -248,5 +252,12 @@ public class Tab implements Observable<Tab> {
         for (Observer<Tab> observer : this.subscriptionList) {
             observer.update(this);
         }
+    }
+
+    // Tab will watch for changes to the SQLTable (mainly for Filter changes)
+    @Override
+    public void update(SQLTable passThroughObject) {
+        // Notify all Tab observers that this tab updated it's SQLTable
+        notifyObservers();
     }
 }

@@ -121,7 +121,7 @@ public class MainBoardController {
         test1.addOption(new MenuOption("New Tab Test", p -> testBar.addTab(testTab)));
         test1.addOption(new MenuOption("New Entry",p-> {
             try {
-                PopWindow window = new PopWindow("New Entry",table);
+                PopWindow window = new PopWindow("New Entry");
                 window.getWindowPane().addButton("Window button", (test2,test3,test4)-> System.out.println("Hello Window!"));
                 window.getWindowPane().addButton("Window button2", (test2,test3,test4)-> {System.out.println("Hello Window!");
                     InteractiveWindowPane testWindowPane = (InteractiveWindowPane) test4;

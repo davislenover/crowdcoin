@@ -101,8 +101,10 @@ public class TabBar implements Observer<Tab> {
     public boolean removeTab(String tabID) {
 
         if (this.tabIDMap.containsKey(tabID)) {
+
+            Tab tabToRemove = this.tabIDMap.get(tabID);
             // Remove TabBar from tab observer subscription list
-            this.tabIDMap.get(tabID).removeObserver(this);
+            tabToRemove.removeObserver(this);
             this.tabIDMap.remove(tabID);
             return true;
 
@@ -155,5 +157,35 @@ public class TabBar implements Observer<Tab> {
     @Override
     public void update(Tab passThroughObject) {
 
+        try {
+
+            String tabID = passThroughObject.getTabID();
+
+            // Check if the Tab is currently selected
+            if (this.controlBar.getSelectionModel().getSelectedItem().getId().equals(tabID)) {
+                // Force call openTab() (as onSelectionChanged event would not be triggered
+                this.openTab(tabID);
+            } else {
+                // If not selected, select it
+                // This will trigger the onSelectionChanged event and thus, call openTab()
+                this.controlBar.getSelectionModel().select(this.getJavaFXTab(tabID));
+            }
+
+        } catch (Exception e) {
+            // TODO add exception handling
+        }
+
     }
+
+    // Method to select the corresponding JavaFX Tab object given a tabID. Both a crowd-coin Tab object and JavaFX Tab object will share the same ID if the crowd-coin object is within this instance of TabBar
+    private javafx.scene.control.Tab getJavaFXTab(String tabID) {
+        for(javafx.scene.control.Tab javaFXTab : this.controlBar.getTabs()) {
+            if (javaFXTab.getId().equals(tabID)) {
+                return javaFXTab;
+            }
+
+        }
+        return null;
+    }
+
 }

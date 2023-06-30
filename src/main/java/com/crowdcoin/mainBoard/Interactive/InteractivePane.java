@@ -19,16 +19,13 @@ public class InteractivePane implements Iterable<InputField> {
     // The idea is to have some object which can be passed into a GUI that defines how said GUI interacts with the user
     private List<InputField> fieldsList;
     private List<InteractiveButton> buttonList;
-    private SQLTable sqlTable;
 
     /**
      * Creates an InteractivePane object. InteractivePane's define how a GUI interacts with a user (by convention). This is intended as a parent class (framework) for child (specific) classes
-     * @param table the SQLTable object which communicates with the SQL database, typically defined by the Tab
      */
-    public InteractivePane(SQLTable table) {
+    public InteractivePane() {
         this.fieldsList = new ArrayList<>();
         this.buttonList = new ArrayList<>();
-        this.sqlTable = table;
     }
 
     /**
@@ -226,14 +223,6 @@ public class InteractivePane implements Iterable<InputField> {
 
         return returnList;
 
-    }
-
-    /**
-     * Gets the corresponding SQLTable object for communicating with the SQL database
-     * @return SQLTable object
-     */
-    public SQLTable getSqlTable() {
-        return this.sqlTable;
     }
 
     /**

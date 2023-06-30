@@ -49,7 +49,7 @@ public class NewFilterPopWindow implements EventHandler {
     public void handle(Event event) {
 
         // Create a new window and get it's InteractivePane
-        PopWindow newWindow = new PopWindow("New Filter",this.table);
+        PopWindow newWindow = new PopWindow("New Filter");
         InteractivePane newPane = newWindow.getWindowPane();
 
         // Add target column name field
@@ -118,7 +118,9 @@ public class NewFilterPopWindow implements EventHandler {
                 filterManager.add(filterToAdd);
                 newWindow.closeWindow();
 
-                // TODO Call some sort of update tab method which refreshes the tab
+                // Call sql notify method to update
+                // This will trigger tab to notify TabBar to "refresh" the Tab
+                this.table.notifyObservers();
             }
 
 

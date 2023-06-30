@@ -11,10 +11,8 @@ public class InteractiveTabPane extends InteractivePane {
     /**
      * Creates an InteractiveTabPane object. InteractiveTabPane's define how a Tab interacts with the rightmost display beside the TableView (by convention).
      * This object is typically used in tandem with a Tab object (as a Tab handles invocation of applying InteractiveTabPane to GridPanes)
-     * @param table the SQLTable object which communicates with the SQL database, typically defined by the Tab
      */
-    public InteractiveTabPane(SQLTable table) {
-        super(table);
+    public InteractiveTabPane() {
     }
 
     /**

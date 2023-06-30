@@ -25,9 +25,9 @@ public class PopWindow extends Application {
     private Scene scene;
     private VBox root;
 
-    public PopWindow(String windowName, SQLTable table) {
+    public PopWindow(String windowName) {
         this.windowName = windowName;
-        this.parentPane = new InteractiveWindowPane(table);
+        this.parentPane = new InteractiveWindowPane();
 
         this.fieldPane = new GridPane();
         this.buttonPane = new GridPane();
