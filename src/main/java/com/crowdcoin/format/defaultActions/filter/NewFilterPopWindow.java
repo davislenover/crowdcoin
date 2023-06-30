@@ -10,6 +10,7 @@ import com.crowdcoin.mainBoard.table.Tab;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.filter.Filter;
+import com.crowdcoin.networking.sqlcom.data.filter.FilterFXController;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterManager;
 import com.crowdcoin.networking.sqlcom.data.filter.build.BlankFilterBuilder;
 import com.crowdcoin.networking.sqlcom.data.filter.build.FilterBuildDirector;
@@ -33,16 +34,18 @@ public class NewFilterPopWindow implements EventHandler {
     private SQLTable table;
     private FilterManager filterManager;
     private SplitMenuButton filterButton;
+    private FilterFXController filterController;
 
     private List<String> allOperators = new ArrayList<>() {{
         addAll(GeneralFilterOperators.getNames());
         addAll(ExtendedFilterOperators.getNames());
     }};
 
-    public NewFilterPopWindow(SplitMenuButton filterButton, FilterManager filterManager, SQLTable table) {
+    public NewFilterPopWindow(SplitMenuButton filterButton, FilterManager filterManager, SQLTable table, FilterFXController filterController) {
         this.filterButton = filterButton;
         this.filterManager = filterManager;
         this.table = table;
+        this.filterController = filterController;
     }
 
     @Override
@@ -118,9 +121,9 @@ public class NewFilterPopWindow implements EventHandler {
                 filterManager.add(filterToAdd);
                 newWindow.closeWindow();
 
-                // Call sql notify method to update
+                // Call controller notify method to update
                 // This will trigger tab to notify TabBar to "refresh" the Tab
-                this.table.notifyObservers();
+                this.filterController.notifyObservers();
             }
 
 

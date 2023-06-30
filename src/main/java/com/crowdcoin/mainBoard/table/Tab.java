@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Note Tabs are observable as they can change things that other classes may need to react to, such as application of new filters
-public class Tab implements Observable<Tab>, Observer<SQLTable> {
+public class Tab implements Observable<Tab>, Observer<FilterFXController> {
 
     private ColumnContainer columnContainer;
     private ModelClass modelClass;
@@ -89,9 +89,8 @@ public class Tab implements Observable<Tab>, Observer<SQLTable> {
         // The "subscription list" will be defined by an ArrayList
         this.subscriptionList = new ArrayList<>();
 
-        // Tab will observe the SQLTable for changes
-        // TODO the only problem I have with this is that this may cause a form of memory leak. SQLTable currently has no way of knowing when a Tab is deleted thus it will hold the Tab reference as an observer indefinitely
-        sqlTable.addObserver(this);
+        // Tab will observe the filter controller for changes to filters (such as if a filter is being added)
+        this.filterController.addObserver(this);
 
     }
 
@@ -256,7 +255,7 @@ public class Tab implements Observable<Tab>, Observer<SQLTable> {
 
     // Tab will watch for changes to the SQLTable (mainly for Filter changes)
     @Override
-    public void update(SQLTable passThroughObject) {
+    public void update(FilterFXController passThroughObject) {
         // Notify all Tab observers that this tab updated it's SQLTable
         notifyObservers();
     }

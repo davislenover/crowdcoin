@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-public class SQLTable implements Observable<SQLTable> {
+public class SQLTable {
 
     private String tableName;
     // Within the String array (inside the list), index 0 corresponds to table name, 1 is data type as specified in SQL table, 2 specifies the ordinal position
@@ -24,8 +24,6 @@ public class SQLTable implements Observable<SQLTable> {
     private List<String[]> tableColumns;
     private SQLConnection connection;
     private FilterManager filterManager;
-
-    private List<Observer<SQLTable>> subscriptionList;
 
     /**
      * An object to get information from an SQL database
@@ -41,7 +39,6 @@ public class SQLTable implements Observable<SQLTable> {
         this.tableName = tableName;
         getTableData();
         this.filterManager = new FilterManager();
-        this.subscriptionList = new ArrayList<>();
 
     }
 
@@ -426,25 +423,5 @@ public class SQLTable implements Observable<SQLTable> {
      */
     public FilterManager getFilterManager() {
         return this.filterManager;
-    }
-
-    @Override
-    public boolean addObserver(Observer<SQLTable> observer) {
-        if (!this.subscriptionList.contains(observer)) {
-            return this.subscriptionList.add(observer);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean removeObserver(Observer<SQLTable> observer) {
-        return this.subscriptionList.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-        for (Observer<SQLTable> observer : this.subscriptionList) {
-            observer.update(this);
-        }
     }
 }
