@@ -19,9 +19,11 @@ import javafx.scene.text.Text;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Tab {
+// Note Tabs are observable as they can change things that other classes may need to react to, such as application of new filters
+public class Tab implements Observable<Tab> {
 
     private ColumnContainer columnContainer;
     private ModelClass modelClass;
@@ -45,6 +47,9 @@ public class Tab {
 
     private int defaultNumberOfRows = 10;
     private double totalWidth;
+
+    // Observer list
+    private List<Observer> subscriptionList;
 
     /**
      * Create a Tab object. Similar to a tab in a web browser, a Tab object stores a "state" of the TableView. Upon creation, a blank InteractiveTabPane is available for use
@@ -80,6 +85,9 @@ public class Tab {
         setupTab();
 
         this.tabID = tabID;
+
+        // The "subscription list" will be defined by an ArrayList
+        this.subscriptionList = new ArrayList<>();
 
     }
 
@@ -195,7 +203,7 @@ public class Tab {
         this.interactiveTabPane.applyInteractivePane(fieldPane, buttonPane);
 
         // Apply filters
-        this.filterController.applyFilters(filterButton,this.sqlTable.getFilterManager(),this.sqlTable);
+        this.filterController.applyFilters(filterButton,this.sqlTable.getFilterManager(),this.sqlTable,this);
 
     }
 
@@ -220,5 +228,25 @@ public class Tab {
             throw new IllegalArgumentException("numOfRows must be greater than 0 (entered: " + numOfRows + ")");
         }
 
+    }
+
+    @Override
+    public boolean addObserver(Observer<Tab> observer) {
+        if (!this.subscriptionList.contains(observer)) {
+            return this.subscriptionList.add(observer);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeObserver(Observer<Tab> observer) {
+        return this.subscriptionList.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer<Tab> observer : this.subscriptionList) {
+            observer.update(this);
+        }
     }
 }

@@ -6,6 +6,7 @@ import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
+import com.crowdcoin.mainBoard.table.Tab;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.filter.Filter;
@@ -117,15 +118,7 @@ public class NewFilterPopWindow implements EventHandler {
                 filterManager.add(filterToAdd);
                 newWindow.closeWindow();
 
-                filterButton.getItems().clear();
-                filterButton.getItems().addAll(filterManager.getFilterNodes());
-
-                // TODO make sure application of filters is on ONE tab
-                // TODO This is a very hacky way of applying filters
-                MenuItem newFilter = new MenuItem();
-                newFilter.setText("New Filter...");
-                newFilter.setOnAction(this);
-                filterButton.getItems().add(newFilter);
+                // TODO Call some sort of update tab method which refreshes the tab
             }
 
 

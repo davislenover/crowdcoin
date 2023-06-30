@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TabBar {
+public class TabBar implements Observer<Tab> {
 
     private TabPane controlBar;
     private Map<String,Tab> tabIDMap;
@@ -91,6 +91,9 @@ public class TabBar {
         // Note this will invoke selectionChanged event
         this.controlBar.getSelectionModel().select(javaFXTab);
 
+        // Add TabBar to Tabs observer subscription list
+        tab.addObserver(this);
+
         return true;
 
     }
@@ -98,6 +101,8 @@ public class TabBar {
     public boolean removeTab(String tabID) {
 
         if (this.tabIDMap.containsKey(tabID)) {
+            // Remove TabBar from tab observer subscription list
+            this.tabIDMap.get(tabID).removeObserver(this);
             this.tabIDMap.remove(tabID);
             return true;
 
@@ -129,7 +134,6 @@ public class TabBar {
         // Load the corresponding data Tab
         tabToLoad.loadTab(this.mainTable,this.fieldGrid,this.buttonGrid,this.previous,this.next,this.filterButton);
 
-
     }
 
     // Method to clear the screen
@@ -148,4 +152,8 @@ public class TabBar {
 
     }
 
+    @Override
+    public void update(Tab passThroughObject) {
+
+    }
 }
