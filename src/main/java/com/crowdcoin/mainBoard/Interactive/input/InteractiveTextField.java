@@ -167,4 +167,9 @@ public class InteractiveTextField implements InputField {
         this.parentPane = pane;
     }
 
+    @Override
+    public void setValue(String value) {
+        this.textField.setText(value);
+    }
+
 }

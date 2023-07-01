@@ -253,4 +253,10 @@ public class InteractiveChoiceBox implements InputField {
     public void setInteractivePane(InteractivePane pane) {
         this.parentPane = pane;
     }
+
+    @Override
+    public void setValue(String value) {
+        this.choiceBox.getSelectionModel().select(value);
+    }
+
 }

@@ -164,4 +164,9 @@ public class InteractiveTextArea implements InputField {
         this.parentPane = pane;
     }
 
+    @Override
+    public void setValue(String value) {
+        this.textArea.setText(value);
+    }
+
 }

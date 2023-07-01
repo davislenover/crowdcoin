@@ -51,6 +51,14 @@ public class BetweenFilter implements Filter {
     }
 
     @Override
+    public List<Object> getFilterValues() {
+        return new ArrayList<>() {{
+            add(value1);
+            add(value2);
+        }};
+    }
+
+    @Override
     public String getFilterString() {
         return " WHERE " + this.columnName + " " + operator.getOperatorString() + " " + "'" + value1.toString() + "'" + " AND " + "'" + value2.toString() + "'";
     }

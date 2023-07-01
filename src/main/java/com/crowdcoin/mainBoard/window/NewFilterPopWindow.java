@@ -1,4 +1,4 @@
-package com.crowdcoin.format.defaultActions.filter;
+package com.crowdcoin.mainBoard.window;
 
 import com.crowdcoin.exceptions.validation.ValidationException;
 import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class NewFilterPopWindow implements EventHandler {
+public class NewFilterPopWindow extends PopWindow {
 
     private SQLTable table;
     private FilterManager filterManager;
@@ -42,6 +42,7 @@ public class NewFilterPopWindow implements EventHandler {
     }};
 
     public NewFilterPopWindow(SplitMenuButton filterButton, FilterManager filterManager, SQLTable table, FilterFXController filterController) {
+        super("New Filter");
         this.filterButton = filterButton;
         this.filterManager = filterManager;
         this.table = table;
@@ -49,11 +50,10 @@ public class NewFilterPopWindow implements EventHandler {
     }
 
     @Override
-    public void handle(Event event) {
+    public void start(Stage stage) throws Exception {
 
-        // Create a new window and get it's InteractivePane
-        PopWindow newWindow = new PopWindow("New Filter");
-        InteractivePane newPane = newWindow.getWindowPane();
+        // Get parent window and get it's InteractivePane
+        InteractivePane newPane = super.getWindowPane();
 
         // Add target column name field
         InteractiveChoiceBox choiceBoxColumns = new InteractiveChoiceBox("Target column","The column to apply the filter to",new FieldActionDummyEvent());
@@ -76,9 +76,9 @@ public class NewFilterPopWindow implements EventHandler {
             // Create a new filter build director
             FilterBuildDirector buildDirector = new FilterBuildDirector(new BlankFilterBuilder());
             // Call buildDirector to construct blank Filter and call method within to apply fields needed to pane/window
-            buildDirector.createFilter(FilterOperatorTools.getEnum(choiceBox.getValue().toString()),null,null).applyInputFieldsOnWindow(newPane,newWindow);
+            buildDirector.createFilter(FilterOperatorTools.getEnum(choiceBox.getValue().toString()),null,null).applyInputFieldsOnWindow(newPane,this);
             // applyInput does not update the window (not it's responsibility) thus call update
-            newWindow.updateWindow();
+            super.updateWindow();
 
 
         });
@@ -119,7 +119,7 @@ public class NewFilterPopWindow implements EventHandler {
 
                 // Add filter to manager and close window
                 filterManager.add(filterToAdd);
-                newWindow.closeWindow();
+                super.closeWindow();
 
                 // Call controller notify method to update
                 // This will trigger tab to notify TabBar to "refresh" the Tab
@@ -129,14 +129,13 @@ public class NewFilterPopWindow implements EventHandler {
 
         }));
 
-        newWindow.setWindowHeight(300);
-        newWindow.setWindowWidth(425);
+        super.setWindowHeight(300);
+        super.setWindowWidth(425);
 
         try {
-            newWindow.start(new Stage());
+            super.start(stage);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 }

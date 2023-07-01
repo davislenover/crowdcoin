@@ -4,10 +4,17 @@ import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 
+import java.util.List;
+
 /**
  * A filter class to construct a specific SQL WHERE statement with a specific SQL operator
  */
 public interface Filter {
+
+    /**
+     * Gets a list of all values used by the operator in the Filter. List indices should preserve the order at which the values were passed into the Filter. List should not be a direct reference to method of storage of values within the Filter.
+     */
+    List<Object> getFilterValues();
 
     /**
      * Gets the filter as an SQL WHERE statement as a String object

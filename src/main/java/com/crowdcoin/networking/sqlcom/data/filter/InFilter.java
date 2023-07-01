@@ -41,6 +41,21 @@ public class InFilter implements Filter {
 
     }
 
+    /**
+     * Gets a list of all Filter values. Filter values are placed in first index as one String with newlines
+     * @return a List of Filter values as Objects
+     */
+    @Override
+    public List<Object> getFilterValues() {
+        return new ArrayList<>() {{
+            String text = "";
+            for(Object value : values) {
+                text+=value+"\n";
+            }
+            add(text);
+        }};
+    }
+
     @Override
     public String getFilterString() {
         String filter = " WHERE " + this.columnName + " " + operator.getOperatorString() + " (";

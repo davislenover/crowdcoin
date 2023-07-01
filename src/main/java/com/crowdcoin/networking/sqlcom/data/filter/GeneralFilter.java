@@ -9,6 +9,9 @@ import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.GeneralFilterOperators;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A general purpose filter to construct an SQL WHERE statement using GeneralFilterOperator objects
  */
@@ -35,6 +38,13 @@ public class GeneralFilter implements Filter {
      */
     public GeneralFilter() {
 
+    }
+
+    @Override
+    public List<Object> getFilterValues() {
+        return new ArrayList<>() {{
+            add(value);
+        }};
     }
 
     @Override

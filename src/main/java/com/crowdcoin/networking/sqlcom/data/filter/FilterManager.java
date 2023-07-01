@@ -4,10 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class FilterManager implements Collection<Filter> {
 
@@ -171,21 +168,20 @@ public class FilterManager implements Collection<Filter> {
     }
 
     /**
-     * Gets a list of MenuItem objects representing each filter within the FilterManager object
-     * @return a list of MenuItem objects
+     * Gets a HashMap of MenuItem objects representing each filter within the FilterManager object
+     * @return a HashMap of MenuItem objects
      */
-    public List<MenuItem> getFilterNodes() {
+    public HashMap<MenuItem,Filter> getFilterNodes() {
 
-        List<MenuItem> returnList = new ArrayList<>();
+        HashMap<MenuItem, Filter> returnList = new HashMap<>();
 
         for (Filter filter : this.filterList) {
 
             MenuItem filterMenuItem = new MenuItem();
             filterMenuItem.setText(filter.getTargetColumnName());
 
-            // TODO Set filterAction
-
-            returnList.add(filterMenuItem);
+            // Place the corresponding MenuItem with filter
+            returnList.put(filterMenuItem,filter);
 
         }
 

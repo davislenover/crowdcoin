@@ -44,6 +44,12 @@ public interface InputField {
     void hideInfo();
 
     /**
+     * Pre-Set a specific value in the InputField. Change will immediately apply on-screen if object was set to screen by a InteractivePane
+     * @param value the given String to display
+     */
+    void setValue(String value);
+
+    /**
      * Sets the spacing between all text and the field. Text and field are translated from original creation position (i.e., original position +- spacing)
      * @param spacing the spacing as an integer
      */
