@@ -1,12 +1,13 @@
 package com.crowdcoin.mainBoard.Interactive.input;
 
 import com.crowdcoin.exceptions.validation.ValidationException;
+import com.crowdcoin.mainBoard.Interactive.Field;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.validation.InputValidator;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
-public interface InputField {
+public interface InputField extends Field {
 
     /**
      * Method invoked to apply the given InputField to a GridPane. The location within the GridPane where the InputField is added should be handled by the GridPane, however, it may be customary to utilize a container defined within the InputField class
@@ -83,7 +84,7 @@ public interface InputField {
 
     /**
      * Sets the InteractivePane the field belongs to. This pane will be passed on InteractiveFieldActionEvent trigger
-     * @param pane
+     * @param pane the corresponding InteractivePane object
      */
     void setInteractivePane(InteractivePane pane);
 

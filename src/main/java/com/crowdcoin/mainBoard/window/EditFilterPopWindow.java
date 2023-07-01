@@ -154,6 +154,13 @@ public class EditFilterPopWindow extends PopWindow {
 
         });
 
+        newPane.addButton("Remove Filter",((event, button, pane) -> {
+
+
+
+        }));
+
+
         // Start the stage to populate stage variable. This is done such that updateWindow() in the trigger for choiceBoxOperation' event works (as it is needed to be triggered below)
         super.start(stage);
 
