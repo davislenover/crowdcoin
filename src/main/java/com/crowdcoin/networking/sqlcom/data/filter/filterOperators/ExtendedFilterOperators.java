@@ -55,5 +55,4 @@ public enum ExtendedFilterOperators implements FilterOperators {
 
         return returnList;
     }
-
 }
