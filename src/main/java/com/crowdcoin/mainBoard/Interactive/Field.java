@@ -20,9 +20,9 @@ public interface Field {
     Pane getPane();
 
     /**
-     * Sets the InteractiveInputPane the Field belongs to. This pane will be passed on InteractiveFieldActionEvent trigger
-     * @param pane the corresponding InteractiveInputPane object
+     * Sets the InteractivePane the Field belongs to. This pane will be passed on InteractiveFieldActionEvent trigger
+     * @param pane the corresponding InteractivePane object
      */
-    void setInteractivePane(InteractiveInputPane pane);
+    void setInteractivePane(InteractivePane pane);
 
 }

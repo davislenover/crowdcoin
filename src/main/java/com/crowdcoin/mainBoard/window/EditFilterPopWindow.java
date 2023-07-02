@@ -2,7 +2,7 @@ package com.crowdcoin.mainBoard.window;
 
 import com.crowdcoin.exceptions.validation.ValidationException;
 import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
-import com.crowdcoin.mainBoard.Interactive.InteractiveInputPane;
+import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
@@ -17,9 +17,11 @@ import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.ExtendedFilte
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.GeneralFilterOperators;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.SplitMenuButton;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class EditFilterPopWindow extends PopWindow {
@@ -45,8 +47,8 @@ public class EditFilterPopWindow extends PopWindow {
     @Override
     public void start(Stage stage) throws Exception {
 
-        // Get parent window and get it's InteractiveInputPane
-        InteractiveInputPane newPane = super.getWindowPane();
+        // Get parent window and get it's InteractivePane
+        InteractivePane newPane = super.getWindowPane();
 
         // Add target column name field
         InteractiveChoiceBox choiceBoxColumns = new InteractiveChoiceBox("Target column","The column to apply the filter to",new FieldActionDummyEvent());
@@ -55,7 +57,7 @@ public class EditFilterPopWindow extends PopWindow {
         // Pre-select target name in ChoiceBox
         choiceBoxColumns.setValue(this.filter.getTargetColumnName());
         choiceBoxColumns.addValidator(new LengthValidator(1));
-        newPane.addField(choiceBoxColumns);
+        newPane.addInputField(choiceBoxColumns);
 
         // Add operation field
         // Operation field requires more logic as arbitrary logic will be to be invoked given specific operator selection
@@ -63,8 +65,8 @@ public class EditFilterPopWindow extends PopWindow {
 
             // Reset to two fields in pane (to remove potentially old fields from previous filter operator selection)
             newPane.retainAllFields(new ArrayList<>() {{
-                add(newPane.getField(0));
-                add(newPane.getField(1));
+                add(newPane.getInputField(0));
+                add(newPane.getInputField(1));
             }});
 
             // Downcast to choice box (to get value)
@@ -86,7 +88,7 @@ public class EditFilterPopWindow extends PopWindow {
                 // Start at index 2 as it's known that the first two fields are the column name and the operator, thus all other fields are value fields
                 for(int index = 2; index < newPane.getFieldsSize(); index++) {
 
-                    InputField valueField = newPane.getField(index);
+                    InputField valueField = newPane.getInputField(index);
                     // Index is aligned in Filter as fields were added in the same order that values were entered into Filters
                     valueField.setValue((filterValues.get(index-2).toString()));
 
@@ -100,8 +102,8 @@ public class EditFilterPopWindow extends PopWindow {
         });
         choiceBoxOperation.addAllValues(allOperators);
         choiceBoxOperation.addValidator(new LengthValidator(1));
-        // Add choiceBoxOperation to InteractiveInputPane before setting value as this will trigger the event and the event takes in the pane. If the pane does not exist when triggered, a null pointer exception will occur
-        newPane.addField(choiceBoxOperation);
+        // Add choiceBoxOperation to InteractivePane before setting value as this will trigger the event and the event takes in the pane. If the pane does not exist when triggered, a null pointer exception will occur
+        newPane.addInputField(choiceBoxOperation);
 
         // Add button
         newPane.addButton("OK",(actionEvent,button,pane) -> {
@@ -137,7 +139,7 @@ public class EditFilterPopWindow extends PopWindow {
                 // Get the corresponding builder by calling operator enum
                 FilterBuildDirector buildDirector = new FilterBuildDirector(operator.getOperatorBuilder());
 
-                // Using input from InteractiveInputPane, call factory to construct corresponding filter
+                // Using input from InteractivePane, call factory to construct corresponding filter
                 Filter filterToAdd = buildDirector.createFilter(operator,(String) parsedInput.get(0), (List<Object>) parsedInput.get(2));
 
                 // Add filter to manager and close window

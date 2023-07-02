@@ -1,7 +1,7 @@
 package com.crowdcoin.networking.sqlcom.data.filter;
 
 import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
-import com.crowdcoin.mainBoard.Interactive.InteractiveInputPane;
+import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
@@ -68,10 +68,10 @@ public class GeneralFilter implements Filter {
     }
 
     @Override
-    public void applyInputFieldsOnWindow(InteractiveInputPane targetPane, PopWindow targetWindow) {
+    public void applyInputFieldsOnWindow(InteractivePane targetPane, PopWindow targetWindow) {
         InputField field = new InteractiveTextField("Value","The value used in conjunction with the operator",new FieldActionDummyEvent());
         field.addValidator(new LengthValidator(1));
-        targetPane.addField(field);
+        targetPane.addInputField(field);
         targetWindow.setWindowHeight(350);
     }
 

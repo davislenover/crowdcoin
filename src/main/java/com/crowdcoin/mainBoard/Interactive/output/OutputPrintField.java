@@ -1,6 +1,6 @@
 package com.crowdcoin.mainBoard.Interactive.output;
 
-import com.crowdcoin.mainBoard.Interactive.InteractiveInputPane;
+import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -27,7 +27,7 @@ public class OutputPrintField implements OutputField {
     }
 
     @Override
-    public void setInteractivePane(InteractiveInputPane pane) {
+    public void setInteractivePane(InteractivePane pane) {
 
     }
 

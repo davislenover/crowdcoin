@@ -1,6 +1,7 @@
 package com.crowdcoin.mainBoard.window;
 
-import com.crowdcoin.mainBoard.Interactive.InteractiveWindowInputPane;
+import com.crowdcoin.mainBoard.Interactive.InteractiveWindowPane;
+import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -10,7 +11,7 @@ import javafx.stage.Stage;
 public class PopWindow extends Application {
 
     private String windowName;
-    private InteractiveWindowInputPane parentPane;
+    private InteractiveWindowPane parentPane;
     private GridPane fieldPane;
     private GridPane buttonPane;
 
@@ -26,7 +27,7 @@ public class PopWindow extends Application {
 
     public PopWindow(String windowName) {
         this.windowName = windowName;
-        this.parentPane = new InteractiveWindowInputPane();
+        this.parentPane = new InteractiveWindowPane();
 
         this.fieldPane = new GridPane();
         this.buttonPane = new GridPane();
@@ -36,7 +37,7 @@ public class PopWindow extends Application {
 
     }
 
-    public InteractiveWindowInputPane getWindowPane() {
+    public InteractiveWindowPane getWindowPane() {
         return this.parentPane;
     }
 

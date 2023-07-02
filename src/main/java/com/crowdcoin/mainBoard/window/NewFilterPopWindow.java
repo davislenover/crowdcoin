@@ -3,9 +3,11 @@ package com.crowdcoin.mainBoard.window;
 import com.crowdcoin.exceptions.validation.ValidationException;
 import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
-import com.crowdcoin.mainBoard.Interactive.InteractiveInputPane;
+import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
+import com.crowdcoin.mainBoard.table.Tab;
+import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.filter.Filter;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterFXController;
@@ -16,11 +18,15 @@ import com.crowdcoin.networking.sqlcom.data.filter.build.FilterOperatorTools;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.ExtendedFilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.GeneralFilterOperators;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class NewFilterPopWindow extends PopWindow {
@@ -46,14 +52,14 @@ public class NewFilterPopWindow extends PopWindow {
     @Override
     public void start(Stage stage) throws Exception {
 
-        // Get parent window and get it's InteractiveInputPane
-        InteractiveInputPane newPane = super.getWindowPane();
+        // Get parent window and get it's InteractivePane
+        InteractivePane newPane = super.getWindowPane();
 
         // Add target column name field
         InteractiveChoiceBox choiceBoxColumns = new InteractiveChoiceBox("Target column","The column to apply the filter to",new FieldActionDummyEvent());
         choiceBoxColumns.addAllValues(this.table.getColumnNames());
         choiceBoxColumns.addValidator(new LengthValidator(1));
-        newPane.addField(choiceBoxColumns);
+        newPane.addInputField(choiceBoxColumns);
 
         // Add operation field
         // Operation field requires more logic as arbitrary logic will be to be invoked given specific operator selection
@@ -61,8 +67,8 @@ public class NewFilterPopWindow extends PopWindow {
 
             // Reset to two fields in pane (to remove potentially old fields from previous filter operator selection)
             newPane.retainAllFields(new ArrayList<>() {{
-                add(newPane.getField(0));
-                add(newPane.getField(1));
+                add(newPane.getInputField(0));
+                add(newPane.getInputField(1));
             }});
 
             // Downcast to choice box (to get value)
@@ -79,7 +85,7 @@ public class NewFilterPopWindow extends PopWindow {
 
         choiceBoxOperation.addAllValues(allOperators);
         choiceBoxOperation.addValidator(new LengthValidator(1));
-        newPane.addField(choiceBoxOperation);
+        newPane.addInputField(choiceBoxOperation);
 
         newPane.addButton("OK", ((actionEvent, button, pane) -> {
 
@@ -108,7 +114,7 @@ public class NewFilterPopWindow extends PopWindow {
                 // Get the corresponding builder by calling operator enum
                 FilterBuildDirector buildDirector = new FilterBuildDirector(operator.getOperatorBuilder());
 
-                // Using input from InteractiveInputPane, call factory to construct corresponding filter
+                // Using input from InteractivePane, call factory to construct corresponding filter
                 Filter filterToAdd = buildDirector.createFilter(operator,(String) parsedInput.get(0), (List<Object>) parsedInput.get(2));
 
                 // Add filter to manager and close window

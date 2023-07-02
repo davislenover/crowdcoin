@@ -2,7 +2,7 @@ package com.crowdcoin.mainBoard.Interactive.input;
 
 import com.crowdcoin.exceptions.validation.ValidationException;
 import com.crowdcoin.mainBoard.Interactive.InteractiveFieldActionEvent;
-import com.crowdcoin.mainBoard.Interactive.InteractiveInputPane;
+import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.validation.InputValidator;
 import com.crowdcoin.mainBoard.Interactive.input.validation.ValidatorManager;
 import javafx.event.ActionEvent;
@@ -37,7 +37,7 @@ public class InteractiveTextArea implements InputField {
 
     // Event
     private InteractiveFieldActionEvent interactiveFieldActionEvent;
-    private InteractiveInputPane parentPane;
+    private InteractivePane parentPane;
 
     // Info
     private InfoBox infoBox;
@@ -49,7 +49,7 @@ public class InteractiveTextArea implements InputField {
      * Houses three node objects which are used in a single row on a GridPane
      * @param header the header for the column
      * @param description the description of what the text area (user input) is used for
-     * @Note this is the lower level object used in InteractiveInputPane's
+     * @Note this is the lower level object used in InteractivePane's
      */
     public InteractiveTextArea(String header, String description, InteractiveFieldActionEvent actionEvent) {
 
@@ -160,7 +160,7 @@ public class InteractiveTextArea implements InputField {
     }
 
     @Override
-    public void setInteractivePane(InteractiveInputPane pane) {
+    public void setInteractivePane(InteractivePane pane) {
         this.parentPane = pane;
     }
 

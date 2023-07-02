@@ -1,7 +1,7 @@
 package com.crowdcoin.format.defaultActions.interactive;
 
 import com.crowdcoin.mainBoard.Interactive.InteractiveFieldActionEvent;
-import com.crowdcoin.mainBoard.Interactive.InteractiveInputPane;
+import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Control;
 
@@ -10,7 +10,7 @@ import javafx.scene.control.Control;
  */
 public class FieldActionDummyEvent implements InteractiveFieldActionEvent {
     @Override
-    public void fieldActionHandler(ActionEvent event, Control field, InteractiveInputPane pane) {
+    public void fieldActionHandler(ActionEvent event, Control field, InteractivePane pane) {
         return;
     }
 }

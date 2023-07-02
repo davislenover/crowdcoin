@@ -2,7 +2,7 @@ package com.crowdcoin.mainBoard.Interactive.input;
 
 import com.crowdcoin.exceptions.validation.ValidationException;
 import com.crowdcoin.mainBoard.Interactive.InteractiveFieldActionEvent;
-import com.crowdcoin.mainBoard.Interactive.InteractiveInputPane;
+import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.validation.InputValidator;
 import com.crowdcoin.mainBoard.Interactive.input.validation.ValidatorManager;
 import javafx.geometry.Pos;
@@ -39,7 +39,7 @@ public class InteractiveChoiceBox implements InputField {
 
     // Event
     private InteractiveFieldActionEvent interactiveFieldActionEvent;
-    private InteractiveInputPane parentPane;
+    private InteractivePane parentPane;
 
     // Info
     private InfoBox infoBox;
@@ -51,7 +51,7 @@ public class InteractiveChoiceBox implements InputField {
      * Houses three node objects which are used in a single row on a GridPane
      * @param header the header for the column
      * @param description the description of what the ChoiceBox field (user input) is used for
-     * @Note this is the lower level object used in InteractiveTabInputPane's
+     * @Note this is the lower level object used in InteractiveTabPane's
      */
     public InteractiveChoiceBox(String header, String description, InteractiveFieldActionEvent actionEvent) {
 
@@ -91,7 +91,7 @@ public class InteractiveChoiceBox implements InputField {
      * @param header the header for the column
      * @param description the description of what the ChoiceBox field (user input) is used for
      * @param values add any values into the choice box
-     * @Note this is the lower level object used in InteractiveTabInputPane's
+     * @Note this is the lower level object used in InteractiveTabPane's
      */
     public InteractiveChoiceBox(String header, String description, InteractiveFieldActionEvent actionEvent, String ... values) {
 
@@ -250,7 +250,7 @@ public class InteractiveChoiceBox implements InputField {
     }
 
     @Override
-    public void setInteractivePane(InteractiveInputPane pane) {
+    public void setInteractivePane(InteractivePane pane) {
         this.parentPane = pane;
     }
 
