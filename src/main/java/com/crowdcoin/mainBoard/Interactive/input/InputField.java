@@ -2,7 +2,7 @@ package com.crowdcoin.mainBoard.Interactive.input;
 
 import com.crowdcoin.exceptions.validation.ValidationException;
 import com.crowdcoin.mainBoard.Interactive.Field;
-import com.crowdcoin.mainBoard.Interactive.InteractivePane;
+import com.crowdcoin.mainBoard.Interactive.InteractiveInputPane;
 import com.crowdcoin.mainBoard.Interactive.input.validation.InputValidator;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -45,7 +45,7 @@ public interface InputField extends Field {
     void hideInfo();
 
     /**
-     * Pre-Set a specific value in the InputField. Change will immediately apply on-screen if object was set to screen by a InteractivePane
+     * Pre-Set a specific value in the InputField. Change will immediately apply on-screen if object was set to screen by a InteractiveInputPane
      * @param value the given String to display
      */
     void setValue(String value);
@@ -83,9 +83,9 @@ public interface InputField extends Field {
 
 
     /**
-     * Sets the InteractivePane the field belongs to. This pane will be passed on InteractiveFieldActionEvent trigger
-     * @param pane the corresponding InteractivePane object
+     * Sets the InteractiveInputPane the field belongs to. This pane will be passed on InteractiveFieldActionEvent trigger
+     * @param pane the corresponding InteractiveInputPane object
      */
-    void setInteractivePane(InteractivePane pane);
+    void setInteractivePane(InteractiveInputPane pane);
 
 }

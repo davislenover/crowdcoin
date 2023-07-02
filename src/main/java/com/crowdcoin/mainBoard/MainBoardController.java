@@ -2,7 +2,6 @@ package com.crowdcoin.mainBoard;
 
 import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
 import com.crowdcoin.mainBoard.Interactive.*;
-import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
 import com.crowdcoin.mainBoard.table.*;
@@ -46,23 +45,23 @@ public class MainBoardController {
         Tab testTab = new Tab(model,table,"testTab");
         testTab.setTabTableAction(new TabActionEvent() {
             @Override
-            public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane) {
+            public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabInputPane pane) {
                 System.out.println("This tab was pressed!");
             }
         });
 
-        // an InteractiveTabPane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
-        InteractiveTabPane testPane = testTab.getInteractivePane();
+        // an InteractiveTabInputPane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
+        InteractiveTabInputPane testPane = testTab.getInteractivePane();
         // Add fields to the pane
-        testPane.addInputField(new InteractiveTextField("This is a test","This is a test combo object for textfield combo's 1",new FieldActionDummyEvent()));
-        testPane.addInputField(new InteractiveTextField("This is a test2","This is a test combo object for textfield combo's 2",new FieldActionDummyEvent()));
-        testPane.addInputField(new InteractiveTextField("This is a test3","This is a test combo object for textfield combo's 3",new FieldActionDummyEvent()));
+        testPane.addField(new InteractiveTextField("This is a test","This is a test combo object for textfield combo's 1",new FieldActionDummyEvent()));
+        testPane.addField(new InteractiveTextField("This is a test2","This is a test combo object for textfield combo's 2",new FieldActionDummyEvent()));
+        testPane.addField(new InteractiveTextField("This is a test3","This is a test combo object for textfield combo's 3",new FieldActionDummyEvent()));
 
         // Testing buttons
         // One can specify how they would like a button to handle an ActionEvent by defining it within a specific class or on the fly
         InteractiveButtonActionEvent testHandler = new InteractiveButtonActionEvent() {
             @Override
-            public void buttonActionHandler(ActionEvent event, Button button, InteractivePane pane) {
+            public void buttonActionHandler(ActionEvent event, Button button, InteractiveInputPane pane) {
                 System.out.println(event.getEventType().getName());
                 System.out.println(button.getText() + " fired an event!");
             }
@@ -75,30 +74,30 @@ public class MainBoardController {
         Tab testTab2 = new Tab(model,table2,"testTab2");
         testTab2.setTabTableAction(new TabActionEvent() {
             @Override
-            public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane) {
+            public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabInputPane pane) {
                 System.out.println("This tab 2 was pressed!");
             }
         });
 
-        // an InteractiveTabPane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
-        InteractiveTabPane testPane2 = testTab2.getInteractivePane();
+        // an InteractiveTabInputPane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
+        InteractiveTabInputPane testPane2 = testTab2.getInteractivePane();
         // Add fields to the pane
-        testPane2.addInputField(new InteractiveTextField("This is a test1","This is a test combo object for textfield combo's 1",new FieldActionDummyEvent()));
-        testPane2.addInputField(new InteractiveTextField("This is a test2","This is a test combo object for textfield combo's 2",new FieldActionDummyEvent()));
-        testPane2.addInputField(new InteractiveTextField("This is a test3","This is a test combo object for textfield combo's 3",new FieldActionDummyEvent()));
-        testPane2.addInputField(new InteractiveTextField("This is a test4","This is a test combo object for textfield combo's 4",new FieldActionDummyEvent()));
+        testPane2.addField(new InteractiveTextField("This is a test1","This is a test combo object for textfield combo's 1",new FieldActionDummyEvent()));
+        testPane2.addField(new InteractiveTextField("This is a test2","This is a test combo object for textfield combo's 2",new FieldActionDummyEvent()));
+        testPane2.addField(new InteractiveTextField("This is a test3","This is a test combo object for textfield combo's 3",new FieldActionDummyEvent()));
+        testPane2.addField(new InteractiveTextField("This is a test4","This is a test combo object for textfield combo's 4",new FieldActionDummyEvent()));
         // Add choice field
         InteractiveChoiceBox box = new InteractiveChoiceBox("This is a choice field","This is a test combo object for textfield combo's 4",new FieldActionDummyEvent());
         box.addValue("Option1");
         box.addValue("Option2");
         box.addValue("Option3");
-        testPane2.addInputField(box);
+        testPane2.addField(box);
 
         // Testing buttons
         // One can specify how they would like a button to handle an ActionEvent by defining it within a specific class or on the fly
         InteractiveButtonActionEvent testHandler2 = new InteractiveButtonActionEvent() {
             @Override
-            public void buttonActionHandler(ActionEvent event, Button button, InteractivePane pane) {
+            public void buttonActionHandler(ActionEvent event, Button button, InteractiveInputPane pane) {
                 System.out.println(event.getEventType().getName());
                 System.out.println(button.getText() + " fired an event!");
             }
@@ -124,15 +123,15 @@ public class MainBoardController {
                 PopWindow window = new PopWindow("New Entry");
                 window.getWindowPane().addButton("Window button", (test2,test3,test4)-> System.out.println("Hello Window!"));
                 window.getWindowPane().addButton("Window button2", (test2,test3,test4)-> {System.out.println("Hello Window!");
-                    InteractiveWindowPane testWindowPane = (InteractiveWindowPane) test4;
+                    InteractiveWindowInputPane testWindowPane = (InteractiveWindowInputPane) test4;
                     System.out.println(Arrays.toString(testWindowPane.getAllInput().toArray()));
                 });
                 InteractiveChoiceBox box2 = new InteractiveChoiceBox("Test","Testing window choice field",new FieldActionDummyEvent());
                 box2.addValue("Option1");
                 box2.addValue("Option2");
                 box2.addValue("Option3");
-                window.getWindowPane().addInputField(box2);
-                window.getWindowPane().addInputField(new InteractiveTextField("This is a test","This is a field test",new FieldActionDummyEvent()));
+                window.getWindowPane().addField(box2);
+                window.getWindowPane().addField(new InteractiveTextField("This is a test","This is a field test",new FieldActionDummyEvent()));
                 window.start(new Stage());
             } catch (Exception e) {
                 throw new RuntimeException(e);

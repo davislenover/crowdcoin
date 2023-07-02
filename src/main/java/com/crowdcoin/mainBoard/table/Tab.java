@@ -5,10 +5,9 @@ import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.tab.IncompatibleModelClassException;
 import com.crowdcoin.exceptions.tab.ModelClassConstructorTypeException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
-import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
+import com.crowdcoin.mainBoard.Interactive.InteractiveTabInputPane;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
-import com.crowdcoin.networking.sqlcom.data.filter.Filter;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterFXController;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitMenuButton;
@@ -30,16 +29,16 @@ public class Tab implements Observable<Tab>, Observer<FilterFXController> {
     private ModelClassFactory factory;
     private TableViewManager tableViewManager;
     private SQLTable sqlTable;
-    private InteractiveTabPane interactiveTabPane;
+    private InteractiveTabInputPane interactiveTabPane;
     private FilterFXController filterController;
     private String tabID;
 
     // TabActionEvent is intended to allow arbitrary logic to be invoked when a user selects anything within the TableView object within the Tab
-    // Basically provides a connection between the TableView and InteractiveTabPane on the right beside the table (something happens in the Table, do something in the InteractiveTabPane)
+    // Basically provides a connection between the TableView and InteractiveTabInputPane on the right beside the table (something happens in the Table, do something in the InteractiveTabInputPane)
     // On instantiation, set action event to default
     private TabActionEvent tableSelectHandler = new TabActionEvent() {
         @Override
-        public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane) {
+        public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabInputPane pane) {
             return;
         }
     };;
@@ -52,7 +51,7 @@ public class Tab implements Observable<Tab>, Observer<FilterFXController> {
     private List<Observer<Tab>> subscriptionList;
 
     /**
-     * Create a Tab object. Similar to a tab in a web browser, a Tab object stores a "state" of the TableView. Upon creation, a blank InteractiveTabPane is available for use
+     * Create a Tab object. Similar to a tab in a web browser, a Tab object stores a "state" of the TableView. Upon creation, a blank InteractiveTabInputPane is available for use
      * @param classToModel an instance of the class to model for column data. This class will be used to get values for columns. To learn more, please see ModelClass and ModelClassFactory
      * @param sqlTable an SQLTable object which is responsible for gathering data of a specific table found within the database
      * @param tabID a String identifier for the tab instance
@@ -67,7 +66,7 @@ public class Tab implements Observable<Tab>, Observer<FilterFXController> {
         this.factory = new ModelClassFactory();
         this.sqlTable = sqlTable;
         this.filterController = new FilterFXController();
-        this.interactiveTabPane = new InteractiveTabPane();
+        this.interactiveTabPane = new InteractiveTabInputPane();
         // Build model class from model reference
         this.modelClass = this.factory.build(classToModel);
 
@@ -153,10 +152,10 @@ public class Tab implements Observable<Tab>, Observer<FilterFXController> {
     }
 
     /**
-     * Gets the associated InteractiveTabPane created upon instantiation of a Tab object.
-     * @return the associated InteractiveTabPane object. The object is live.
+     * Gets the associated InteractiveTabInputPane created upon instantiation of a Tab object.
+     * @return the associated InteractiveTabInputPane object. The object is live.
      */
-    public InteractiveTabPane getInteractivePane() {
+    public InteractiveTabInputPane getInteractivePane() {
         return this.interactiveTabPane;
     }
 
@@ -202,7 +201,7 @@ public class Tab implements Observable<Tab>, Observer<FilterFXController> {
         // Set previous and forward button logic for TableViewManager instance
         this.tableViewManager.applyPrevNextButtons(destinationTable,previous,next);
 
-        // Apply InteractiveTabPane
+        // Apply InteractiveTabInputPane
         this.interactiveTabPane.applyInteractivePane(fieldPane, buttonPane);
 
         // Apply filters

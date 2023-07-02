@@ -35,7 +35,7 @@ public class FilterOperatorTools {
 
     /**
      * Parse input from filter window. This method assumes column name is first, operation is second and the rest is after
-     * @param input the input from the window, typically called from getAllInput() in a InteractivePane
+     * @param input the input from the window, typically called from getAllInput() in a InteractiveInputPane
      * @return a list of objects, the first two indices should contain Strings whereas the third is a list of Strings
      */
     public static List<Object> parseInput(List<String> input) {

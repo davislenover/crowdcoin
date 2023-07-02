@@ -86,10 +86,10 @@ public class InFilter implements Filter {
     }
 
     @Override
-    public void applyInputFieldsOnWindow(InteractivePane targetPane, PopWindow targetWindow) {
+    public void applyInputFieldsOnWindow(InteractiveInputPane targetPane, PopWindow targetWindow) {
         InteractiveTextArea field = new InteractiveTextArea("Values","All values IN the given column separated by new lines",new FieldActionDummyEvent());
         field.addValidator(new LengthValidator(1));
-        targetPane.addInputField(field);
+        targetPane.addField(field);
         targetWindow.setWindowHeight(350);
     }
 

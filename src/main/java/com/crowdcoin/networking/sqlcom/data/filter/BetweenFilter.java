@@ -1,7 +1,7 @@
 package com.crowdcoin.networking.sqlcom.data.filter;
 
 import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
-import com.crowdcoin.mainBoard.Interactive.InteractivePane;
+import com.crowdcoin.mainBoard.Interactive.InteractiveInputPane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
 import com.crowdcoin.mainBoard.Interactive.input.validation.ComparatorValidator;
@@ -13,7 +13,6 @@ import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperato
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -79,11 +78,11 @@ public class BetweenFilter implements Filter {
     }
 
     @Override
-    public void applyInputFieldsOnWindow(InteractivePane targetPane, PopWindow targetWindow) {
+    public void applyInputFieldsOnWindow(InteractiveInputPane targetPane, PopWindow targetWindow) {
         InputField field = new InteractiveTextField("First value","The lower value within the between operator",new FieldActionDummyEvent());
         field.addValidator(new LengthValidator(1));
         field.addValidator(new TypeValidator(Integer.class));
-        targetPane.addInputField(field);
+        targetPane.addField(field);
         InputField field2 = new InteractiveTextField("Second value","The higher value within the between operator",new FieldActionDummyEvent());
         field2.addValidator(new LengthValidator(1));
         field2.addValidator(new TypeValidator(Integer.class));
@@ -98,7 +97,7 @@ public class BetweenFilter implements Filter {
                         // Add onto context
                 }," first value"));
 
-        targetPane.addInputField(field2);
+        targetPane.addField(field2);
         targetWindow.setWindowHeight(400);
     }
 

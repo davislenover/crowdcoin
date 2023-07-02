@@ -28,7 +28,7 @@ public class InfoBox {
      */
     public void applyInfoBox(InputField targetField) {
 
-        // Get the given pane from the InputField (NOT to be confused with InteractivePane)
+        // Get the given pane from the InputField (NOT to be confused with InteractiveInputPane)
         Pane targetPane = targetField.getPane();
 
         // Remove previous info box (if it exists)
@@ -47,7 +47,7 @@ public class InfoBox {
      * @param targetField the target InputField object
      */
     public void removeInfoBox(InputField targetField) {
-        // Get the given pane from the InputField (NOT to be confused with InteractivePane)
+        // Get the given pane from the InputField (NOT to be confused with InteractiveInputPane)
         Pane targetPane = targetField.getPane();
 
         // Remove previous info box (if it exists)
