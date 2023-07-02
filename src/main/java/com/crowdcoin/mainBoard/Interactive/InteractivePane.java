@@ -4,6 +4,7 @@ import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextArea;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
+import com.crowdcoin.mainBoard.Interactive.output.OutputField;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -18,6 +19,7 @@ public class InteractivePane implements Iterable<InputField> {
 
     // The idea is to have some object which can be passed into a GUI that defines how said GUI interacts with the user
     private List<InputField> fieldsList;
+    private List<OutputField> outputFieldList;
     private List<InteractiveButton> buttonList;
 
     /**
@@ -26,6 +28,7 @@ public class InteractivePane implements Iterable<InputField> {
     public InteractivePane() {
         this.fieldsList = new ArrayList<>();
         this.buttonList = new ArrayList<>();
+        this.outputFieldList = new ArrayList<>();
     }
 
     /**
@@ -51,7 +54,22 @@ public class InteractivePane implements Iterable<InputField> {
     }
 
     /**
-     * Add already created InputFields to the InteractivePane
+     * Add an OutputField to the InteractivePane. Sets the parent pane of the OutputField to this instance of InteractivePane
+     * @param newField the OutputField object to add
+     * @return true if the OutputField object was added, false otherwise
+     */
+    public boolean addOutputField(OutputField newField) {
+
+        if (this.outputFieldList.add(newField)) {
+            newField.setInteractivePane(this);
+            return true;
+        }
+        return false;
+
+    }
+
+    /**
+     * Add InputFields to the InteractivePane
      * @param newFields the InputField objects to add
      * @return true if the list was changed as a result of InputField objects being added, false otherwise
      */
