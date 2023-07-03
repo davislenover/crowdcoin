@@ -63,6 +63,18 @@ public interface InputField extends Field {
     void setDescWrappingWidth(int wrappingWidth);
 
     /**
+     * Sets the maximum with of a single line of text before moving to a new line
+     * @param wrappingWidth the width as an integer
+     */
+    void setHeaderWrappingWidth(int wrappingWidth);
+
+    /**
+     * Sets the vertical spacing between the header and the description text. Takes original default position of the header and adds (or subtracts) spacing onto it
+     * @param spacing the spacing as an integer
+     */
+    void setHeaderDescVerticalSpacing(int spacing);
+
+    /**
      * Add a new input validator to the InputField
      * @param validator the given validator as an InputValidator object
      */

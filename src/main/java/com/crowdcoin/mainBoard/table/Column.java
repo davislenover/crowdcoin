@@ -13,10 +13,12 @@ public class Column implements Privileged {
 
     private List<Permission> permissions;
     private String columnName;
+    private Class columnDataType;
 
-    public Column(String columnName) {
+    public Column(String columnName,Class columnDataType) {
         this.columnName = columnName;
         this.permissions = new ArrayList<>();
+        this.columnDataType = columnDataType;
     }
 
     /**
@@ -25,6 +27,14 @@ public class Column implements Privileged {
      */
     public String getColumnName() {
         return this.columnName;
+    }
+
+    /**
+     * Gets the column data type
+     * @return the Class of the data type
+     */
+    public Class getColumnDataType() {
+        return this.columnDataType;
     }
 
     @Override

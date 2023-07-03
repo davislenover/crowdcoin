@@ -42,7 +42,7 @@ public class ModelClassFactory {
                 methodList.add(methodCandidate);
 
                 // Create a column object to store column and privileges
-                Column newColumn = new Column(methodCandidate.getAnnotation(TableReadable.class).columnName());
+                Column newColumn = new Column(methodCandidate.getAnnotation(TableReadable.class).columnName(),methodCandidate.getReturnType());
                 // Set Permissions
                 newColumn.addPermission(new IsReadable(methodCandidate.getAnnotation(TableReadable.class).isUserReadable()));
                 newColumn.addPermission(new IsWriteable(methodCandidate.getAnnotation(TableReadable.class).isUserWriteable()));
@@ -144,7 +144,6 @@ public class ModelClassFactory {
     private static void checkMethodNames(ModelClass klass, SQLTable table) throws IncompatibleModelClassMethodNamesException {
 
         List<String> columnNames = table.getColumnNames();
-        System.out.println("COLUMN Name" + Arrays.toString(columnNames.toArray()));
 
         for (Column column : klass.getColumns()) {
             if (!columnNames.contains(column.getColumnName())) {

@@ -11,6 +11,7 @@ import com.crowdcoin.mainBoard.table.*;
 import com.crowdcoin.mainBoard.toolBar.MenuGroup;
 import com.crowdcoin.mainBoard.toolBar.MenuGroupContainer;
 import com.crowdcoin.mainBoard.toolBar.MenuOption;
+import com.crowdcoin.mainBoard.window.NewEntryPopWindow;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.SQLData;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
@@ -133,25 +134,7 @@ public class MainBoardController {
         test1.addOption(new MenuOption("New Tab Test", p -> testBar.addTab(testTab)));
         test1.addOption(new MenuOption("New Entry",p-> {
             try {
-                PopWindow window = new PopWindow("New Entry");
-                SubmitField windowButton1 = new InteractiveButton("Window button", (test2,test3,test4)-> System.out.println("Hello Window!"));
-                windowButton1.setOrder(0);
-                SubmitField windowButton2 = new InteractiveButton("Window button2", (test2,test3,test4)-> {System.out.println("Hello Window!");
-                    InteractiveWindowPane testWindowPane = (InteractiveWindowPane) test4;
-                    System.out.println(Arrays.toString(testWindowPane.getAllInput().toArray()));
-                });
-                windowButton2.setOrder(1);
-
-                window.getWindowPane().addSubmitField(windowButton1);
-                window.getWindowPane().addSubmitField(windowButton2);
-
-                InteractiveChoiceBox box2 = new InteractiveChoiceBox("Test","Testing window choice field",new FieldActionDummyEvent());
-                box2.addValue("Option1");
-                box2.addValue("Option2");
-                box2.addValue("Option3");
-                window.getWindowPane().addInputField(box2);
-                window.getWindowPane().addInputField(new InteractiveTextField("This is a test","This is a field test",new FieldActionDummyEvent()));
-                window.start(new Stage());
+                new NewEntryPopWindow("New Entry",new ModelClassFactory().build(model)).start(new Stage());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

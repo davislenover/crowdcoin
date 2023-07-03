@@ -145,6 +145,16 @@ public class InteractiveTextField implements InputField {
     }
 
     @Override
+    public void setHeaderWrappingWidth(int wrappingWidth) {
+        this.fieldHeader.setWrappingWidth(wrappingWidth);
+    }
+
+    @Override
+    public void setHeaderDescVerticalSpacing(int spacing) {
+        this.fieldHeader.setTranslateY(fieldHeaderTranslateY+spacing);
+    }
+
+    @Override
     public void addValidator(InputValidator validator) {
         this.validatorManager.add(validator);
     }
