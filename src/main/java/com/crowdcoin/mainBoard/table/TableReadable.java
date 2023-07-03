@@ -22,13 +22,13 @@ public @interface TableReadable {
     int order() default 0;
 
     /**
-     * Defines if a column is user readable onscreen. If not, classes can still obtain this column but should not display such on screen
+     * Defines if a column is user readable onscreen. If not, classes can still obtain this column but should not display such on screen. Default true
      * @return true if the column is user readable, false otherwise
      */
     boolean isUserReadable() default true;
 
     /**
-     * Defines if a column is user writable. If not, classes can still write to this column but should not provide a users a method of doing so on-screen
+     * Defines if a column is user writable. If not, classes can still write to this column but should not provide a users a method of doing so on-screen. Default true
      * @return true if the column is user writeable, false otherwise
      */
     boolean isUserWriteable() default true;
