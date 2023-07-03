@@ -1,15 +1,20 @@
 package com.crowdcoin.mainBoard.Interactive.output;
 
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 public class OutputPrintField implements OutputField {
 
     // Defaults
     private static int textWrappingWidth = 200;
+    private static int textTranslateX = 45;
 
     private StackPane containerPane;
     private Text messageText;
@@ -25,9 +30,12 @@ public class OutputPrintField implements OutputField {
         this.containerPane.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
         // By default, items are added to the center of the StackPane and the node (as in the JavaFX object like TextField or Text) will be stretched to fit the entire available space
         this.containerPane.getChildren().add(this.messageText);
+        StackPane.setAlignment(this.messageText,Pos.CENTER_LEFT);
 
         // Set wrapping width
         this.messageText.setWrappingWidth(textWrappingWidth);
+        this.messageText.setTextAlignment(TextAlignment.CENTER);
+        this.messageText.setTranslateX(textTranslateX);
 
         this.order = 0;
 

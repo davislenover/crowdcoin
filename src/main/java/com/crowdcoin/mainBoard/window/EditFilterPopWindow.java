@@ -156,7 +156,13 @@ public class EditFilterPopWindow extends PopWindow {
 
         newPane.addButton("Remove Filter",((event, button, pane) -> {
 
+            InfoPopWindow newInfoWindow = new InfoPopWindow("Confirmation");
+            newInfoWindow.setInfoMessage("Are you sure you want to remove this filter?");
+            try {
+                newInfoWindow.start(new Stage());
+            } catch (Exception e) {
 
+            }
 
         }));
 

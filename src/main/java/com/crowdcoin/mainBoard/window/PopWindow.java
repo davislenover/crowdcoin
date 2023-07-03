@@ -67,6 +67,8 @@ public class PopWindow extends Application {
         this.stage.setTitle(this.windowName);
         // Set width, height
         this.stage.setScene(this.scene);
+        this.stage.setWidth(this.windowWidth);
+        this.stage.setHeight(this.windowHeight);
         this.stage.show();
 
     }

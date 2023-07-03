@@ -6,6 +6,7 @@ import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextArea;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
 import com.crowdcoin.mainBoard.Interactive.output.OutputField;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
+import javafx.geometry.Pos;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
