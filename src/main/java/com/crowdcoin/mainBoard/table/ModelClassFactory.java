@@ -1,6 +1,13 @@
 package com.crowdcoin.mainBoard.table;
 
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
+import com.crowdcoin.exceptions.tab.IncompatibleModelClassException;
+import com.crowdcoin.exceptions.tab.IncompatibleModelClassMethodNamesException;
+import com.crowdcoin.exceptions.tab.ModelClassConstructorTypeException;
+import com.crowdcoin.mainBoard.table.permissions.IsReadable;
+import com.crowdcoin.mainBoard.table.permissions.IsWriteable;
+import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
+import com.crowdcoin.networking.sqlcom.data.SQLTable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -19,6 +26,7 @@ public class ModelClassFactory {
     public ModelClass build(Object classInstance) throws NotZeroArgumentException {
 
         List<Method> methodList = new ArrayList<>();
+        List<Column> columnList = new ArrayList<>();
 
         for (Method methodCandidate : classInstance.getClass().getMethods()) {
 
@@ -33,6 +41,13 @@ public class ModelClassFactory {
                 // Thus add to list
                 methodList.add(methodCandidate);
 
+                // Create a column object to store column and privileges
+                Column newColumn = new Column(methodCandidate.getAnnotation(TableReadable.class).columnName());
+                // Set Permissions
+                newColumn.addPermission(new IsReadable(methodCandidate.getAnnotation(TableReadable.class).isUserReadable()));
+                newColumn.addPermission(new IsWriteable(methodCandidate.getAnnotation(TableReadable.class).isUserWriteable()));
+                columnList.add(newColumn);
+
             }
 
         }
@@ -40,7 +55,7 @@ public class ModelClassFactory {
         // TableReadable has order attribute which allows the user to specify the order in which methods are added to this list
         // Thus we sort methodList with a comparator that compares order attributes
         Collections.sort(methodList, Comparator.comparingInt((Method o) -> o.getAnnotation(TableReadable.class).order()));
-        return new ModelClass(classInstance,methodList);
+        return new ModelClass(classInstance,methodList,columnList);
 
     }
 
@@ -76,6 +91,74 @@ public class ModelClassFactory {
         // Create new ModelClass
         return this.build(newInstance);
 
+    }
+
+    /**
+     * Checks validity of a ModelClass by comparing table data from the SQLTable
+     * @param klass the given ModelClass object to check
+     * @param table the given SQLTable object to compare data against
+     * @throws IncompatibleModelClassException if the number of methods matches that of the number of columns of the SQLTable
+     * @throws ModelClassConstructorTypeException if the parameter types of the modelClass constructor mismatch that of the columns within the database
+     * @throws IncompatibleModelClassMethodNamesException if one or more method names do not match that of the columns names within the database
+     */
+    public static void checkModelClassValidity(ModelClass klass, SQLTable table) throws IncompatibleModelClassException, ModelClassConstructorTypeException, IncompatibleModelClassMethodNamesException {
+        checkNumOfParams(klass,table);
+        checkMethodNames(klass,table);
+        checkTypes(klass,table);
+    }
+
+    // Method to check if the parameter types of the modelClass constructor match that of columns within the database
+    // Throws ModelClassConstructorTypeException if there is a mismatch
+    private static void checkTypes(ModelClass klass, SQLTable table) throws ModelClassConstructorTypeException {
+
+        boolean doesntHaveIssue = true;
+
+        // Get constructor of modelClass (which is assumed to be the only constructor)
+        Class<?>[] modelClassConstructorTypes = klass.getInstanceClass().getConstructors()[0].getParameterTypes();
+
+        // Loop through the column types
+        int constructorTypeIndex = 0;
+        for (String columnType : table.getColumnTypes()) {
+
+            try {
+                // Queries class contains a hashmap that provides the corresponding class for the given column type in sql
+                // Check if both the columnType class and the corresponding constructor parameter match
+                if (!SQLDefaultQueries.SQLToJavaType.get(columnType.toUpperCase()).getName().toUpperCase().contains(modelClassConstructorTypes[constructorTypeIndex].getName().toUpperCase())) {
+                    doesntHaveIssue = false;
+                    break;
+                }
+                // Index out of bounds also indicates there are more columns than there are arguments in the constructor
+            } catch (IndexOutOfBoundsException e) {
+                doesntHaveIssue = false;
+                break;
+            }
+            constructorTypeIndex++;
+        }
+
+        if (!doesntHaveIssue) {
+            throw new ModelClassConstructorTypeException();
+        }
+
+    }
+
+    private static void checkMethodNames(ModelClass klass, SQLTable table) throws IncompatibleModelClassMethodNamesException {
+
+        List<String> columnNames = table.getColumnNames();
+        System.out.println("COLUMN Name" + Arrays.toString(columnNames.toArray()));
+
+        for (Column column : klass.getColumns()) {
+            if (!columnNames.contains(column.getColumnName())) {
+                throw new IncompatibleModelClassMethodNamesException();
+            }
+        }
+
+    }
+
+    private static void checkNumOfParams(ModelClass klass, SQLTable table) throws IncompatibleModelClassException {
+        // Check that the number of methods within the model reference are the same as the number of columns within the sql database table
+        if (table.getNumberOfColumns() != klass.getNumberOfMethods()) {
+            throw new IncompatibleModelClassException(klass.getNumberOfMethods(),table.getNumberOfColumns());
+        }
     }
 
 }

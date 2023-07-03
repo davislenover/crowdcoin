@@ -23,37 +23,37 @@ public class CoinModel {
 
     }
 
-    @TableReadable (order = 4)
+    @TableReadable (order = 4, columnName = "certificationCompany")
     public String certCompany() {
         return certCompany;
     }
 
-    @TableReadable (order = 5)
+    @TableReadable (order = 5, columnName = "certificationNumber")
     public String certNumber() {
         return certNumber;
     }
 
-    @TableReadable (order = 0)
+    @TableReadable (order = 0, columnName = "coinID")
     public int coinID() {
         return coinID;
     }
 
-    @TableReadable (order = 2)
+    @TableReadable (order = 2, columnName = "dateOfIssue")
     public String dateOfIssue() {
         return dateOfIssue;
     }
 
-    @TableReadable (order = 6)
+    @TableReadable (order = 6, columnName = "declaredValue")
     public String declaredValue() {
         return declaredValue;
     }
 
-    @TableReadable (order = 1)
+    @TableReadable (order = 1, columnName = "denomination")
     public String denomination() {
         return denomination;
     }
 
-    @TableReadable (order = 3)
+    @TableReadable (order = 3, columnName = "grade")
     public String grade() {
         return grade;
     }

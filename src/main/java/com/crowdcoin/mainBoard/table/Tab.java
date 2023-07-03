@@ -3,6 +3,7 @@ package com.crowdcoin.mainBoard.table;
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.tab.IncompatibleModelClassException;
+import com.crowdcoin.exceptions.tab.IncompatibleModelClassMethodNamesException;
 import com.crowdcoin.exceptions.tab.ModelClassConstructorTypeException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
@@ -60,7 +61,7 @@ public class Tab implements Observable<Tab>, Observer<FilterFXController> {
      * @throws IncompatibleModelClassException if the model class does not contain the same number of invokable methods as there are columns within the given table within the database (as specified within the SQLTable object)
      * @throws ModelClassConstructorTypeException if the modelClass constructor contains an argument type mismatch to one or more columns within the database table. This could mean the constructor arguments of the modeling class are not in the correct order. Note that SQLTable returns a list where each element is a row of the database table sorted in ordinal position thus it is imperative to organize constructor parameters in the same position as column ordinal position
      */
-    public Tab(Object classToModel, SQLTable sqlTable, String tabID) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException, FailedQueryException, SQLException, InvalidRangeException {
+    public Tab(Object classToModel, SQLTable sqlTable, String tabID) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException, FailedQueryException, SQLException, InvalidRangeException, IncompatibleModelClassMethodNamesException {
 
         // Create instances needed
         this.columnContainer = new ColumnContainer();
@@ -71,14 +72,8 @@ public class Tab implements Observable<Tab>, Observer<FilterFXController> {
         // Build model class from model reference
         this.modelClass = this.factory.build(classToModel);
 
-        // Check that the number of methods within the model reference are the same as the number of columns within the sql database table
-        if (this.sqlTable.getNumberOfColumns() != this.modelClass.getNumberOfMethods()) {
-            throw new IncompatibleModelClassException(this.modelClass.getNumberOfMethods(),this.sqlTable.getNumberOfColumns());
-        }
-
-        if (!checkTypes()) {
-            throw new ModelClassConstructorTypeException();
-        }
+        // Check validity of modelClass
+        ModelClassFactory.checkModelClassValidity(this.modelClass,this.sqlTable);
 
         this.tableViewManager = new TableViewManager(this.sqlTable,this.columnContainer,this.modelClass,this.factory);
 
@@ -91,34 +86,6 @@ public class Tab implements Observable<Tab>, Observer<FilterFXController> {
 
         // Tab will observe the filter controller for changes to filters (such as if a filter is being added)
         this.filterController.addObserver(this);
-
-    }
-
-    // Method to check if the parameter types of the modelClass constructor match that of columns within the database
-    // False if there is a mismatch
-    private boolean checkTypes() {
-
-        // Get constructor of modelClass (which is assumed to be the only constructor)
-        Class<?>[] modelClassConstructorTypes = this.modelClass.getInstanceClass().getConstructors()[0].getParameterTypes();
-
-        // Loop through the column types
-        int constructorTypeIndex = 0;
-        for (String columnType : this.sqlTable.getColumnTypes()) {
-
-            try {
-                // Queries class contains a hashmap that provides the corresponding class for the given column type in sql
-                // Check if both the columnType class and the corresponding constructor parameter match
-                if (!SQLDefaultQueries.SQLToJavaType.get(columnType.toUpperCase()).getName().toUpperCase().contains(modelClassConstructorTypes[constructorTypeIndex].getName().toUpperCase())) {
-                    return false;
-                }
-                // Index out of bounds also indicates there are more columns than there are arguments in the constructor
-            } catch (IndexOutOfBoundsException e) {
-                return false;
-            }
-            constructorTypeIndex++;
-        }
-
-        return true;
 
     }
 

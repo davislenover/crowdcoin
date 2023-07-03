@@ -45,7 +45,7 @@ class ModelClassFactoryTest {
     @Test
     public void testNotZeroArgs() {
         class testClass {
-            @TableReadable
+            @TableReadable (columnName = "test")
             public int dummyMethod(int test) {
                 return test;
             }

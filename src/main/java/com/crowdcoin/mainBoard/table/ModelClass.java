@@ -1,12 +1,14 @@
 package com.crowdcoin.mainBoard.table;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ModelClass {
 
     private Object classWithMethods;
     private List<Method> dataMethods;
+    private List<Column> columns;
 
     /**
      * Create a ModelClass for TableColumn's to reference (i.e., TableColumns will invoke specified methods which get data within the ModelClass to display on screen)
@@ -14,9 +16,10 @@ public class ModelClass {
      * @param associatedMethods executable methods from class instance
      * @Note It is recommended to call ModelClassFactory build() on a class instance to produce a ModelClass object
      */
-    public ModelClass(Object classInstance, List<Method> associatedMethods) {
+    public ModelClass(Object classInstance, List<Method> associatedMethods, List<Column> columns) {
         this.classWithMethods = classInstance;
         this.dataMethods = associatedMethods;
+        this.columns = columns;
     }
 
     /**
@@ -58,6 +61,18 @@ public class ModelClass {
      */
     public int getNumberOfMethods() {
         return this.dataMethods.size();
+    }
+
+    /**
+     * Get column objects that represent the columns within the database. Typically used to check permissions on a specific (or more) column.
+     * @return a List of column objects (a COPY of the list within the given ModelClass instance)
+     */
+    public List<Column> getColumns() {
+        List<Column> returnList = new ArrayList<>() {{
+            addAll(columns);
+        }};
+
+        return returnList;
     }
 
 }
