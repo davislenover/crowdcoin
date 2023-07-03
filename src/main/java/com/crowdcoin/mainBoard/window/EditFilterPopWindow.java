@@ -2,6 +2,7 @@ package com.crowdcoin.mainBoard.window;
 
 import com.crowdcoin.exceptions.validation.ValidationException;
 import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
+import com.crowdcoin.mainBoard.Interactive.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
@@ -17,11 +18,9 @@ import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.ExtendedFilte
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.GeneralFilterOperators;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.SplitMenuButton;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class EditFilterPopWindow extends PopWindow {
@@ -158,6 +157,25 @@ public class EditFilterPopWindow extends PopWindow {
 
             InfoPopWindow newInfoWindow = new InfoPopWindow("Confirmation");
             newInfoWindow.setInfoMessage("Are you sure you want to remove this filter?");
+            newInfoWindow.setOkButtonAction(((event1, button1, pane1) -> {
+                // If ok button is pressed, remove the filter and notify controller for refresh to Tab
+                filterManager.remove(filter);
+                // Close both the Info and EditFilter window (as Filter no longer exists)
+                newInfoWindow.closeWindow();
+                super.closeWindow();
+                this.filterController.notifyObservers();
+            }));
+
+            InteractivePane infoWindowPane = newInfoWindow.getWindowPane();
+
+            // Create cancel button
+            InteractiveButton cancelButton = new InteractiveButton("Cancel",((event1, button1, pane1) -> {
+                // Just close the window, nothing else
+                newInfoWindow.closeWindow();
+            }),infoWindowPane);
+            // Add cancel button to infoWindowPane
+            infoWindowPane.addButton(cancelButton);
+
             try {
                 newInfoWindow.start(new Stage());
             } catch (Exception e) {
