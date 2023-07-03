@@ -44,6 +44,8 @@ public class InteractiveTextField implements InputField {
     // Input validators
     private ValidatorManager validatorManager;
 
+    private int order;
+
     /**
      * Houses three node objects which are used in a single row on a GridPane
      * @param header the header for the column
@@ -89,6 +91,8 @@ public class InteractiveTextField implements InputField {
 
         // Create new input validator manager
         this.validatorManager = new ValidatorManager();
+
+        this.order = 0;
 
     }
 
@@ -171,5 +175,16 @@ public class InteractiveTextField implements InputField {
     public void setValue(String value) {
         this.textField.setText(value);
     }
+
+    @Override
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    @Override
+    public int getOrder() {
+        return this.order;
+    }
+
 
 }

@@ -25,4 +25,16 @@ public interface Field {
      */
     void setInteractivePane(InteractivePane pane);
 
+    /**
+     * Specifies the order in which the field should be displayed (from top to bottom). This property will be used by an InteractivePane the determine which element will come before the other in a window. Fields should default to an order of 0
+     * @param order the given order as an Integer
+     */
+    void setOrder(int order);
+
+    /**
+     * Gets the order of the object to be displayed on screen. See {@link com.crowdcoin.mainBoard.Interactive.Field#setOrder(int)} for full details
+     * @return the order as an Integer
+     */
+    int getOrder();
+
 }

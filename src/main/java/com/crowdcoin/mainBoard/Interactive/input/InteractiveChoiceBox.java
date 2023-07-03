@@ -47,6 +47,8 @@ public class InteractiveChoiceBox implements InputField {
     // Input validators
     private ValidatorManager validatorManager;
 
+    private int order;
+
     /**
      * Houses three node objects which are used in a single row on a GridPane
      * @param header the header for the column
@@ -83,6 +85,8 @@ public class InteractiveChoiceBox implements InputField {
 
         // Create new input validator manager
         this.validatorManager = new ValidatorManager();
+
+        this.order = 0;
 
     }
 
@@ -126,6 +130,8 @@ public class InteractiveChoiceBox implements InputField {
 
         // Add values
         this.addAllValues(List.of(values));
+
+        this.order = 0;
 
     }
 
@@ -252,6 +258,16 @@ public class InteractiveChoiceBox implements InputField {
     @Override
     public void setInteractivePane(InteractivePane pane) {
         this.parentPane = pane;
+    }
+
+    @Override
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    @Override
+    public int getOrder() {
+        return this.order;
     }
 
     @Override

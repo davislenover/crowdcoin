@@ -10,10 +10,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class InteractivePane implements Iterable<InputField> {
 
@@ -124,6 +121,22 @@ public class InteractivePane implements Iterable<InputField> {
 
     }
 
+    /**
+     * Gets a OutputField object stored at the specified index position
+     * @param fieldIndex the index position as an integer
+     * @return an OutputField object at the specified index position
+     * @throws IndexOutOfBoundsException if fieldIndex is not within the range of the list
+     */
+    public OutputField getOutputField(int fieldIndex) {
+
+        if (fieldIndex > this.outputFieldList.size() - 1) {
+            throw new IndexOutOfBoundsException("Index of " + fieldIndex + " is out of range for size " + this.outputFieldList.size());
+        }
+
+        return this.outputFieldList.get(fieldIndex);
+
+    }
+
     // Method to update row constraints
     // Called to setup spacing of fields evenly in GridPane
     private void updateParentDisplayPane(GridPane parentFieldGridPane) {
@@ -131,12 +144,15 @@ public class InteractivePane implements Iterable<InputField> {
         // Clear all prior constraints
         parentFieldGridPane.getRowConstraints().clear();
 
+        // Get combined input and output field list
+        List<Field> combinedList = this.getCombinedList();
+
         // Update how much space each row will need (in height)
         RowConstraints rowConstraint = new RowConstraints();
-        rowConstraint.percentHeightProperty().setValue(100/this.fieldsList.size());
+        rowConstraint.percentHeightProperty().setValue(100/combinedList.size());
 
         // Apply updated property for however many rows are needed
-        for (int i = 0; i < this.fieldsList.size(); i++) {
+        for (int i = 0; i < combinedList.size(); i++) {
             parentFieldGridPane.getRowConstraints().add(rowConstraint);
         }
 
@@ -206,10 +222,13 @@ public class InteractivePane implements Iterable<InputField> {
         updateParentDisplayPane(parentFieldGridPane);
         updateParentButtonPane(parentButtonGridPane);
 
+        // Get combined input and output field list
+        List<Field> combinedFieldList = this.getCombinedList();
+
         // Apply fields
-        for (int fieldIndex = 0; fieldIndex < this.fieldsList.size(); fieldIndex++) {
+        for (int fieldIndex = 0; fieldIndex < combinedFieldList.size(); fieldIndex++) {
             // Get field
-            InputField currentField = this.fieldsList.get(fieldIndex);
+            Field currentField = combinedFieldList.get(fieldIndex);
             // Apply to GirdPane in corresponding index location (same as fieldsList index)
             currentField.applyPane(parentFieldGridPane,fieldIndex);
         }
@@ -250,5 +269,20 @@ public class InteractivePane implements Iterable<InputField> {
     @Override
     public Iterator<InputField> iterator() {
         return this.fieldsList.iterator();
+    }
+
+    // Take both input and output fields, add them all to a list and sort based on order
+    private List<Field> getCombinedList() {
+
+        List<Field> combinedList = new ArrayList<>() {{
+            addAll(fieldsList);
+            addAll(outputFieldList);
+        }};
+
+        // Sort list according to order integers
+        combinedList.sort(Comparator.comparingInt(Field::getOrder));
+
+        return combinedList;
+
     }
 }

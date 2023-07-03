@@ -10,8 +10,10 @@ public class OutputPrintField implements OutputField {
 
     private StackPane containerPane;
     private Text messageText;
+    private int order;
 
     public OutputPrintField(String message) {
+        this.order = 0;
         this.messageText = new Text(message);
         this.containerPane = new StackPane();
     }
@@ -29,6 +31,16 @@ public class OutputPrintField implements OutputField {
     @Override
     public void setInteractivePane(InteractivePane pane) {
 
+    }
+
+    @Override
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    @Override
+    public int getOrder() {
+        return this.order;
     }
 
     @Override
