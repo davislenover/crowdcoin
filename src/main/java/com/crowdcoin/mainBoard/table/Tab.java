@@ -256,6 +256,12 @@ public class Tab implements Observable<Tab>, Observer<FilterFXController> {
     // Tab will watch for changes to the SQLTable (mainly for Filter changes)
     @Override
     public void update(FilterFXController passThroughObject) {
+        // Reset TableView manager, this will cause it to grab a fresh query (with any Filters that have now been applied)
+        try {
+            this.tableViewManager.reset();
+        } catch (Exception e) {
+            // TODO Error handling
+        }
         // Notify all Tab observers that this tab updated it's SQLTable
         notifyObservers();
     }

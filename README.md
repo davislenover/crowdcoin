@@ -21,5 +21,5 @@ Status: Pending (P), Started (S), Blocked (B), Done (D)
 | F06 | Additional User Input Objects for sidebar grid     | Davis Lenover      | 2023-05-22 | NA         | B (Will always be adding input objects as seen fit)                 |
 | F07 | Write to table from SQL database                   | Davis Lenover      | 2023-06-03 | 2023-06-07 | B (This is technically complete but may require more functionality) |
 | F08 | Pop-up Windows                                     | Davis Lenover      | 2023-06-05 | 2023-06-10 | D                                                                   |
-| F09 | Filters for Tabs                                   | Davis Lenover      | 2023-06-10 |            | S                                                                   |
+| F09 | Filters for Tabs                                   | Davis Lenover      | 2023-06-10 | 2023-07-03 | D                                                                   |
 | F10 | Input Checking for Fields                          | Davis Lenover      | 2023-06-27 | NA         | B (Will always be adding validators as seen fit)                    |

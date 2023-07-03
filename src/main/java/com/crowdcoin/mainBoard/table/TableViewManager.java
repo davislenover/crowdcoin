@@ -75,6 +75,20 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
     }
 
     /**
+     * Delete's all data and retrieves a fresh query result from the sqltable. This does not update button states, re-application will be required
+     * @throws FailedQueryException
+     * @throws SQLException
+     * @throws InvalidRangeException
+     */
+    public void reset() throws FailedQueryException, SQLException, InvalidRangeException {
+        this.currentRowCount = 0;
+        this.currentRowSet.clear();
+        this.nextRowSet.clear();
+        this.previousRowSet.clear();
+        this.setupIterator();
+    }
+
+    /**
      * Sets the number of rows that will be requested from the SQL database each query. It is not guaranteed that all queries will contain this many rows (i.e, the ending of the table). Changing this value will reset iteration of this instance back to the start of the table. Re-applying to a TableView object after invoking this method is strongly recommended
      * @param rowsPerRequest the number of rows to get per query as an integer
      * @throws FailedQueryException
