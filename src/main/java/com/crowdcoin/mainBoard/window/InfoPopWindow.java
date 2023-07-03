@@ -1,17 +1,17 @@
 package com.crowdcoin.mainBoard.window;
 
-import com.crowdcoin.mainBoard.Interactive.InteractiveButton;
+import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.InteractiveButtonActionEvent;
-import com.crowdcoin.mainBoard.Interactive.InteractiveFieldActionEvent;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.output.OutputField;
 import com.crowdcoin.mainBoard.Interactive.output.OutputPrintField;
+import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 /**
- * A class for display a short message along with button actions to the screen. By default, one OutputPrintField and Button are present within the InteractivePane upon calling {@link com.crowdcoin.mainBoard.window.InfoPopWindow#start(Stage)}
+ * A class for display a short message along with button actions to the screen. By default, one OutputPrintField and SubmitField (order of 0) are present within the InteractivePane upon calling {@link com.crowdcoin.mainBoard.window.InfoPopWindow#start(Stage)}
  */
 public class InfoPopWindow extends PopWindow {
 
@@ -67,8 +67,8 @@ public class InfoPopWindow extends PopWindow {
         InteractivePane windowPane = super.getWindowPane();
         windowPane.addOutputField(this.messageField);
 
-        InteractiveButton OkButton = new InteractiveButton(this.okButtonMessage,this.okButtonAction,windowPane);
-        windowPane.addButton(OkButton);
+        SubmitField OkButton = new InteractiveButton(this.okButtonMessage,this.okButtonAction);
+        windowPane.addSubmitField(OkButton);
         super.setWindowHeight(windowHeight);
         super.setWindowWidth(windowWidth);
 

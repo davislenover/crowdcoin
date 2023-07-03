@@ -5,6 +5,8 @@ import com.crowdcoin.mainBoard.Interactive.*;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
+import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
+import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.table.*;
 import com.crowdcoin.mainBoard.toolBar.MenuGroup;
 import com.crowdcoin.mainBoard.toolBar.MenuGroupContainer;
@@ -68,8 +70,12 @@ public class MainBoardController {
             }
         };
 
-        testPane.addButton("Button1",testHandler);
-        testPane.addButton("Button2", testHandler);
+        SubmitField button1 = new InteractiveButton("Button1",testHandler);
+        button1.setOrder(0);
+        SubmitField button2 = new InteractiveButton("Button2",testHandler);
+        button2.setOrder(1);
+        testPane.addSubmitField(button1);
+        testPane.addSubmitField(button2);
 
         // Test Tab 2
         Tab testTab2 = new Tab(model,table2,"testTab2");
@@ -104,9 +110,15 @@ public class MainBoardController {
             }
         };
 
-        testPane2.addButton("Button1",testHandler2);
-        testPane2.addButton("Button2", testHandler2);
-        testPane2.addButton("Button3", testHandler2);
+        SubmitField button2_1 = new InteractiveButton("Button1",testHandler2);
+        button2_1.setOrder(0);
+        SubmitField button2_2 = new InteractiveButton("Button2",testHandler2);
+        button2_2.setOrder(1);
+        SubmitField button2_3 = new InteractiveButton("Button3",testHandler2);
+        button2_3.setOrder(2);
+        testPane2.addSubmitField(button2_1);
+        testPane2.addSubmitField(button2_2);
+        testPane2.addSubmitField(button2_3);
 
         TabBar testBar = new TabBar(tabBar,mainTable,rightDisplay,buttonGrid,prevTableViewButton,nextTableViewButton,filters);
         testBar.addTab(testTab);
@@ -122,11 +134,17 @@ public class MainBoardController {
         test1.addOption(new MenuOption("New Entry",p-> {
             try {
                 PopWindow window = new PopWindow("New Entry");
-                window.getWindowPane().addButton("Window button", (test2,test3,test4)-> System.out.println("Hello Window!"));
-                window.getWindowPane().addButton("Window button2", (test2,test3,test4)-> {System.out.println("Hello Window!");
+                SubmitField windowButton1 = new InteractiveButton("Window button", (test2,test3,test4)-> System.out.println("Hello Window!"));
+                windowButton1.setOrder(0);
+                SubmitField windowButton2 = new InteractiveButton("Window button2", (test2,test3,test4)-> {System.out.println("Hello Window!");
                     InteractiveWindowPane testWindowPane = (InteractiveWindowPane) test4;
                     System.out.println(Arrays.toString(testWindowPane.getAllInput().toArray()));
                 });
+                windowButton2.setOrder(1);
+
+                window.getWindowPane().addSubmitField(windowButton1);
+                window.getWindowPane().addSubmitField(windowButton2);
+
                 InteractiveChoiceBox box2 = new InteractiveChoiceBox("Test","Testing window choice field",new FieldActionDummyEvent());
                 box2.addValue("Option1");
                 box2.addValue("Option2");

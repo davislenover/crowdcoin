@@ -2,11 +2,12 @@ package com.crowdcoin.mainBoard.window;
 
 import com.crowdcoin.exceptions.validation.ValidationException;
 import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
-import com.crowdcoin.mainBoard.Interactive.InteractiveButton;
+import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
+import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.filter.Filter;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterFXController;
@@ -63,7 +64,7 @@ public class EditFilterPopWindow extends PopWindow {
         InteractiveChoiceBox choiceBoxOperation = new InteractiveChoiceBox("Operation","Operation applied to target column to compare values",(action,field,pane) -> {
 
             // Reset to two fields in pane (to remove potentially old fields from previous filter operator selection)
-            newPane.retainAllFields(new ArrayList<>() {{
+            newPane.retainAllInputFields(new ArrayList<>() {{
                 add(newPane.getInputField(0));
                 add(newPane.getInputField(1));
             }});
@@ -104,8 +105,8 @@ public class EditFilterPopWindow extends PopWindow {
         // Add choiceBoxOperation to InteractivePane before setting value as this will trigger the event and the event takes in the pane. If the pane does not exist when triggered, a null pointer exception will occur
         newPane.addInputField(choiceBoxOperation);
 
-        // Add button
-        newPane.addButton("OK",(actionEvent,button,pane) -> {
+        // Add Ok submitField for editing filters
+        SubmitField submitFilterEdit = new InteractiveButton("OK",(actionEvent, button, pane) -> {
 
             // Perform basically the same actions as NewFilterPopWindowClass
 
@@ -153,7 +154,14 @@ public class EditFilterPopWindow extends PopWindow {
 
         });
 
-        newPane.addButton("Remove Filter",((event, button, pane) -> {
+        // Set the order of submitFilterEdit to appear on the very left of the window
+        submitFilterEdit.setOrder(0);
+
+        // Add submitFiled to pane
+        newPane.addSubmitField(submitFilterEdit);
+
+        // Create remove filter field
+        SubmitField removeFilter = new InteractiveButton("Remove Filter",((event, button, pane) -> {
 
             InfoPopWindow newInfoWindow = new InfoPopWindow("Confirmation");
             newInfoWindow.setInfoMessage("Are you sure you want to remove this filter?");
@@ -167,14 +175,16 @@ public class EditFilterPopWindow extends PopWindow {
             }));
 
             InteractivePane infoWindowPane = newInfoWindow.getWindowPane();
-
             // Create cancel button
-            InteractiveButton cancelButton = new InteractiveButton("Cancel",((event1, button1, pane1) -> {
+            SubmitField cancelField = new InteractiveButton("Cancel",((event1, button1, pane1) -> {
                 // Just close the window, nothing else
                 newInfoWindow.closeWindow();
-            }),infoWindowPane);
+            }));
+
+            cancelField.setOrder(1);
+
             // Add cancel button to infoWindowPane
-            infoWindowPane.addButton(cancelButton);
+            infoWindowPane.addSubmitField(cancelField);
 
             try {
                 newInfoWindow.start(new Stage());
@@ -183,6 +193,12 @@ public class EditFilterPopWindow extends PopWindow {
             }
 
         }));
+
+        // Set order to come after ok field
+        removeFilter.setOrder(1);
+
+        // Add remove filter field to InteractivePane
+        newPane.addSubmitField(removeFilter);
 
 
         // Start the stage to populate stage variable. This is done such that updateWindow() in the trigger for choiceBoxOperation' event works (as it is needed to be triggered below)

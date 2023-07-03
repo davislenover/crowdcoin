@@ -1,6 +1,7 @@
 package com.crowdcoin.mainBoard.Interactive;
 
-import com.crowdcoin.networking.sqlcom.data.SQLTable;
+import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
+import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 
 /**
  * InteractiveWindowPane is an extension of InteractivePane. WindowPanes dictate how the user interacts with a PopWindow
@@ -15,18 +16,18 @@ public class InteractiveWindowPane extends InteractivePane {
     }
 
     /**
-     * Add a button to InteractiveWindowPane. When applyInteractivePane() is called, all buttons added will be applied to the corresponding button GridPane
-     * @param buttonText the text to be displayed by the Button
-     * @param eventHandler the class containing an invokable method by the Button to perform arbitrary logic upon firing of an ActionEvent by the Button. Intended to allow users to execute arbitrary logic for each button and not singular unified logic
-     * @return true if a new field was added, false otherwise
-     * @Note by convention, Buttons are added horizontally below the Field Grid
+     * Add an SubmitField to the InteractivePane. Also used by child classes to add SubmitFields to parent class. Sets the parent pane of the SubmitField to this instance of InteractivePane. By convention, SubmitFields are added in a row at the bottom of the window in a GridPane (each column holds a SubmitField). The order at which they are added is determined by each object's order property.
+     * It is imperative that each button within this list has a successive order (i.e., no SubmitField skips an order number)
+     * @param newField the field to add as an SubmitField object
+     * @return true if the collection was modified as a result of invocation of this method, false otherwise.
      */
-    public boolean addButton(String buttonText, InteractiveButtonActionEvent eventHandler) {
-        // Overriding addButton enables pass-through of the InteractiveWindowPane to InteractiveButton
-        // This way, when setting the eventHandler, the parent pane points to the WindowPane rather than the parent Pane for correctness
-        // If the arbitrary logic requires calling methods from the parent TabPane, then it can still do as WindowPane is a child class of parent Pane
-        InteractiveButton newButton = new InteractiveButton(buttonText,eventHandler,this);
-        return super.addButton(newButton);
+    public boolean addSubmitField(SubmitField newField) {
+        // Override method to set InteractivePane to this child class of InteractivePane for correctness
+        if (super.addSubmitField(newField)) {
+            newField.setInteractivePane(this);
+            return true;
+        }
+        return false;
     }
 
 }

@@ -1,22 +1,28 @@
-package com.crowdcoin.mainBoard.Interactive;
+package com.crowdcoin.mainBoard.Interactive.submit;
 
+import com.crowdcoin.mainBoard.Interactive.InteractiveButtonActionEvent;
+import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 
-public class InteractiveButton {
+public class InteractiveButton implements SubmitField {
 
     private Button button;
+    private StackPane containerPane;
     private InteractiveButtonActionEvent interactiveButtonActionEvent;
     private InteractivePane parentPane;
+
+    private int order;
 
     /**
      * Houses a button object on a column of a GridPane. Sets button to invoke corresponding method in InteractiveButtonActionEvent class upon interaction event is fired from Button object
      * @param buttonText the text displayed by the button
      * @param buttonActionHandler the class which contains an invokable method by the Button (as specified by the InteractiveButtonActionEvent interface). Intended to allow for a variety of different logic to be executed for any given Button
-     * @param pane the InteractiveTabPane object to house the InteractiveButton object (i.e., the parent)
      * @Note this is the lower level object used in InteractivePane's
      */
-    public InteractiveButton(String buttonText, InteractiveButtonActionEvent buttonActionHandler, InteractivePane pane) {
+    public InteractiveButton(String buttonText, InteractiveButtonActionEvent buttonActionHandler) {
 
         // Create a new button with specified text
         this.button = new Button(buttonText);
@@ -25,10 +31,16 @@ public class InteractiveButton {
         this.button.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
 
         this.interactiveButtonActionEvent = buttonActionHandler;
-        this.parentPane = pane;
 
         // Set the button to invoke the given handleButtonClick() method found within the corresponding interactiveButtonActionEvent class when interacted with
         this.button.setOnAction(event -> this.interactiveButtonActionEvent.buttonActionHandler(event,this.button,this.parentPane));
+
+        // Add button to container
+        this.containerPane = new StackPane();
+        this.containerPane.getChildren().add(this.button);
+
+        // Set order
+        this.order = 0;
 
     }
 
@@ -42,4 +54,28 @@ public class InteractiveButton {
     }
 
 
+    @Override
+    public void applyPane(GridPane targetPane, int targetRow) {
+        targetPane.add(this.button,this.order,targetRow);
+    }
+
+    @Override
+    public Pane getPane() {
+        return this.containerPane;
+    }
+
+    @Override
+    public void setInteractivePane(InteractivePane pane) {
+        this.parentPane = pane;
+    }
+
+    @Override
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    @Override
+    public int getOrder() {
+        return this.order;
+    }
 }

@@ -1,12 +1,8 @@
 package com.crowdcoin.mainBoard.Interactive;
 
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
-import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
-import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextArea;
-import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
 import com.crowdcoin.mainBoard.Interactive.output.OutputField;
-import com.crowdcoin.networking.sqlcom.data.SQLTable;
-import javafx.geometry.Pos;
+import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
@@ -16,16 +12,16 @@ import java.util.*;
 public class InteractivePane implements Iterable<InputField> {
 
     // The idea is to have some object which can be passed into a GUI that defines how said GUI interacts with the user
-    private List<InputField> fieldsList;
+    private List<InputField> inputFieldsList;
     private List<OutputField> outputFieldList;
-    private List<InteractiveButton> buttonList;
+    private List<SubmitField> submitFieldList;
 
     /**
      * Creates an InteractivePane object. InteractivePane's define how a GUI interacts with a user (by convention). This is intended as a parent class (framework) for child (specific) classes
      */
     public InteractivePane() {
-        this.fieldsList = new ArrayList<>();
-        this.buttonList = new ArrayList<>();
+        this.inputFieldsList = new ArrayList<>();
+        this.submitFieldList = new ArrayList<>();
         this.outputFieldList = new ArrayList<>();
     }
 
@@ -34,17 +30,17 @@ public class InteractivePane implements Iterable<InputField> {
      * @return the size as an integer
      */
     public int getFieldsSize() {
-        return this.fieldsList.size();
+        return this.inputFieldsList.size();
     }
 
     /**
-     * Add an InputField to the InteractivePane. Sets the parent pane of the InputField to this instance of InteractivePane
+     * Add an InputField to the InteractivePane. Sets the parent pane of the InputField to this instance of InteractivePane. By convention, InputFields are added vertically in a GridPane (i.e., one row contains one InputField). The object's order dictates the order in which object's a added to the GridPane (top to bottom)
      * @param newField the InputField object to add
      * @return true if the InputField object was added, false otherwise
      */
     public boolean addInputField(InputField newField) {
 
-        if (this.fieldsList.add(newField)) {
+        if (this.inputFieldsList.add(newField)) {
             newField.setInteractivePane(this);
             return true;
         }
@@ -52,7 +48,7 @@ public class InteractivePane implements Iterable<InputField> {
     }
 
     /**
-     * Add an OutputField to the InteractivePane. Sets the parent pane of the OutputField to this instance of InteractivePane
+     * Add an OutputField to the InteractivePane. Sets the parent pane of the OutputField to this instance of InteractivePane. By convention, OutputFields are added vertically in a GridPane (i.e., one row contains one OutputField). The object's order dictates the order in which object's a added to the GridPane (top to bottom)
      * @param newField the OutputField object to add
      * @return true if the OutputField object was added, false otherwise
      */
@@ -73,7 +69,7 @@ public class InteractivePane implements Iterable<InputField> {
      */
     public boolean addAllInputFields(Collection<InputField> newFields) {
 
-        if (this.fieldsList.addAll(newFields)) {
+        if (this.inputFieldsList.addAll(newFields)) {
             for (InputField field : newFields) {
                 field.setInteractivePane(this);
             }
@@ -90,7 +86,7 @@ public class InteractivePane implements Iterable<InputField> {
      */
     public void removeField(int fieldIndex) throws IndexOutOfBoundsException {
 
-        this.fieldsList.remove(fieldIndex);
+        this.inputFieldsList.remove(fieldIndex);
 
     }
 
@@ -98,8 +94,8 @@ public class InteractivePane implements Iterable<InputField> {
      * Retains all fields within the given InputField collection, discards the rest
      * @param fieldsToRetain the InputField collection to retain
      */
-    public void retainAllFields(Collection<InputField> fieldsToRetain) {
-        if (this.fieldsList.retainAll(fieldsToRetain)) {
+    public void retainAllInputFields(Collection<InputField> fieldsToRetain) {
+        if (this.inputFieldsList.retainAll(fieldsToRetain)) {
             for(InputField field : fieldsToRetain) {
                 field.setInteractivePane(this);
             }
@@ -114,11 +110,11 @@ public class InteractivePane implements Iterable<InputField> {
      */
     public InputField getInputField(int fieldIndex) {
 
-        if (fieldIndex > this.fieldsList.size() - 1) {
-            throw new IndexOutOfBoundsException("Index of " + fieldIndex + " is out of range for size " + this.fieldsList.size());
+        if (fieldIndex > this.inputFieldsList.size() - 1) {
+            throw new IndexOutOfBoundsException("Index of " + fieldIndex + " is out of range for size " + this.inputFieldsList.size());
         }
 
-        return this.fieldsList.get(fieldIndex);
+        return this.inputFieldsList.get(fieldIndex);
 
     }
 
@@ -160,49 +156,42 @@ public class InteractivePane implements Iterable<InputField> {
     }
 
     /**
-     * Add a button to InteractivePane. When applyInteractivePane() is called, all buttons added will be applied to the corresponding button GridPane
-     * @param buttonText the text to be displayed by the Button
-     * @param eventHandler the class containing an invokable method by the Button to perform arbitrary logic upon firing of an ActionEvent by the Button. Intended to allow users to execute arbitrary logic for each button and not singular unified logic
-     * @return true if a new field was added, false otherwise
-     * @Note by convention, Buttons are added horizontally below the Field Grid horizontally
+     * Add an SubmitField to the InteractivePane. Also used by child classes to add SubmitFields to parent class. Sets the parent pane of the SubmitField to this instance of InteractivePane. By convention, SubmitFields are added in a row at the bottom of the window in a GridPane (each column holds a SubmitField). The order at which they are added is determined by each object's order property.
+     * It is imperative that each button within this list has a successive order (i.e., no SubmitField skips an order number)
+     * @param newField the field to add as an SubmitField object
+     * @return true if the collection was modified as a result of invocation of this method, false otherwise.
      */
-    public boolean addButton(String buttonText, InteractiveButtonActionEvent eventHandler) {
-        InteractiveButton newButton = new InteractiveButton(buttonText,eventHandler,this);
-        return this.buttonList.add(newButton);
+    public boolean addSubmitField(SubmitField newField) {
+        if (this.submitFieldList.add(newField)) {
+            newField.setInteractivePane(this);
+            return true;
+        }
+        return false;
     }
 
     /**
-     * Add an already created InteractiveButton to the InteractivePane. Also used by child classes to add buttons to parent class
-     * @param newButton the button to add as an InteractiveButton object
-     * @return
+     * Removes a specified SubmitField from the InteractivePane. Note removal change does NOT take effect on GridPane until application method is invoked
+     * @param fieldIndex the index within the InteractivePane of the Field to remove
+     * @throws IndexOutOfBoundsException if fieldIndex is not within the range of the list
      */
-    public boolean addButton(InteractiveButton newButton) {
-        return this.buttonList.add(newButton);
-    }
+    public void removeSubmitField(int fieldIndex) throws IndexOutOfBoundsException {
 
-    /**
-     * Removes a specified button from the InteractivePane. Note removal change does NOT take effect on GridPane until application method is invoked
-     * @param buttonIndex the index within the InteractivePane of the button to remove
-     * @throws IndexOutOfBoundsException if buttonIndex is not within the range of the list
-     */
-    public void removeButton(int buttonIndex) throws IndexOutOfBoundsException {
-
-        this.buttonList.remove(buttonIndex);
+        this.submitFieldList.remove(fieldIndex);
 
     }
 
-    // Method to update column constraints for button grid
+    // Method to update column constraints for SubmitField grid
     // Unlike the field grid, buttons are added horizontally rather than vertically, thus column constraints is updated instead
-    private void updateParentButtonPane(GridPane parentButtonGridPane) {
+    private void updateParentSubmitFieldPane(GridPane parentSubmitFieldGridPane) {
 
-        parentButtonGridPane.getColumnConstraints().clear();
+        parentSubmitFieldGridPane.getColumnConstraints().clear();
 
         ColumnConstraints columnConstraint = new ColumnConstraints();
-        columnConstraint.percentWidthProperty().setValue(100/this.buttonList.size());
+        columnConstraint.percentWidthProperty().setValue(100/this.submitFieldList.size());
 
         // Apply updated property for however many columns are needed
-        for (int i = 0; i < this.buttonList.size(); i++) {
-            parentButtonGridPane.getColumnConstraints().add(columnConstraint);
+        for (int i = 0; i < this.submitFieldList.size(); i++) {
+            parentSubmitFieldGridPane.getColumnConstraints().add(columnConstraint);
         }
 
     }
@@ -210,18 +199,18 @@ public class InteractivePane implements Iterable<InputField> {
     /**
      * Applys Fields and Buttons to GridPanes.
      * @param parentFieldGridPane the target GridPane to insert fields into. Upon application, for each field, creates a new row at the bottom of the Field GridPane and inserts a new field there. All other rows are automatically resized such that they are all spaced out evenly.
-     * @param parentButtonGridPane the target GridPane to insert buttons into. Upon application, for each button, Creates a new column at the rightmost side of the Button GridPane and inserts the field there. All other columns are automatically resized such that they are all spaced out evenly.
-     * @Note by convention, the field GridPane should be above the button GridPane
+     * @param parentSubmitFieldPane the target GridPane to insert SubmitField into. Upon application, for each SubmitField, Creates a new column at the rightmost side of the SubmitField GridPane and inserts the field there. All other columns are automatically resized such that they are all spaced out evenly.
+     * @Note by convention, the field GridPane should be above the SubmitField GridPane
      */
-    public void applyInteractivePane(GridPane parentFieldGridPane, GridPane parentButtonGridPane) {
+    public void applyInteractivePane(GridPane parentFieldGridPane, GridPane parentSubmitFieldPane) {
 
         // Clear both GridPanes
         parentFieldGridPane.getChildren().clear();
-        parentButtonGridPane.getChildren().clear();
+        parentSubmitFieldPane.getChildren().clear();
 
         // Clear and update column/row constraints for fitting instances of TextFields and Buttons
         updateParentDisplayPane(parentFieldGridPane);
-        updateParentButtonPane(parentButtonGridPane);
+        updateParentSubmitFieldPane(parentSubmitFieldPane);
 
         // Get combined input and output field list
         List<Field> combinedFieldList = this.getCombinedList();
@@ -234,26 +223,26 @@ public class InteractivePane implements Iterable<InputField> {
             currentField.applyPane(parentFieldGridPane,fieldIndex);
         }
 
-        // Apply buttons
-        for (int buttonIndex = 0; buttonIndex < this.buttonList.size(); buttonIndex++) {
+        // Apply SubmitFields
+        for (int buttonIndex = 0; buttonIndex < this.submitFieldList.size(); buttonIndex++) {
             // Get Button
-            InteractiveButton currentButton = this.buttonList.get(buttonIndex);
+            SubmitField currentButton = this.submitFieldList.get(buttonIndex);
             // Apply to GirdPane in corresponding index location (same as buttonList index)
-            currentButton.applyPane(parentButtonGridPane,buttonIndex,0);
+            currentButton.applyPane(parentSubmitFieldPane,0);
         }
 
 
     }
 
     /**
-     * Gets all user input from all TextFields
-     * @return a list of strings corresponding to each TextField (top to bottom in the GirdPane)
+     * Gets all user input from all InputFields
+     * @return a list of strings corresponding to each InputField (top to bottom in the GirdPane)
      */
     public List<String> getAllInput() {
 
         List<String> returnList = new ArrayList<>();
 
-        for (InputField field : this.fieldsList) {
+        for (InputField field : this.inputFieldsList) {
 
             returnList.add(field.getInput());
 
@@ -269,14 +258,14 @@ public class InteractivePane implements Iterable<InputField> {
      */
     @Override
     public Iterator<InputField> iterator() {
-        return this.fieldsList.iterator();
+        return this.inputFieldsList.iterator();
     }
 
     // Take both input and output fields, add them all to a list and sort based on order
     private List<Field> getCombinedList() {
 
         List<Field> combinedList = new ArrayList<>() {{
-            addAll(fieldsList);
+            addAll(inputFieldsList);
             addAll(outputFieldList);
         }};
 

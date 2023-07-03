@@ -6,8 +6,8 @@ import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
-import com.crowdcoin.mainBoard.table.Tab;
-import com.crowdcoin.mainBoard.window.PopWindow;
+import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
+import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.filter.Filter;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterFXController;
@@ -18,15 +18,11 @@ import com.crowdcoin.networking.sqlcom.data.filter.build.FilterOperatorTools;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.ExtendedFilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.GeneralFilterOperators;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class NewFilterPopWindow extends PopWindow {
@@ -66,7 +62,7 @@ public class NewFilterPopWindow extends PopWindow {
         InteractiveChoiceBox choiceBoxOperation = new InteractiveChoiceBox("Operation","Operation applied to target column to compare values",(action,field,pane) -> {
 
             // Reset to two fields in pane (to remove potentially old fields from previous filter operator selection)
-            newPane.retainAllFields(new ArrayList<>() {{
+            newPane.retainAllInputFields(new ArrayList<>() {{
                 add(newPane.getInputField(0));
                 add(newPane.getInputField(1));
             }});
@@ -87,7 +83,8 @@ public class NewFilterPopWindow extends PopWindow {
         choiceBoxOperation.addValidator(new LengthValidator(1));
         newPane.addInputField(choiceBoxOperation);
 
-        newPane.addButton("OK", ((actionEvent, button, pane) -> {
+        // Create submit filter SubmitField
+        SubmitField submitNewFilter = new InteractiveButton("OK", ((actionEvent, button, pane) -> {
 
             boolean areFieldsGood = true;
 
@@ -128,6 +125,34 @@ public class NewFilterPopWindow extends PopWindow {
 
 
         }));
+
+        submitNewFilter.setOrder(0);
+        newPane.addSubmitField(submitNewFilter);
+
+        // Create Cancel field
+        SubmitField cancelField = new InteractiveButton("Cancel",((event, button, pane) -> {
+            // Cancel will open confirmation window to close adding filter
+            InfoPopWindow confirmationWindow = new InfoPopWindow("Confirmation");
+            confirmationWindow.setInfoMessage("Cancel adding a filter?");
+            confirmationWindow.setOkButtonAction(((event1, button1, pane1) -> {
+                super.closeWindow();
+                confirmationWindow.closeWindow();
+            }));
+            SubmitField cancelConfirmation = new InteractiveButton("No",((event1, button1, pane1) -> {
+                confirmationWindow.closeWindow();
+            }));
+            cancelConfirmation.setOrder(1);
+            confirmationWindow.getWindowPane().addSubmitField(cancelConfirmation);
+
+            try {
+                confirmationWindow.start(new Stage());
+            } catch (Exception e) {
+
+            }
+        }));
+
+        cancelField.setOrder(1);
+        newPane.addSubmitField(cancelField);
 
         super.setWindowHeight(300);
         super.setWindowWidth(425);
