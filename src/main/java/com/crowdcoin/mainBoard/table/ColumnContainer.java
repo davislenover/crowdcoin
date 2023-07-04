@@ -3,7 +3,10 @@ import com.crowdcoin.exceptions.columnContainer.NoColumnsException;
 import com.crowdcoin.exceptions.columnContainer.NoTableViewInstanceException;
 import com.crowdcoin.exceptions.columnContainer.UnknownRowException;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -52,8 +55,6 @@ public class ColumnContainer implements Iterable<TableColumn<ModelClass,Object>>
      */
     public boolean removeColumn(String columnName) {
         boolean returnbool = removeColumn(getColumn(columnName));
-        // Update how columns get cell values
-        this.setAllCellValueProperties();
         return returnbool;
 
     }
@@ -67,8 +68,6 @@ public class ColumnContainer implements Iterable<TableColumn<ModelClass,Object>>
     public boolean removeColumn(TableColumn<ModelClass, Object> column) {
         // Remove column from list (if applicable)
         boolean returnbool = this.columnData.remove(column);
-        // Update how columns get cell values
-        this.setAllCellValueProperties();
         return returnbool;
     }
 
@@ -122,12 +121,15 @@ public class ColumnContainer implements Iterable<TableColumn<ModelClass,Object>>
         }
 
         List<ModelClass> rowModelList;
+        ObservableList<TableColumn<ModelClass, ?>> columns;
 
         // If loadTab() was not called within a TabInstance to apply these columns, it is possible that the given columns within ColumnContainer do not contain a TableView
         try {
 
             // Each row has its own modelClass which tells each column what data to display per row
             rowModelList = this.columnData.get(0).getTableView().getItems();
+            // Get columns as their names are needed to correlate corresponding methods to invoke to get data
+            columns = this.columnData.get(0).getColumns();
 
         } catch (NullPointerException e) {
 
@@ -146,7 +148,7 @@ public class ColumnContainer implements Iterable<TableColumn<ModelClass,Object>>
             // From the modelClass, invoke all methods in-order and add their returns to the Object list
             for (int methodIndex = 0; methodIndex < row.getNumberOfMethods(); methodIndex++) {
 
-                returnRow.add(row.getData(methodIndex));
+                returnRow.add(row.getData(columns.get(methodIndex).getText()));
 
             }
 
@@ -185,20 +187,6 @@ public class ColumnContainer implements Iterable<TableColumn<ModelClass,Object>>
         // When this column displays data, it will execute the following expression where p is the given ModelClass
         // Get the text of the column name as this will match a corresponding Column object .getColumnName() and will invoke the corresponding method
         column.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getData(column.getText())));
-    }
-
-    // Method to set all column cell values
-    // Useful if a column is removed, thus re-calculation is required
-    // TODO this method may not be required anymore as Column objects now contain the methods to invoke and thus, no need to rely on Method lists
-    private void setAllCellValueProperties() {
-
-        // Loop through all columns in column list
-        for (TableColumn<ModelClass, Object> column : this.columnData) {
-            // Set new cell value factory to updated index
-            column.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getData((column.getText()))));
-
-        }
-
     }
 
 }
