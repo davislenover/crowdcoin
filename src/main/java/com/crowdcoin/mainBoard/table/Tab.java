@@ -99,21 +99,31 @@ public class Tab implements Observable<Tab>, Observer<FilterFXController> {
         // Loop through each column
         for (String columnName : columnNames) {
 
-            // Create a new column with the specified name
-            TableColumn<ModelClass,Object> columnObject = new TableColumn<>(columnName);
-            columnObject.setId(columnName);
-            columnObject.setReorderable(false);
+            for (Column column : this.modelClass.getColumns()) {
 
-            // Get the text of the new column and set it's width accordingly
-            Text columnText = new Text(columnObject.getText());
-            columnText.setFont(columnObject.getCellFactory().call(columnObject).getFont());
+                // Check permissions on column
+                if (column.getColumnName().equals(columnName) && column.checkPermissionValue("IsReadable")) {
 
-            double widthValue = columnText.prefWidth(-1)+columnText.getText().length();
-            columnObject.setMinWidth(widthValue);
-            columnObject.setPrefWidth(widthValue);
-            this.totalWidth+=widthValue;
+                    // Create a new column with the specified name
+                    TableColumn<ModelClass,Object> columnObject = new TableColumn<>(columnName);
+                    columnObject.setId(columnName);
+                    columnObject.setReorderable(false);
 
-            this.columnContainer.addColumn(columnObject);
+                    // Get the text of the new column and set it's width accordingly
+                    Text columnText = new Text(columnObject.getText());
+                    columnText.setFont(columnObject.getCellFactory().call(columnObject).getFont());
+
+                    double widthValue = columnText.prefWidth(-1)+columnText.getText().length();
+                    columnObject.setMinWidth(widthValue);
+                    columnObject.setPrefWidth(widthValue);
+                    this.totalWidth+=widthValue;
+
+                    this.columnContainer.addColumn(columnObject);
+                    break;
+
+                }
+
+            }
 
         }
 

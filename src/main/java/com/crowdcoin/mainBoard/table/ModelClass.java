@@ -40,6 +40,27 @@ public class ModelClass {
     }
 
     /**
+     * Get data from a specified method found within the class instance. Checks column objects for matching column name then invokes corresponding method specified within the Column object
+     * @param columnName the given column name. Must match exactly with a Column.getColumnName() call for any given Column object within the list
+     * @return an Object instance containing the return of the specified method. Null if not found (i.e. the column name did not match or an exception occured)
+     */
+    public Object getData(String columnName) {
+
+        try {
+            for (Column column : this.columns) {
+                if (column.getColumnName().equals(columnName)) {
+                    return column.getColumnDataMethod().invoke(this.classWithMethods);
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+
+        return null;
+
+    }
+
+    /**
      * Get the instance class
      * @return the instance as a Class object
      */

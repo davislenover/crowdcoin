@@ -3,6 +3,7 @@ package com.crowdcoin.mainBoard.table;
 import com.crowdcoin.mainBoard.table.permissions.Permission;
 import com.crowdcoin.mainBoard.table.permissions.Privileged;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,11 +15,13 @@ public class Column implements Privileged {
     private List<Permission> permissions;
     private String columnName;
     private Class columnDataType;
+    private Method columnDataMethod;
 
-    public Column(String columnName,Class columnDataType) {
+    public Column(String columnName,Class columnDataType, Method columnDataMethod) {
         this.columnName = columnName;
         this.permissions = new ArrayList<>();
         this.columnDataType = columnDataType;
+        this.columnDataMethod = columnDataMethod;
     }
 
     /**
@@ -35,6 +38,14 @@ public class Column implements Privileged {
      */
     public Class getColumnDataType() {
         return this.columnDataType;
+    }
+
+    /**
+     * Gets the corresponding method which is used by the ModelClass to get data for the specific column within the SQL table
+     * @return the corresponding method as a Method object
+     */
+    public Method getColumnDataMethod() {
+        return this.columnDataMethod;
     }
 
     @Override

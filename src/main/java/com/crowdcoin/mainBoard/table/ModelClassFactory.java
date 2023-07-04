@@ -42,7 +42,7 @@ public class ModelClassFactory {
                 methodList.add(methodCandidate);
 
                 // Create a column object to store column and privileges
-                Column newColumn = new Column(methodCandidate.getAnnotation(TableReadable.class).columnName(),methodCandidate.getReturnType());
+                Column newColumn = new Column(methodCandidate.getAnnotation(TableReadable.class).columnName(),methodCandidate.getReturnType(),methodCandidate);
                 // Set Permissions
                 newColumn.addPermission(new IsReadable(methodCandidate.getAnnotation(TableReadable.class).isUserReadable()));
                 newColumn.addPermission(new IsWriteable(methodCandidate.getAnnotation(TableReadable.class).isUserWriteable()));

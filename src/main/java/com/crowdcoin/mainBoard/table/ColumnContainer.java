@@ -180,27 +180,22 @@ public class ColumnContainer implements Iterable<TableColumn<ModelClass,Object>>
     // Method to set a given column's cell value
     // Set's column to call corresponding method in ModelClass and use that as the cell's value
     private void setCellValueProperties(TableColumn<ModelClass, Object> column) {
-        // Calculate which method corresponds to given methodIndex in ModelClass
-        int methodIndex = this.columnData.size()-1;
         // p is of CellDataFeature type, calling getValue() gets the corresponding ModelClass instance and thus, invokes given method at given index
         // Returned value is displayed in column
         // When this column displays data, it will execute the following expression where p is the given ModelClass
-        column.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getData(methodIndex)));
+        // Get the text of the column name as this will match a corresponding Column object .getColumnName() and will invoke the corresponding method
+        column.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getData(column.getText())));
     }
 
     // Method to set all column cell values
     // Useful if a column is removed, thus re-calculation is required
+    // TODO this method may not be required anymore as Column objects now contain the methods to invoke and thus, no need to rely on Method lists
     private void setAllCellValueProperties() {
-
-        int methodIndex = 0;
 
         // Loop through all columns in column list
         for (TableColumn<ModelClass, Object> column : this.columnData) {
-            // Copy because lambda's require variables to be in a "final" state
-            int methodIndexCopy = methodIndex;
             // Set new cell value factory to updated index
-            column.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getData(methodIndexCopy)));
-            methodIndex++;
+            column.setCellValueFactory(p -> new SimpleObjectProperty<>(p.getValue().getData((column.getText()))));
 
         }
 
