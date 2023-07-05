@@ -3,6 +3,7 @@ package com.crowdcoin.networking.sqlcom.data;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.exceptions.table.UnknownColumnNameException;
+import com.crowdcoin.mainBoard.table.Column;
 import com.crowdcoin.mainBoard.table.Observable;
 import com.crowdcoin.mainBoard.table.Observer;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
@@ -24,21 +25,32 @@ public class SQLTable {
     private List<String[]> tableColumns;
     private SQLConnection connection;
     private FilterManager filterManager;
+    private List<Column> columnsPermList;
+    private String isReadablePerm = "IsReadable";
+    private String isWriteablePerm = "IsWriteable";
 
     /**
      * An object to get information from an SQL database
      * @param connection the current connection to communicate with the database
      * @param tableName the table within the database to get data from. Note the ordering of the columns when returning rows is via ordinal position (as raw ResultSets do NOT guarantee specific column ordering on queries thus SQLTable is intended deal with it via sorting the ResultSet via ordinal position)
+     * @param columnObjectList the list of Column objects representing which contain permission data about each column. Each column name (from {@link Column#getColumnName()}) within this list must match that of a column from the SQL Table. The list is copied and thus, reference of list passed into object is only used for creation and not modified (Column objects stored within may be modified).
      * @throws FailedQueryException if the query fails to execute. This could be for a multitude of reasons and is recommended to get rootException within this exception for exact cause. It may indicate the table provided does not exist within the database
      * @throws SQLException if a database access error occurs
+     * @throws UnknownColumnNameException if one or more Column object names (from {@link Column#getColumnName()}) do not match any SQL column name
      */
-    public SQLTable(SQLConnection connection, String tableName) throws FailedQueryException, SQLException {
+    public SQLTable(SQLConnection connection, String tableName, List<Column> columnObjectList) throws FailedQueryException, SQLException, UnknownColumnNameException {
 
         // Setup
         this.connection = connection;
         this.tableName = tableName;
         getTableData();
         this.filterManager = new FilterManager();
+        // Create new list (as modification of order may be needed)
+        this.columnsPermList = new ArrayList<>() {{
+            addAll(columnObjectList);
+        }};
+        checkColumnNames();
+        sortColumnObjectList();
 
     }
 
@@ -81,6 +93,48 @@ public class SQLTable {
 
     }
 
+    // Method to check that Column object names match that of one column name from the SQL table
+    private void checkColumnNames() throws UnknownColumnNameException {
+
+        if (this.columnsPermList.size() == this.tableColumns.size()) {
+            for (Column column : this.columnsPermList) {
+
+                boolean hasMatch = false;
+
+                for (String[] SQLColumnName : this.tableColumns) {
+
+                    if (SQLColumnName[0].equals(column.getColumnName())) {
+                        hasMatch = true;
+                        break;
+                    }
+
+                }
+
+                if (!hasMatch) {
+                    throw new UnknownColumnNameException("Column name, " + column.getColumnName() + ", from Column objects does not have a corresponding SQL column name");
+                }
+
+            }
+        } else {
+            throw new IndexOutOfBoundsException("Column object list and SQL table columns list are not the same size");
+        }
+
+    }
+
+    // Sort the given Column object list
+    // This will allow columnPermsList to index match tableColumns
+    private void sortColumnObjectList() {
+
+        // First, set ordinal position of each Column
+        for (String[] column : this.tableColumns) {
+            this.getColumnObject(column[0]).setOrdinalPosition(Integer.valueOf(column[2]));
+        }
+
+        // Sort using custom comparator
+        this.columnsPermList.sort((Comparator.comparingInt(Column::getOrdinalPosition)));
+
+    }
+
     /**
      * Get a list of data between two columns corresponding to a given row in the SQL table (NOT Table object). Results are returned in ordinal position of columns as specified in database
      * @param rowIndex the corresponding row within the SQL table to get data from
@@ -105,7 +159,10 @@ public class SQLTable {
 
         // Loop through range and add data of the specified columns to the return list
         for (String columnName : columnRange) {
-            returnRow.add(result.getObject(columnName));
+            // Check permissions of column before adding to results
+            if (this.getColumnObject(columnName).checkPermissionValue(isReadablePerm)) {
+                returnRow.add(result.getObject(columnName));
+            }
         }
 
         result.close();
@@ -138,8 +195,11 @@ public class SQLTable {
         // The result set is not guaranteed to have returned a query in any particular column position
         // Thus, given the ordinal position is known, we will return the result list in said position
         for (int index = startColumnIndex; index <= endColumnIndex; index++) {
-            // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
-            returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
+            // Since columnPermList index matches, check permissions before adding to result
+            if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
+                // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
+                returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
+            }
         }
 
         result.close();
@@ -176,7 +236,10 @@ public class SQLTable {
             List<Object> returnRow = new ArrayList<>();
             // Loop through range and add data of the specified columns to the return list
             for (String columnName : columnRange) {
-                returnRow.add(result.getObject(columnName));
+                // Check permissions of column before adding to results
+                if (this.getColumnObject(columnName).checkPermissionValue(isReadablePerm)) {
+                    returnRow.add(result.getObject(columnName));
+                }
             }
 
             // Add row to return list
@@ -217,6 +280,52 @@ public class SQLTable {
 
             // Loop through start to end and add the corresponding column data to return list
             for (int index = startColumnIndex; index <= endColumnIndex; index++) {
+                // Since columnPermList index matches, check permissions before adding to result
+                if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
+                    // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
+                    returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
+                }
+            }
+            // Add row to return list
+            returnRows.add(returnRow);
+
+        }
+
+
+        result.close();
+
+        return returnRows;
+
+    }
+
+    /**
+     * Get a list of data between two columns corresponding to given rows in the SQL table (NOT Table object). Unlike {@link SQLTable#getRows(int, int, int, int)}, method ignores ALL permissions and will return all columns specified. Method is affected by FilterManager, any filter is applied. Results are returned in ordinal position of columns as specified in database
+     * @param rowIndex the corresponding starting row within the SQL table to get data from
+     * @param numberOfRows how many rows (starting from row given in rowIndex) to get. e.g., specifying a rowIndex of 0 and numberOfRows as 3 will get the first 3 rows
+     * @param startColumnIndex the starting column in the row to begin reading data from (inclusive) where the integer corresponds to the position of the column as found within the table (upwards). Note the ordering of the columns is via ordinal position
+     * @param endColumnIndex the ending column in the row to end reading data from (inclusive) where the integer corresponds to the position of the column as found within the table (upwards). Note the ordering of the columns is via ordinal position
+     * @return a list of Object type containing the data found via the specified arguments. First list corresponds to each row whereas second list contains the data for the specified row.
+     * @throws InvalidRangeException if startColumn comes after endColumn (i.e., the range does not make sense)
+     * @throws UnknownColumnNameException if either startColumn or endColumn do not exist within the table
+     * @throws SQLException if a database access error occurred
+     * @throws FailedQueryException if query failed to execute
+     * @Note if numberOfRows exceeds that of what is physically available in the database, up to and including the last row possible will be returned
+     */
+    public List<List<Object>> getRawRows(int rowIndex, int numberOfRows, int startColumnIndex, int endColumnIndex) throws InvalidRangeException, FailedQueryException, SQLException {
+
+        if (startColumnIndex > endColumnIndex) {
+            throw new InvalidRangeException(String.valueOf(startColumnIndex),String.valueOf(endColumnIndex));
+        }
+
+        ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllWithFilterAndLimit(this.tableName,this.filterManager.getCombinedQuery(),rowIndex,numberOfRows));
+        List<List<Object>> returnRows = new ArrayList<>();
+
+        while (result.next()) {
+            List<Object> returnRow = new ArrayList<>();
+
+            // Loop through start to end and add the corresponding column data to return list
+            for (int index = startColumnIndex; index <= endColumnIndex; index++) {
+                // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
                 returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
             }
             // Add row to return list
@@ -264,7 +373,11 @@ public class SQLTable {
 
             // Loop through start to end and add the corresponding column data to return list
             for (int index = startColumnIndex; index <= endColumnIndex; index++) {
-                returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
+                // Since columnPermList index matches, check permissions before adding to result
+                if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
+                    // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
+                    returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
+                }
             }
             // Add row to return list
             returnRows.add(returnRow);
@@ -296,6 +409,10 @@ public class SQLTable {
             throw new IndexOutOfBoundsException("The specified column does not exist within the table (" + columnWhereIndex + " where max is " + (this.tableColumns.size()-1) + ")");
         }
 
+        if (!this.columnsPermList.get(columnWriteIndex).checkPermissionValue(isWriteablePerm)) {
+            throw new IllegalAccessError("ColumnWriteIndex, " + columnWriteIndex + ", user is not permitted to write to");
+        }
+
         // Invoke query
         this.connection.sendQuery(SQLDefaultQueries.insertValueIntoExistingRow(this.tableName,this.tableColumns.get(columnWriteIndex)[0],dataToWrite,this.tableColumns.get(columnWhereIndex)[0],dataWhereRead));
 
@@ -316,7 +433,7 @@ public class SQLTable {
             boolean doesExist = false;
             for (String[] checkName : this.tableColumns) {
 
-                if (checkName.equals(columnName)) {
+                if (checkName[0].equals(columnName)) {
                     doesExist = true;
                     break;
                 }
@@ -325,6 +442,10 @@ public class SQLTable {
 
             if (!doesExist) {
                 throw new UnknownColumnNameException(columnName);
+            }
+
+            if (!this.getColumnObject(columnName).checkPermissionValue(isWriteablePerm)) {
+                throw new IllegalAccessError("One or more columns user is not permitted to write to");
             }
 
         }
@@ -350,8 +471,28 @@ public class SQLTable {
 
         List<String> columnNames = new ArrayList<>();
 
-        for (String[] currentColumn : this.tableColumns) {
-            columnNames.add(currentColumn[0]);
+        for (int index = 0; index < this.tableColumns.size(); index++) {
+            // Check perms before adding
+            if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
+                columnNames.add(this.tableColumns.get(index)[0]);
+            }
+        }
+
+        return columnNames;
+
+    }
+
+    /**
+     * Get all column names found within the table Unlike {@link SQLTable#getColumnTypes()}, this method does NOT check for {@link com.crowdcoin.mainBoard.table.permissions.IsReadable} permissions.
+     * Only use this method with classes that are not user visible
+     * @return the column names in a list of Strings
+     */
+    public List<String> getRawColumnNames() {
+
+        List<String> columnNames = new ArrayList<>();
+
+        for (int index = 0; index < this.tableColumns.size(); index++) {
+                columnNames.add(this.tableColumns.get(index)[0]);
         }
 
         return columnNames;
@@ -366,13 +507,35 @@ public class SQLTable {
 
         List<String> columnTypes = new ArrayList<>();
 
-        for (String[] currentColumn : this.tableColumns) {
-            columnTypes.add(currentColumn[1]);
+        for (int index = 0; index < this.tableColumns.size(); index++) {
+            // Check perms before adding
+            if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
+                columnTypes.add(this.tableColumns.get(index)[1]);
+            }
         }
 
         return columnTypes;
 
     }
+
+    /**
+     * Get all column types found within the table (in-order). Unlike {@link SQLTable#getColumnTypes()}, this method does NOT check for {@link com.crowdcoin.mainBoard.table.permissions.IsReadable} permissions.
+     * Only use this method with classes that are not user visible
+     * @return the column types as specified within the database in a list of Strings
+     */
+    public List<String> getRawColumnTypes() {
+
+        List<String> columnTypes = new ArrayList<>();
+
+        for (int index = 0; index < this.tableColumns.size(); index++) {
+            columnTypes.add(this.tableColumns.get(index)[1]);
+        }
+
+        return columnTypes;
+
+    }
+
+
 
     // Method to get all column names between startColumn and endColumn (both inclusive)
     private List<String> getColumnNameList(String startColumn, String endColumn) throws InvalidRangeException, UnknownColumnNameException {
@@ -423,5 +586,18 @@ public class SQLTable {
      */
     public FilterManager getFilterManager() {
         return this.filterManager;
+    }
+
+    // Method to get a Column object (mainly to check permissions) from a column name
+    private Column getColumnObject(String columnName) {
+
+        for (Column column : this.columnsPermList) {
+            if (column.getColumnName().equals(columnName)) {
+                return column;
+            }
+        }
+
+        return null;
+
     }
 }

@@ -118,7 +118,7 @@ public class ModelClassFactory {
 
         // Loop through the column types
         int constructorTypeIndex = 0;
-        for (String columnType : table.getColumnTypes()) {
+        for (String columnType : table.getRawColumnTypes()) {
 
             try {
                 // Queries class contains a hashmap that provides the corresponding class for the given column type in sql
@@ -143,7 +143,7 @@ public class ModelClassFactory {
 
     private static void checkMethodNames(ModelClass klass, SQLTable table) throws IncompatibleModelClassMethodNamesException {
 
-        List<String> columnNames = table.getColumnNames();
+        List<String> columnNames = table.getRawColumnNames();
 
         for (Column column : klass.getColumns()) {
             if (!columnNames.contains(column.getColumnName())) {

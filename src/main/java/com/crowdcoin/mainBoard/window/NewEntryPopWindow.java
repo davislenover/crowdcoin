@@ -11,14 +11,15 @@ import com.crowdcoin.mainBoard.table.ModelClass;
 import com.crowdcoin.mainBoard.table.permissions.IsReadable;
 import com.crowdcoin.mainBoard.table.permissions.IsWriteable;
 import com.crowdcoin.mainBoard.table.permissions.Permission;
+import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.stage.Stage;
 
 public class NewEntryPopWindow extends PopWindow {
 
-    private ModelClass columnData;
+    private SQLTable columnData;
     private static String isWriteablePermission = IsWriteable.class.getSimpleName();
 
-    public NewEntryPopWindow(String windowName, ModelClass columnData) {
+    public NewEntryPopWindow(String windowName, SQLTable columnData) {
         super(windowName);
         this.columnData = columnData;
     }
@@ -28,14 +29,12 @@ public class NewEntryPopWindow extends PopWindow {
 
         InteractivePane windowPane = super.getWindowPane();
 
-        for (Column column : columnData.getColumns()) {
-            if (column.checkPermissionValue(isWriteablePermission)) {
-                InputField newField = new InteractiveTextField(column.getColumnName(),"Enter data for the given column",new FieldActionDummyEvent());
-                newField.setDescWrappingWidth(200);
-                newField.setHeaderWrappingWidth(200);
-                newField.setHeaderDescVerticalSpacing(10);
-                windowPane.addInputField(newField);
-            }
+        for (String column : columnData.getColumnNames()) {
+            InputField newField = new InteractiveTextField(column,"Enter data for the given column",new FieldActionDummyEvent());
+            newField.setDescWrappingWidth(200);
+            newField.setHeaderWrappingWidth(200);
+            newField.setHeaderDescVerticalSpacing(10);
+            windowPane.addInputField(newField);
         }
 
         SubmitField addEntry = new InteractiveButton("Add Entry",((event, button, pane) -> {return;}));

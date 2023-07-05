@@ -16,6 +16,7 @@ public class Column implements Privileged {
     private String columnName;
     private Class columnDataType;
     private Method columnDataMethod;
+    private int ordinalPosition = 0;
 
     public Column(String columnName,Class columnDataType, Method columnDataMethod) {
         this.columnName = columnName;
@@ -46,6 +47,22 @@ public class Column implements Privileged {
      */
     public Method getColumnDataMethod() {
         return this.columnDataMethod;
+    }
+
+    /**
+     * Gets the ordinal position of the column. Typically set by an {@link com.crowdcoin.networking.sqlcom.data.SQLTable} object
+     * @return the ordinal position as an Integer. If not previously set, default 0
+     */
+    public int getOrdinalPosition() {
+        return this.ordinalPosition;
+    }
+
+    /**
+     * Sets the ordinal position of the column. Typically set by an {@link com.crowdcoin.networking.sqlcom.data.SQLTable} object
+     * @param ordinalPosition the ordinal position of the column as an Integer
+     */
+    public void setOrdinalPosition(int ordinalPosition) {
+        this.ordinalPosition = ordinalPosition;
     }
 
     @Override

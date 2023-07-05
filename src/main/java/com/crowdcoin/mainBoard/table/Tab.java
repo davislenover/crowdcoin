@@ -99,31 +99,22 @@ public class Tab implements Observable<Tab>, Observer<FilterFXController> {
         // Loop through each column
         for (String columnName : columnNames) {
 
-            for (Column column : this.modelClass.getColumns()) {
+            // Create a new column with the specified name
+            TableColumn<ModelClass,Object> columnObject = new TableColumn<>(columnName);
+            columnObject.setId(columnName);
+            columnObject.setReorderable(false);
 
-                // Check permissions on column
-                if (column.getColumnName().equals(columnName) && column.checkPermissionValue("IsReadable")) {
+            // Get the text of the new column and set it's width accordingly
+            Text columnText = new Text(columnObject.getText());
+            columnText.setFont(columnObject.getCellFactory().call(columnObject).getFont());
 
-                    // Create a new column with the specified name
-                    TableColumn<ModelClass,Object> columnObject = new TableColumn<>(columnName);
-                    columnObject.setId(columnName);
-                    columnObject.setReorderable(false);
+            double widthValue = columnText.prefWidth(-1)+columnText.getText().length();
+            columnObject.setMinWidth(widthValue);
+            columnObject.setPrefWidth(widthValue);
+            this.totalWidth+=widthValue;
 
-                    // Get the text of the new column and set it's width accordingly
-                    Text columnText = new Text(columnObject.getText());
-                    columnText.setFont(columnObject.getCellFactory().call(columnObject).getFont());
+            this.columnContainer.addColumn(columnObject);
 
-                    double widthValue = columnText.prefWidth(-1)+columnText.getText().length();
-                    columnObject.setMinWidth(widthValue);
-                    columnObject.setPrefWidth(widthValue);
-                    this.totalWidth+=widthValue;
-
-                    this.columnContainer.addColumn(columnObject);
-                    break;
-
-                }
-
-            }
 
         }
 
@@ -168,6 +159,7 @@ public class Tab implements Observable<Tab>, Observer<FilterFXController> {
         destinationTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
         // Load data within Tab to table
+        // Note that TableViewManager gets raw rows, meaning it ignores column permissions BUT it relies on columnContainer to retrieve which columns will be added to the table and that container contains columns only with the correct permissions
         this.tableViewManager.applyCurrentRows(destinationTable);
 
         // Clear prior mouse clicked event before applying current Tab one (redundant but safer)

@@ -42,8 +42,9 @@ public class MainBoardController {
     public void initializeList() throws Exception {
 
         CoinModel model = new CoinModel(12,"myDenomination","01/01/2002","myGrade","myCompany","01234","$101.93");
-        SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coindata");
-        SQLTable table2 = new SQLTable(SQLData.getSqlConnection(),"coindata");
+        ModelClass modelClass = new ModelClassFactory().build(model);
+        SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
+        SQLTable table2 = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
 
         // Test Tab 1
         Tab testTab = new Tab(model,table,"testTab");
@@ -134,7 +135,7 @@ public class MainBoardController {
         test1.addOption(new MenuOption("New Tab Test", p -> testBar.addTab(testTab)));
         test1.addOption(new MenuOption("New Entry",p-> {
             try {
-                new NewEntryPopWindow("New Entry",new ModelClassFactory().build(model)).start(new Stage());
+                new NewEntryPopWindow("New Entry",table).start(new Stage());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
