@@ -1,15 +1,16 @@
 package com.crowdcoin.networking.sqlcom.data.filter;
 
 import com.crowdcoin.FXTools.StageManager;
+import com.crowdcoin.mainBoard.table.Observe.ObservableEvent;
 import com.crowdcoin.mainBoard.window.EditFilterPopWindow;
 import com.crowdcoin.mainBoard.window.NewFilterPopWindow;
-import com.crowdcoin.mainBoard.table.Observable;
-import com.crowdcoin.mainBoard.table.Observer;
+import com.crowdcoin.mainBoard.table.Observe.Observable;
+import com.crowdcoin.mainBoard.table.Observe.Observer;
 import com.crowdcoin.mainBoard.window.PopWindow;
+import com.crowdcoin.networking.sqlcom.data.DatabaseTool;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.MenuItem;
-import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,9 +19,9 @@ import java.util.List;
 /**
  * A class responsible for loading filters into SplitMenuButton objects
  */
-public class FilterFXController implements Observable<FilterFXController> {
+public class FilterFXController implements Observable<DatabaseTool>, ObservableEvent<DatabaseTool>, DatabaseTool {
 
-    private List<Observer<FilterFXController>> subscriptionList;
+    private List<Observer<DatabaseTool>> subscriptionList;
 
     public FilterFXController() {
         this.subscriptionList = new ArrayList<>();
@@ -68,7 +69,7 @@ public class FilterFXController implements Observable<FilterFXController> {
     }
 
     @Override
-    public boolean addObserver(Observer<FilterFXController> observer) {
+    public boolean addObserver(Observer<DatabaseTool> observer) {
         if (!this.subscriptionList.contains(observer)) {
             return this.subscriptionList.add(observer);
         }
@@ -76,14 +77,19 @@ public class FilterFXController implements Observable<FilterFXController> {
     }
 
     @Override
-    public boolean removeObserver(Observer<FilterFXController> observer) {
+    public boolean removeObserver(Observer<DatabaseTool> observer) {
         return this.subscriptionList.remove(observer);
     }
 
     @Override
     public void notifyObservers() {
-        for (Observer<FilterFXController> observer : this.subscriptionList) {
+        for (Observer<DatabaseTool> observer : this.subscriptionList) {
             observer.update(this);
         }
+    }
+
+    @Override
+    public DatabaseTool getEventData() {
+        return this;
     }
 }

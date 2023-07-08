@@ -4,20 +4,23 @@ import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.exceptions.table.UnknownColumnNameException;
 import com.crowdcoin.mainBoard.table.Column;
-import com.crowdcoin.mainBoard.table.Observable;
-import com.crowdcoin.mainBoard.table.Observer;
+import com.crowdcoin.mainBoard.table.Observe.Observable;
+import com.crowdcoin.mainBoard.table.Observe.ObservableEvent;
+import com.crowdcoin.mainBoard.table.Observe.Observer;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
+import com.crowdcoin.networking.sqlcom.data.filter.FilterFXController;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-public class SQLTable {
+public class SQLTable implements Observable<DatabaseTool>, ObservableEvent<DatabaseTool>, DatabaseTool {
+
+    private List<Observer<DatabaseTool>> subscriptionList;
 
     private String tableName;
     // Within the String array (inside the list), index 0 corresponds to table name, 1 is data type as specified in SQL table, 2 specifies the ordinal position
@@ -51,6 +54,8 @@ public class SQLTable {
         }};
         checkColumnNames();
         sortColumnObjectList();
+
+        this.subscriptionList = new ArrayList<>();
 
     }
 
@@ -599,5 +604,30 @@ public class SQLTable {
 
         return null;
 
+    }
+
+    @Override
+    public boolean addObserver(Observer<DatabaseTool> observer) {
+        if (!this.subscriptionList.contains(observer)) {
+            return this.subscriptionList.add(observer);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeObserver(Observer<DatabaseTool> observer) {
+        return this.subscriptionList.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer<DatabaseTool> observer : this.subscriptionList) {
+            observer.update(this);
+        }
+    }
+
+    @Override
+    public DatabaseTool getEventData() {
+        return this;
     }
 }

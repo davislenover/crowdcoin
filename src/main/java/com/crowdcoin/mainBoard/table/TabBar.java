@@ -3,7 +3,8 @@ package com.crowdcoin.mainBoard.table;
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
-import javafx.fxml.FXML;
+import com.crowdcoin.mainBoard.table.Observe.ObservableEvent;
+import com.crowdcoin.mainBoard.table.Observe.Observer;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TabPane;
@@ -18,7 +19,7 @@ import java.util.Map;
 public class TabBar implements Observer<Tab> {
 
     private TabPane controlBar;
-    private Map<String,Tab> tabIDMap;
+    private static Map<String,Tab> tabIDMap = new HashMap<>();
     private TableView mainTable;
     private GridPane fieldGrid;
     private GridPane buttonGrid;
@@ -47,8 +48,6 @@ public class TabBar implements Observer<Tab> {
         this.next = next;
         this.filterButton = filterButton;
 
-        this.tabIDMap = new HashMap<>();
-
     }
 
     /**
@@ -61,12 +60,12 @@ public class TabBar implements Observer<Tab> {
         String tabID = tab.getTabID();
 
         // Make sure tabID does not already exist
-        if (this.tabIDMap.containsKey(tabID)) {
+        if (tabIDMap.containsKey(tabID)) {
             return false;
         }
 
         // If not, add the ID string and the corresponding tab to the HashMap
-        this.tabIDMap.put(tabID,tab);
+        tabIDMap.put(tabID,tab);
 
         // Create a new JavaFX Tab
         javafx.scene.control.Tab javaFXTab = new javafx.scene.control.Tab(tabID);
@@ -100,12 +99,13 @@ public class TabBar implements Observer<Tab> {
 
     public boolean removeTab(String tabID) {
 
-        if (this.tabIDMap.containsKey(tabID)) {
+        if (tabIDMap.containsKey(tabID)) {
 
-            Tab tabToRemove = this.tabIDMap.get(tabID);
+            Tab tabToRemove = tabIDMap.get(tabID);
             // Remove TabBar from tab observer subscription list
             tabToRemove.removeObserver(this);
-            this.tabIDMap.remove(tabID);
+
+            tabIDMap.remove(tabID);
             return true;
 
         } else {
@@ -117,7 +117,7 @@ public class TabBar implements Observer<Tab> {
     private void closeTab(String tabID) {
 
         removeTab(tabID);
-        if (this.tabIDMap.isEmpty()) {
+        if (tabIDMap.isEmpty()) {
             clearScreen();
         }
 
@@ -131,7 +131,7 @@ public class TabBar implements Observer<Tab> {
         javafx.scene.control.Tab newlySelectedTab = this.controlBar.getSelectionModel().getSelectedItem();
 
         // Get the corresponding data Tab by using the JavaFX Tab ID
-        Tab tabToLoad = this.tabIDMap.get(newlySelectedTab.getId());
+        Tab tabToLoad = tabIDMap.get(newlySelectedTab.getId());
 
         // Load the corresponding data Tab
         tabToLoad.loadTab(this.mainTable,this.fieldGrid,this.buttonGrid,this.previous,this.next,this.filterButton);
@@ -155,11 +155,18 @@ public class TabBar implements Observer<Tab> {
     }
 
     @Override
-    public void update(Tab passThroughObject) {
+    public void removeObserving() {
+        for (Tab tab : tabIDMap.values()) {
+            tab.removeObserver(this);
+        }
+    }
+
+    @Override
+    public void update(ObservableEvent<Tab> passThroughObject) {
 
         try {
 
-            String tabID = passThroughObject.getTabID();
+            String tabID = passThroughObject.getEventData().getTabID();
 
             // Check if the Tab is currently selected
             if (this.controlBar.getSelectionModel().getSelectedItem().getId().equals(tabID)) {

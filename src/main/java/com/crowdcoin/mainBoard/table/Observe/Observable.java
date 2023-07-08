@@ -1,4 +1,4 @@
-package com.crowdcoin.mainBoard.table;
+package com.crowdcoin.mainBoard.table.Observe;
 
 /**
  * Defines that a class is Observable

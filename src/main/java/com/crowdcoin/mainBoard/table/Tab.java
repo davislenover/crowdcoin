@@ -7,9 +7,11 @@ import com.crowdcoin.exceptions.tab.IncompatibleModelClassMethodNamesException;
 import com.crowdcoin.exceptions.tab.ModelClassConstructorTypeException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
-import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
+import com.crowdcoin.mainBoard.table.Observe.Observable;
+import com.crowdcoin.mainBoard.table.Observe.ObservableEvent;
+import com.crowdcoin.mainBoard.table.Observe.Observer;
+import com.crowdcoin.networking.sqlcom.data.DatabaseTool;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
-import com.crowdcoin.networking.sqlcom.data.filter.Filter;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterFXController;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitMenuButton;
@@ -24,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Note Tabs are observable as they can change things that other classes may need to react to, such as application of new filters
-public class Tab implements Observable<Tab>, Observer<FilterFXController> {
+public class Tab implements Observable<Tab>, Observer<DatabaseTool>, ObservableEvent<Tab> {
 
     private ColumnContainer columnContainer;
     private ModelClass modelClass;
@@ -86,6 +88,8 @@ public class Tab implements Observable<Tab>, Observer<FilterFXController> {
 
         // Tab will observe the filter controller for changes to filters (such as if a filter is being added)
         this.filterController.addObserver(this);
+        // Observe SQL Table for any other changes
+        this.sqlTable.addObserver(this);
 
     }
 
@@ -180,6 +184,12 @@ public class Tab implements Observable<Tab>, Observer<FilterFXController> {
 
     }
 
+    @Override
+    public void removeObserving() {
+        this.sqlTable.removeObserver(this);
+        this.filterController.removeObserver(this);
+    }
+
     /**
      * Get the tabID
      * @return the tabID as a String
@@ -225,7 +235,7 @@ public class Tab implements Observable<Tab>, Observer<FilterFXController> {
 
     // Tab will watch for changes to the SQLTable (mainly for Filter changes)
     @Override
-    public void update(FilterFXController passThroughObject) {
+    public void update(ObservableEvent<DatabaseTool> passThroughObject) {
         // Reset TableView manager, this will cause it to grab a fresh query (with any Filters that have now been applied)
         try {
             this.tableViewManager.reset();
@@ -234,5 +244,10 @@ public class Tab implements Observable<Tab>, Observer<FilterFXController> {
         }
         // Notify all Tab observers that this tab updated it's SQLTable
         notifyObservers();
+    }
+
+    @Override
+    public Tab getEventData() {
+        return this;
     }
 }

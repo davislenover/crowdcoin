@@ -8,6 +8,7 @@ import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.table.Column;
 import com.crowdcoin.mainBoard.table.ModelClass;
+import com.crowdcoin.mainBoard.table.TabBar;
 import com.crowdcoin.mainBoard.table.permissions.IsReadable;
 import com.crowdcoin.mainBoard.table.permissions.IsWriteable;
 import com.crowdcoin.mainBoard.table.permissions.Permission;
