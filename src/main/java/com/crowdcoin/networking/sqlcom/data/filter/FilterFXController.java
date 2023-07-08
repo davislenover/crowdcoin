@@ -1,9 +1,11 @@
 package com.crowdcoin.networking.sqlcom.data.filter;
 
+import com.crowdcoin.FXTools.StageManager;
 import com.crowdcoin.mainBoard.window.EditFilterPopWindow;
 import com.crowdcoin.mainBoard.window.NewFilterPopWindow;
 import com.crowdcoin.mainBoard.table.Observable;
 import com.crowdcoin.mainBoard.table.Observer;
+import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.MenuItem;
@@ -39,7 +41,8 @@ public class FilterFXController implements Observable<FilterFXController> {
             // OnAction create an edit filter window and pass corresponding arguments
             filterNode.setOnAction(event -> {
                 try {
-                    new EditFilterPopWindow(filterNodes.get(filterNode), filterManager,table,this).start(new Stage());
+                    PopWindow editFilterWindow = new EditFilterPopWindow(filterNodes.get(filterNode), filterManager,table,this);
+                    editFilterWindow.start(StageManager.getStage(editFilterWindow));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -54,7 +57,8 @@ public class FilterFXController implements Observable<FilterFXController> {
         newFilter.setOnAction(event -> {
             try {
                 // Create a new FilterPopWindow and display on screen (start)
-                new NewFilterPopWindow(filterButton,filterManager,table,this).start(new Stage());
+                PopWindow newFilterWindow = new NewFilterPopWindow(filterButton,filterManager,table,this);
+                newFilterWindow.start(StageManager.getStage(newFilterWindow));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

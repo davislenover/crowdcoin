@@ -94,6 +94,7 @@ public class Tab implements Observable<Tab>, Observer<FilterFXController> {
 
         this.totalWidth = 0;
 
+        // getColumnNames() only returns columns that have Readable permissions
         List<String> columnNames = this.sqlTable.getColumnNames();
 
         // Loop through each column

@@ -1,5 +1,6 @@
 package com.crowdcoin.mainBoard.window;
 
+import com.crowdcoin.FXTools.StageManager;
 import com.crowdcoin.exceptions.validation.ValidationException;
 import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
@@ -145,7 +146,7 @@ public class NewFilterPopWindow extends PopWindow {
             confirmationWindow.getWindowPane().addSubmitField(cancelConfirmation);
 
             try {
-                confirmationWindow.start(new Stage());
+                confirmationWindow.start(StageManager.getStage(confirmationWindow));
             } catch (Exception e) {
 
             }

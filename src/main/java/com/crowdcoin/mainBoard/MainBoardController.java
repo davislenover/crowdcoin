@@ -1,5 +1,6 @@
 package com.crowdcoin.mainBoard;
 
+import com.crowdcoin.FXTools.StageManager;
 import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
 import com.crowdcoin.mainBoard.Interactive.*;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
@@ -135,7 +136,8 @@ public class MainBoardController {
         test1.addOption(new MenuOption("New Tab Test", p -> testBar.addTab(testTab)));
         test1.addOption(new MenuOption("New Entry",p-> {
             try {
-                new NewEntryPopWindow("New Entry",table).start(new Stage());
+                PopWindow newEntry = new NewEntryPopWindow("New Entry",table);
+                newEntry.start(StageManager.getStage(newEntry));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

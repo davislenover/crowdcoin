@@ -1,5 +1,6 @@
 package com.crowdcoin.mainBoard.window;
 
+import com.crowdcoin.FXTools.StageManager;
 import com.crowdcoin.mainBoard.Interactive.InteractiveWindowPane;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.application.Application;
@@ -125,10 +126,12 @@ public class PopWindow extends Application {
     }
 
     /**
-     * Close window
+     * Close window. Removes JavaFX Scene object from StageManager
      */
     public void closeWindow() {
         this.stage.close();
+        // Remove stage from StageManager (if present)
+        System.out.println(StageManager.removeStage(this));
     }
 
 
