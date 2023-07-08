@@ -23,7 +23,7 @@ public class CoinModel {
 
     }
 
-    @TableReadable (order = 4, columnName = "certificationCompany", isUserReadable = false)
+    @TableReadable (order = 4, columnName = "certificationCompany")
     public String certCompany() {
         return certCompany;
     }

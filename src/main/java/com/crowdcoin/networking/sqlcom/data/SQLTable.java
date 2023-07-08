@@ -414,7 +414,7 @@ public class SQLTable {
         }
 
         // Invoke query
-        this.connection.sendQuery(SQLDefaultQueries.insertValueIntoExistingRow(this.tableName,this.tableColumns.get(columnWriteIndex)[0],dataToWrite,this.tableColumns.get(columnWhereIndex)[0],dataWhereRead));
+        this.connection.executeQuery(SQLDefaultQueries.insertValueIntoExistingRow(this.tableName,this.tableColumns.get(columnWriteIndex)[0],dataToWrite,this.tableColumns.get(columnWhereIndex)[0],dataWhereRead));
 
     }
 
@@ -451,7 +451,7 @@ public class SQLTable {
         }
 
         // Invoke query
-        this.connection.sendQuery(SQLDefaultQueries.insertValueIntoNewRow(this.tableName,columnsToInsertData,correspondingDataToInsert));
+        this.connection.executeQuery(SQLDefaultQueries.insertValueIntoNewRow(this.tableName,columnsToInsertData,correspondingDataToInsert));
 
     }
 

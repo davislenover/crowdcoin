@@ -131,7 +131,7 @@ public class PopWindow extends Application {
     public void closeWindow() {
         this.stage.close();
         // Remove stage from StageManager (if present)
-        System.out.println(StageManager.removeStage(this));
+        StageManager.removeStage(this);
     }
 
 

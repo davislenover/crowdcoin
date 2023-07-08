@@ -70,7 +70,7 @@ public class SQLDefaultQueries {
 
     public static String insertValueIntoNewRow(String tableName, List<String> columnNamesToInsertData, List<String> specificData) {
 
-        String returnString = "INSERT INTO " + tableName + "(";
+        String returnString = "INSERT INTO " + tableName + " (";
 
         for (int index = 0; index < columnNamesToInsertData.size(); index++) {
 
@@ -86,9 +86,9 @@ public class SQLDefaultQueries {
         for (int index = 0; index < specificData.size(); index++) {
 
             if (index != specificData.size()-1) {
-                returnString+=specificData.get(index)+",";
+                returnString+="'"+specificData.get(index)+"',";
             } else {
-                returnString+=specificData.get(index)+")";
+                returnString+="'"+specificData.get(index)+"')";
             }
         }
 

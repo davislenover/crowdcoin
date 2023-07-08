@@ -95,6 +95,39 @@ public class SQLConnection {
     }
 
     /**
+     * Execute manipulative on database (i.e., write to table, any command where a result is not required)
+     * @param query a string containing the query to execute
+     * @return true if the first result is a ResultSet object; false if it is an update count or there are no result
+     * @throws FailedQueryException if the query fails to execute. This could be for a multitude of reasons and is recommended to get rootException within this exception for exact cause
+     */
+    public boolean executeQuery(String query) throws FailedQueryException {
+
+        Statement statement = null;
+        boolean result = false;
+
+        try {
+            // Attempt to create the statements and execution of said statement
+            statement = this.connection.createStatement();
+            // Get result of statement
+            result = statement.execute(query);
+
+            return result;
+
+        } catch (Exception exception) {
+            try {
+                // Attempt to close connections if failed
+                statement.close();
+                // Ignore any exceptions
+            } catch (Exception ignore) {
+            }
+            // If an exception occurs, throw custom failed query exception
+            throw new FailedQueryException(query, exception);
+        } finally {
+            statement = null;
+        }
+    }
+
+    /**
      * Execute query on database
      * @param query a string containing the query to execute
      * @return a ResultSetMetaData object containing the metaData of the query execution (data)

@@ -14,6 +14,8 @@ import com.crowdcoin.mainBoard.table.permissions.Permission;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.stage.Stage;
 
+import java.util.List;
+
 public class NewEntryPopWindow extends PopWindow {
 
     private SQLTable columnData;
@@ -29,7 +31,9 @@ public class NewEntryPopWindow extends PopWindow {
 
         InteractivePane windowPane = super.getWindowPane();
 
-        for (String column : columnData.getColumnNames()) {
+        List<String> columnNames = columnData.getColumnNames();
+
+        for (String column : columnNames) {
             InputField newField = new InteractiveTextField(column,"Enter data for the given column",new FieldActionDummyEvent());
             newField.setDescWrappingWidth(200);
             newField.setHeaderWrappingWidth(200);
@@ -37,7 +41,22 @@ public class NewEntryPopWindow extends PopWindow {
             windowPane.addInputField(newField);
         }
 
-        SubmitField addEntry = new InteractiveButton("Add Entry",((event, button, pane) -> {return;}));
+        SubmitField addEntry = new InteractiveButton("Add Entry",((event, button, pane) -> {
+
+            // Get all fields
+            List<String> fieldInput = windowPane.getAllInput();
+
+            // Since fields on-screen were placed in the same order as columnNames, use both list to write new row to SQL Table
+            try {
+                columnData.writeNewRow(columnNames,fieldInput);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+            super.closeWindow();
+
+        }));
+
         SubmitField cancelAddEntry = new InteractiveButton("Cancel",((event, button, pane) -> {return;}));
         cancelAddEntry.setOrder(1);
         windowPane.addSubmitField(addEntry);

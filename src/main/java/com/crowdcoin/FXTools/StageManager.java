@@ -5,14 +5,14 @@ import javafx.stage.Stage;
 import java.util.HashMap;
 
 /**
- * Acts as a container for JavaFX stages
+ * Acts as a container for JavaFX stages. Provides ordered distribution of Scenes
  */
 public class StageManager {
 
     private static HashMap<Object,Stage> stageMap = new HashMap<>();
 
     /**
-     * Gets the corresponding JavaFX Stage for an Object. If the Object does not have a corresponding Stage, a new one is created, stored and returned
+     * Gets the corresponding JavaFX Stage for an Object. If the Object does not have a corresponding Stage, a new one is created, stored and returned. Classes should use this method instead of instantiating their own Stage
      * @param referenceObject the given Object to get a Stage for
      * @return a JavaFX Stage object
      */
