@@ -3,6 +3,8 @@ package com.crowdcoin.mainBoard.table;
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
+import com.crowdcoin.mainBoard.table.Observe.ModifyDatabaseEvent;
+import com.crowdcoin.mainBoard.table.Observe.ModifyDatabaseEventTypes;
 import com.crowdcoin.mainBoard.table.Observe.ObservableEvent;
 import com.crowdcoin.mainBoard.table.Observe.Observer;
 import javafx.scene.control.Button;
@@ -16,10 +18,10 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TabBar implements Observer<Tab> {
+public class TabBar implements Observer<ModifyDatabaseEvent> {
 
     private TabPane controlBar;
-    private static Map<String,Tab> tabIDMap = new HashMap<>();
+    private Map<String,Tab> tabIDMap = new HashMap<>();
     private TableView mainTable;
     private GridPane fieldGrid;
     private GridPane buttonGrid;
@@ -104,7 +106,8 @@ public class TabBar implements Observer<Tab> {
             Tab tabToRemove = tabIDMap.get(tabID);
             // Remove TabBar from tab observer subscription list
             tabToRemove.removeObserver(this);
-
+            // Remove everything the tab is observing
+            tabToRemove.removeObserving();
             tabIDMap.remove(tabID);
             return true;
 
@@ -162,24 +165,56 @@ public class TabBar implements Observer<Tab> {
     }
 
     @Override
-    public void update(ObservableEvent<Tab> passThroughObject) {
+    public void update(ModifyDatabaseEvent passThroughObject) {
 
-        try {
+        if (passThroughObject.getEventData() == ModifyDatabaseEventTypes.NEW_FILTER) {
+            try {
 
-            String tabID = passThroughObject.getEventData().getTabID();
+                // If the event is a new Filter, then the tabID is located in extra data
+                String tabID = passThroughObject.getExtraData();
 
-            // Check if the Tab is currently selected
-            if (this.controlBar.getSelectionModel().getSelectedItem().getId().equals(tabID)) {
-                // Force call openTab() (as onSelectionChanged event would not be triggered
-                this.openTab(tabID);
-            } else {
-                // If not selected, select it
-                // This will trigger the onSelectionChanged event and thus, call openTab()
-                this.controlBar.getSelectionModel().select(this.getJavaFXTab(tabID));
+                // Check if the Tab is currently selected
+                if (this.controlBar.getSelectionModel().getSelectedItem().getId().equals(tabID)) {
+                    // Force call openTab() (as onSelectionChanged event would not be triggered
+                    this.openTab(tabID);
+                } else {
+                    // If not selected, select it
+                    // This will trigger the onSelectionChanged event and thus, call openTab()
+                    this.controlBar.getSelectionModel().select(this.getJavaFXTab(tabID));
+                }
+
+            } catch (Exception e) {
+                // TODO add exception handling
             }
 
-        } catch (Exception e) {
-            // TODO add exception handling
+        } else if (passThroughObject.getEventData() == ModifyDatabaseEventTypes.NEW_ROW) {
+
+            // If a new row was inserted, refresh all tabs
+            for (Tab currentTab : this.tabIDMap.values()) {
+
+                try {
+
+                    String tabID = currentTab.getTabID();
+                    currentTab.resetTableView();
+                    // TODO Should be checking if the Tab is using the same SQL Table name to refresh
+
+                    // Check if the Tab is currently selected
+                    if (this.controlBar.getSelectionModel().getSelectedItem().getId().equals(tabID)) {
+                        // Force call openTab() (as onSelectionChanged event would not be triggered
+                        this.openTab(tabID);
+                    } else {
+                        // If not selected, select it
+                        // This will trigger the onSelectionChanged event and thus, call openTab()
+                        this.controlBar.getSelectionModel().select(this.getJavaFXTab(tabID));
+                    }
+
+                } catch (Exception e) {
+                    // TODO add exception handling
+                }
+
+
+            }
+
         }
 
     }

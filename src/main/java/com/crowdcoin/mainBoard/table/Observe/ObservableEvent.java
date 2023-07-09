@@ -7,7 +7,7 @@ package com.crowdcoin.mainBoard.table.Observe;
 public interface ObservableEvent<T> {
 
     /**
-     * Gets event info. Typically used to pass data that the Observer class needs to perform arbitary logic
+     * Gets event info. Typically used to pass data that the Observer class needs to perform arbitrary logic
      * @return a type T
      */
     T getEventData();

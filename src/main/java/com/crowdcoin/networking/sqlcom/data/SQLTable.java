@@ -4,9 +4,7 @@ import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.exceptions.table.UnknownColumnNameException;
 import com.crowdcoin.mainBoard.table.Column;
-import com.crowdcoin.mainBoard.table.Observe.Observable;
-import com.crowdcoin.mainBoard.table.Observe.ObservableEvent;
-import com.crowdcoin.mainBoard.table.Observe.Observer;
+import com.crowdcoin.mainBoard.table.Observe.*;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterFXController;
@@ -18,9 +16,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class SQLTable implements Observable<DatabaseTool>, ObservableEvent<DatabaseTool>, DatabaseTool {
+public class SQLTable implements Observable<ModifyDatabaseEvent> {
 
-    private List<Observer<DatabaseTool>> subscriptionList;
+    private List<Observer<ModifyDatabaseEvent>> subscriptionList;
 
     private String tableName;
     // Within the String array (inside the list), index 0 corresponds to table name, 1 is data type as specified in SQL table, 2 specifies the ordinal position
@@ -458,6 +456,10 @@ public class SQLTable implements Observable<DatabaseTool>, ObservableEvent<Datab
         // Invoke query
         this.connection.executeQuery(SQLDefaultQueries.insertValueIntoNewRow(this.tableName,columnsToInsertData,correspondingDataToInsert));
 
+        // Because this is a new row being added, tabs will need to refresh to see changes, thus notify all tabs watching the table
+        ModifyDatabaseEvent event = new ModifyDatabaseEvent(ModifyDatabaseEventTypes.NEW_ROW,this.getTableName());
+        this.notifyObservers(event);
+
     }
 
     /**
@@ -606,8 +608,13 @@ public class SQLTable implements Observable<DatabaseTool>, ObservableEvent<Datab
 
     }
 
+    public String getTableName() {
+        return this.tableName;
+    }
+
+
     @Override
-    public boolean addObserver(Observer<DatabaseTool> observer) {
+    public boolean addObserver(Observer<ModifyDatabaseEvent> observer) {
         if (!this.subscriptionList.contains(observer)) {
             return this.subscriptionList.add(observer);
         }
@@ -615,19 +622,15 @@ public class SQLTable implements Observable<DatabaseTool>, ObservableEvent<Datab
     }
 
     @Override
-    public boolean removeObserver(Observer<DatabaseTool> observer) {
+    public boolean removeObserver(Observer<ModifyDatabaseEvent> observer) {
         return this.subscriptionList.remove(observer);
     }
 
     @Override
-    public void notifyObservers() {
-        for (Observer<DatabaseTool> observer : this.subscriptionList) {
-            observer.update(this);
-        }
-    }
+    public void notifyObservers(ModifyDatabaseEvent event) {
 
-    @Override
-    public DatabaseTool getEventData() {
-        return this;
+        for (Observer<ModifyDatabaseEvent> observer : this.subscriptionList) {
+            observer.update(event);
+        }
     }
 }

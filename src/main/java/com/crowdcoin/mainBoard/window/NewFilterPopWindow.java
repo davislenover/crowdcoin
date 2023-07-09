@@ -9,6 +9,8 @@ import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
 import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
+import com.crowdcoin.mainBoard.table.Observe.ModifyDatabaseEvent;
+import com.crowdcoin.mainBoard.table.Observe.ModifyDatabaseEventTypes;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.filter.Filter;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterFXController;
@@ -121,7 +123,8 @@ public class NewFilterPopWindow extends PopWindow {
 
                 // Call controller notify method to update
                 // This will trigger tab to notify TabBar to "refresh" the Tab
-                this.filterController.notifyObservers();
+                ModifyDatabaseEvent event = new ModifyDatabaseEvent(ModifyDatabaseEventTypes.NEW_FILTER);
+                this.filterController.notifyObservers(event);
             }
 
 
