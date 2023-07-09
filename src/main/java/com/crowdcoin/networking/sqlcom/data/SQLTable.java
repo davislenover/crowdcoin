@@ -7,7 +7,6 @@ import com.crowdcoin.mainBoard.table.Column;
 import com.crowdcoin.mainBoard.table.Observe.*;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
-import com.crowdcoin.networking.sqlcom.data.filter.FilterFXController;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterManager;
 
 import java.sql.ResultSet;
@@ -457,7 +456,7 @@ public class SQLTable implements Observable<ModifyDatabaseEvent> {
         this.connection.executeQuery(SQLDefaultQueries.insertValueIntoNewRow(this.tableName,columnsToInsertData,correspondingDataToInsert));
 
         // Because this is a new row being added, tabs will need to refresh to see changes, thus notify all tabs watching the table
-        ModifyDatabaseEvent event = new ModifyDatabaseEvent(ModifyDatabaseEventTypes.NEW_ROW,this.getTableName());
+        ModifyDatabaseEvent event = new ModifyDatabaseEvent(EventType.NEW_ROW,this.getTableName());
         this.notifyObservers(event);
 
     }

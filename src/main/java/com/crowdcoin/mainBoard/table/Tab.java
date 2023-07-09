@@ -9,7 +9,7 @@ import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
 import com.crowdcoin.mainBoard.table.Observe.*;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
-import com.crowdcoin.networking.sqlcom.data.filter.FilterFXController;
+import com.crowdcoin.networking.sqlcom.data.filter.FilterController;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TableColumn;
@@ -31,7 +31,7 @@ public class Tab implements Observable<ModifyDatabaseEvent>, Observer<ModifyData
     private TableViewManager tableViewManager;
     private SQLTable sqlTable;
     private InteractiveTabPane interactiveTabPane;
-    private FilterFXController filterController;
+    private FilterController filterController;
     private String tabID;
 
     // TabActionEvent is intended to allow arbitrary logic to be invoked when a user selects anything within the TableView object within the Tab
@@ -66,7 +66,7 @@ public class Tab implements Observable<ModifyDatabaseEvent>, Observer<ModifyData
         this.columnContainer = new ColumnContainer();
         this.factory = new ModelClassFactory();
         this.sqlTable = sqlTable;
-        this.filterController = new FilterFXController();
+        this.filterController = new FilterController();
         this.interactiveTabPane = new InteractiveTabPane();
         // Build model class from model reference
         this.modelClass = this.factory.build(classToModel);
@@ -196,6 +196,14 @@ public class Tab implements Observable<ModifyDatabaseEvent>, Observer<ModifyData
     }
 
     /**
+     * Gets the SQL table name (NOT Object) that the tab currently represents
+     * @return
+     */
+    public String getSQLTableName() {
+        return this.sqlTable.getTableName();
+    }
+
+    /**
      * Change the default number of rows that will be displayed in the TableView once the Tab is loaded
      * @param numOfRows the new default number of rows as an integer
      * @throws IllegalArgumentException if the default number is less than or equal to 0
@@ -238,8 +246,8 @@ public class Tab implements Observable<ModifyDatabaseEvent>, Observer<ModifyData
     @Override
     public void notifyObservers(ModifyDatabaseEvent event) {
 
-        if (event.getEventData() == ModifyDatabaseEventTypes.NEW_FILTER) {
-            event.setExtraData(this.tabID);
+        if (event.getEventType() == EventType.NEW_FILTER) {
+            event.setEventData(this.tabID);
         }
 
         for (Observer<ModifyDatabaseEvent> observer : this.subscriptionList) {

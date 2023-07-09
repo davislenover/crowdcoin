@@ -4,8 +4,7 @@ import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.mainBoard.table.Observe.ModifyDatabaseEvent;
-import com.crowdcoin.mainBoard.table.Observe.ModifyDatabaseEventTypes;
-import com.crowdcoin.mainBoard.table.Observe.ObservableEvent;
+import com.crowdcoin.mainBoard.table.Observe.EventType;
 import com.crowdcoin.mainBoard.table.Observe.Observer;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitMenuButton;
@@ -167,11 +166,11 @@ public class TabBar implements Observer<ModifyDatabaseEvent> {
     @Override
     public void update(ModifyDatabaseEvent passThroughObject) {
 
-        if (passThroughObject.getEventData() == ModifyDatabaseEventTypes.NEW_FILTER) {
+        if (passThroughObject.getEventType() == EventType.NEW_FILTER) {
             try {
 
                 // If the event is a new Filter, then the tabID is located in extra data
-                String tabID = passThroughObject.getExtraData();
+                String tabID = passThroughObject.getEventData();
 
                 // Check if the Tab is currently selected
                 if (this.controlBar.getSelectionModel().getSelectedItem().getId().equals(tabID)) {
@@ -187,29 +186,37 @@ public class TabBar implements Observer<ModifyDatabaseEvent> {
                 // TODO add exception handling
             }
 
-        } else if (passThroughObject.getEventData() == ModifyDatabaseEventTypes.NEW_ROW) {
+        } else if (passThroughObject.getEventType() == EventType.NEW_ROW) {
+
+            // If it's a new row event type, then event data contains the name of the SQL table (NOT object)
+            String tableName = passThroughObject.getEventData();
 
             // If a new row was inserted, refresh all tabs
             for (Tab currentTab : this.tabIDMap.values()) {
 
-                try {
+                // Look for Tabs that are representing the same table in the database
+                // These are the ones that need to be updated to account for the new row
+                if (currentTab.getSQLTableName().equals(tableName)) {
 
-                    String tabID = currentTab.getTabID();
-                    currentTab.resetTableView();
-                    // TODO Should be checking if the Tab is using the same SQL Table name to refresh
+                    try {
 
-                    // Check if the Tab is currently selected
-                    if (this.controlBar.getSelectionModel().getSelectedItem().getId().equals(tabID)) {
-                        // Force call openTab() (as onSelectionChanged event would not be triggered
-                        this.openTab(tabID);
-                    } else {
-                        // If not selected, select it
-                        // This will trigger the onSelectionChanged event and thus, call openTab()
-                        this.controlBar.getSelectionModel().select(this.getJavaFXTab(tabID));
+                        String tabID = currentTab.getTabID();
+                        currentTab.resetTableView();
+
+                        // Check if the Tab is currently selected
+                        if (this.controlBar.getSelectionModel().getSelectedItem().getId().equals(tabID)) {
+                            // Force call openTab() (as onSelectionChanged event would not be triggered
+                            this.openTab(tabID);
+                        } else {
+                            // If not selected, select it
+                            // This will trigger the onSelectionChanged event and thus, call openTab()
+                            this.controlBar.getSelectionModel().select(this.getJavaFXTab(tabID));
+                        }
+
+                    } catch (Exception e) {
+                        // TODO add exception handling
                     }
 
-                } catch (Exception e) {
-                    // TODO add exception handling
                 }
 
 

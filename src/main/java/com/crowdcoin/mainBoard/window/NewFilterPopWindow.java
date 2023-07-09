@@ -10,10 +10,10 @@ import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
 import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.table.Observe.ModifyDatabaseEvent;
-import com.crowdcoin.mainBoard.table.Observe.ModifyDatabaseEventTypes;
+import com.crowdcoin.mainBoard.table.Observe.EventType;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.filter.Filter;
-import com.crowdcoin.networking.sqlcom.data.filter.FilterFXController;
+import com.crowdcoin.networking.sqlcom.data.filter.FilterController;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterManager;
 import com.crowdcoin.networking.sqlcom.data.filter.build.BlankFilterBuilder;
 import com.crowdcoin.networking.sqlcom.data.filter.build.FilterBuildDirector;
@@ -33,14 +33,14 @@ public class NewFilterPopWindow extends PopWindow {
     private SQLTable table;
     private FilterManager filterManager;
     private SplitMenuButton filterButton;
-    private FilterFXController filterController;
+    private FilterController filterController;
 
     private List<String> allOperators = new ArrayList<>() {{
         addAll(GeneralFilterOperators.getNames());
         addAll(ExtendedFilterOperators.getNames());
     }};
 
-    public NewFilterPopWindow(SplitMenuButton filterButton, FilterManager filterManager, SQLTable table, FilterFXController filterController) {
+    public NewFilterPopWindow(SplitMenuButton filterButton, FilterManager filterManager, SQLTable table, FilterController filterController) {
         super("New Filter");
         this.filterButton = filterButton;
         this.filterManager = filterManager;
@@ -123,7 +123,7 @@ public class NewFilterPopWindow extends PopWindow {
 
                 // Call controller notify method to update
                 // This will trigger tab to notify TabBar to "refresh" the Tab
-                ModifyDatabaseEvent event = new ModifyDatabaseEvent(ModifyDatabaseEventTypes.NEW_FILTER);
+                ModifyDatabaseEvent event = new ModifyDatabaseEvent(EventType.NEW_FILTER);
                 this.filterController.notifyObservers(event);
             }
 

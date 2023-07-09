@@ -1,6 +1,6 @@
 package com.crowdcoin.mainBoard.table.Observe;
 
-public enum ModifyDatabaseEventTypes {
+public enum EventType {
     NEW_FILTER,NEW_ROW
 
 }

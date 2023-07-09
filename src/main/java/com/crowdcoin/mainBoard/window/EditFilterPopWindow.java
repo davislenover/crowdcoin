@@ -10,10 +10,10 @@ import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.table.Observe.ModifyDatabaseEvent;
-import com.crowdcoin.mainBoard.table.Observe.ModifyDatabaseEventTypes;
+import com.crowdcoin.mainBoard.table.Observe.EventType;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.filter.Filter;
-import com.crowdcoin.networking.sqlcom.data.filter.FilterFXController;
+import com.crowdcoin.networking.sqlcom.data.filter.FilterController;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterManager;
 import com.crowdcoin.networking.sqlcom.data.filter.build.BlankFilterBuilder;
 import com.crowdcoin.networking.sqlcom.data.filter.build.FilterBuildDirector;
@@ -32,14 +32,14 @@ public class EditFilterPopWindow extends PopWindow {
     private SQLTable table;
     private FilterManager filterManager;
     private Filter filter;
-    private FilterFXController filterController;
+    private FilterController filterController;
 
     private List<String> allOperators = new ArrayList<>() {{
         addAll(GeneralFilterOperators.getNames());
         addAll(ExtendedFilterOperators.getNames());
     }};
 
-    public EditFilterPopWindow(Filter filter, FilterManager filterManager, SQLTable table, FilterFXController filterController) {
+    public EditFilterPopWindow(Filter filter, FilterManager filterManager, SQLTable table, FilterController filterController) {
         super("Edit Filter");
         this.filter = filter;
         this.filterManager = filterManager;
@@ -151,7 +151,7 @@ public class EditFilterPopWindow extends PopWindow {
 
                 // Call controller notify method to update
                 // This will trigger tab to notify TabBar to "refresh" the Tab
-                ModifyDatabaseEvent filterEvent = new ModifyDatabaseEvent(ModifyDatabaseEventTypes.NEW_FILTER);
+                ModifyDatabaseEvent filterEvent = new ModifyDatabaseEvent(EventType.NEW_FILTER);
                 this.filterController.notifyObservers(filterEvent);
             }
 
@@ -175,7 +175,7 @@ public class EditFilterPopWindow extends PopWindow {
                 // Close both the Info and EditFilter window (as Filter no longer exists)
                 newInfoWindow.closeWindow();
                 super.closeWindow();
-                ModifyDatabaseEvent filterEvent = new ModifyDatabaseEvent(ModifyDatabaseEventTypes.NEW_FILTER);
+                ModifyDatabaseEvent filterEvent = new ModifyDatabaseEvent(EventType.NEW_FILTER);
                 this.filterController.notifyObservers(filterEvent);
             }));
 

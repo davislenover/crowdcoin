@@ -18,11 +18,11 @@ import java.util.List;
 /**
  * A class responsible for loading filters into SplitMenuButton objects
  */
-public class FilterFXController implements Observable<ModifyDatabaseEvent> {
+public class FilterController implements Observable<ModifyDatabaseEvent> {
 
     private List<Observer<ModifyDatabaseEvent>> subscriptionList;
 
-    public FilterFXController() {
+    public FilterController() {
         this.subscriptionList = new ArrayList<>();
     }
 
