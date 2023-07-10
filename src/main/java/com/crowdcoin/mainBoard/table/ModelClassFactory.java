@@ -5,6 +5,7 @@ import com.crowdcoin.exceptions.tab.IncompatibleModelClassException;
 import com.crowdcoin.exceptions.tab.IncompatibleModelClassMethodNamesException;
 import com.crowdcoin.exceptions.tab.ModelClassConstructorTypeException;
 import com.crowdcoin.mainBoard.table.permissions.IsReadable;
+import com.crowdcoin.mainBoard.table.permissions.IsSystemWriteable;
 import com.crowdcoin.mainBoard.table.permissions.IsWriteable;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
@@ -46,6 +47,7 @@ public class ModelClassFactory {
                 // Set Permissions
                 newColumn.addPermission(new IsReadable(methodCandidate.getAnnotation(TableReadable.class).isUserReadable()));
                 newColumn.addPermission(new IsWriteable(methodCandidate.getAnnotation(TableReadable.class).isUserWriteable()));
+                newColumn.addPermission(new IsSystemWriteable(methodCandidate.getAnnotation(TableReadable.class).isSystemWriteable()));
                 columnList.add(newColumn);
 
             }

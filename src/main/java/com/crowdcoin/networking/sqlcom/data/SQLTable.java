@@ -5,6 +5,10 @@ import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.exceptions.table.UnknownColumnNameException;
 import com.crowdcoin.mainBoard.table.Column;
 import com.crowdcoin.mainBoard.table.Observe.*;
+import com.crowdcoin.mainBoard.table.permissions.IsReadable;
+import com.crowdcoin.mainBoard.table.permissions.IsSystemWriteable;
+import com.crowdcoin.mainBoard.table.permissions.IsWriteable;
+import com.crowdcoin.mainBoard.table.permissions.Permission;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterManager;
@@ -26,8 +30,9 @@ public class SQLTable implements Observable<ModifyDatabaseEvent> {
     private SQLConnection connection;
     private FilterManager filterManager;
     private List<Column> columnsPermList;
-    private String isReadablePerm = "IsReadable";
-    private String isWriteablePerm = "IsWriteable";
+    private String isReadablePerm = IsReadable.class.getSimpleName();
+    private String isWriteablePerm = IsWriteable.class.getSimpleName();
+    private String isSystemWriteablePerm = IsSystemWriteable.class.getSimpleName();
 
     /**
      * An object to get information from an SQL database
@@ -462,6 +467,47 @@ public class SQLTable implements Observable<ModifyDatabaseEvent> {
     }
 
     /**
+     * Create a new row in the SQL table and write data to given columns. This method is to not be invoked via user input directly
+     * @param columnsToInsertData the list of column names as Strings to insert data into
+     * @param correspondingDataToInsert the list of data as Strings to insert into columns (this corresponds to each column within the columnsToInsertData list)
+     * @throws UnknownColumnNameException if a column name is not within the SQL table
+     * @throws FailedQueryException if the query fails
+     */
+    public void systemWriteNewRow(List<String> columnsToInsertData, List<String> correspondingDataToInsert) throws UnknownColumnNameException, FailedQueryException {
+
+        // Check if any column name is not within the table (error-checking)
+        for (String columnName : columnsToInsertData) {
+
+            boolean doesExist = false;
+            for (String[] checkName : this.tableColumns) {
+
+                if (checkName[0].equals(columnName)) {
+                    doesExist = true;
+                    break;
+                }
+
+            }
+
+            if (!doesExist) {
+                throw new UnknownColumnNameException(columnName);
+            }
+
+            if (!this.getColumnObject(columnName).checkPermissionValue(isSystemWriteablePerm)) {
+                throw new IllegalAccessError("One or more columns system is not permitted to write to");
+            }
+
+        }
+
+        // Invoke query
+        this.connection.executeQuery(SQLDefaultQueries.insertValueIntoNewRow(this.tableName,columnsToInsertData,correspondingDataToInsert));
+
+        // Because this is a new row being added, tabs will need to refresh to see changes, thus notify all tabs watching the table
+        ModifyDatabaseEvent event = new ModifyDatabaseEvent(EventType.NEW_ROW,this.getTableName());
+        this.notifyObservers(event);
+
+    }
+
+    /**
      * Get the number of columns the sql table has
      * @return the number of columns as an Integer
      */
@@ -481,6 +527,31 @@ public class SQLTable implements Observable<ModifyDatabaseEvent> {
             // Check perms before adding
             if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
                 columnNames.add(this.tableColumns.get(index)[0]);
+            }
+        }
+
+        return columnNames;
+
+    }
+
+    /**
+     * Get all column names found within the table that return true for a specified permission plus isReadable.
+     * @return the column names in a list of Strings
+     */
+    public List<String> getColumnNames(String permission) {
+        List<String> columnNames = new ArrayList<>();
+
+        for (int index = 0; index < this.tableColumns.size(); index++) {
+
+            Column columnToCheck = this.columnsPermList.get(index);
+
+            // Check perms before adding
+            if (columnToCheck.checkPermissionValue(isReadablePerm)) {
+                System.out.println("Yes!");
+                if (columnToCheck.checkPermissionValue(permission)) {
+                    System.out.println("Yes2!");
+                    columnNames.add(this.tableColumns.get(index)[0]);
+                }
             }
         }
 

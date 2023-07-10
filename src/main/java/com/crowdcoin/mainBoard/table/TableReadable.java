@@ -34,6 +34,12 @@ public @interface TableReadable {
     boolean isUserWriteable() default true;
 
     /**
+     * Defines if a column is system writable. If not, classes can still utilize user input to write to the column (if specified to do so from UserWritable) but classes should not internally write to the column.
+     * @return true if the column is system writeable, false otherwise
+     */
+    boolean isSystemWriteable() default true;
+
+    /**
      * Specifies the name of the column within the table within the SQL database. Each method MUST specify this
      * @return the name of the column as a String object
      */

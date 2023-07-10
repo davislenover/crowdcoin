@@ -33,7 +33,7 @@ public class CoinModel {
         return certNumber;
     }
 
-    @TableReadable (order = 0, columnName = "coinID")
+    @TableReadable (order = 0, columnName = "coinID", isUserWriteable = false)
     public int coinID() {
         return coinID;
     }
