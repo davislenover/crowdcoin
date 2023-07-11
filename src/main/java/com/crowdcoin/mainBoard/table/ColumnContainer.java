@@ -5,6 +5,7 @@ import com.crowdcoin.exceptions.columnContainer.UnknownRowException;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 
 import java.util.ArrayList;
@@ -158,6 +159,45 @@ public class ColumnContainer implements Iterable<TableColumn<ModelClass,Object>>
 
             throw new UnknownRowException(rowIndex,rowModelList.size()-1);
 
+        }
+
+    }
+
+    /**
+     * Get the currently selected row of data as a list of Objects. Data is returned in order of left to right in the TableView
+     * @return a list of Objects corresponding to the given selected row
+     * @throws NoColumnsException if there are no columns currently within the ColumnContainer instance (i.e., it is impossible to retrieve any data from nothing)
+     * @throws NoTableViewInstanceException if columns do not contain a TableView instance. This is mostly likely caused by failure to load the Tab (that contains the ColumnContainer instance) into a TableView using the loadTab() method
+     */
+    public List<Object> getSelectedRow() throws NoColumnsException, NoTableViewInstanceException {
+
+        if (this.columnData.isEmpty()) {
+            throw new NoColumnsException();
+        }
+
+        List<Object> returnList = new ArrayList<>();
+        ObservableList<TableColumn<ModelClass, ?>> columns;
+
+        // If loadTab() was not called within a TabInstance to apply these columns, it is possible that the given columns within ColumnContainer do not contain a TableView
+        try {
+
+            TableView tableView = this.columnData.get(0).getTableView();
+
+            // All cells are of the ModelClass type
+            ObservableList<ModelClass> selectedRows = tableView.getSelectionModel().getSelectedItems();
+            // Each cell carries the same model class per row, thus, get the only ModelClass in the list
+            ModelClass rowModelClass = selectedRows.get(0);
+
+            // Loop through columns and use their names to get the cell data
+            for (TableColumn column : this.columnData) {
+                // Add the cell data to the return list
+                returnList.add(rowModelClass.getData(column.getText()));
+            }
+
+            return returnList;
+
+        } catch (NullPointerException e) {
+            throw new NoTableViewInstanceException();
         }
 
     }

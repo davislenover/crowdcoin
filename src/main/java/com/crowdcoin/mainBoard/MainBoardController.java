@@ -52,7 +52,14 @@ public class MainBoardController {
         testTab.setTabTableAction(new TabActionEvent() {
             @Override
             public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane) {
-                System.out.println("This tab was pressed!");
+
+                try {
+                    for (Object data : columnContainer.getSelectedRow()) {
+                        System.out.println(data.toString());
+                    }
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             }
         });
 
