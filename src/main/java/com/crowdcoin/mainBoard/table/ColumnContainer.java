@@ -122,15 +122,12 @@ public class ColumnContainer implements Iterable<TableColumn<ModelClass,Object>>
         }
 
         List<ModelClass> rowModelList;
-        ObservableList<TableColumn<ModelClass, ?>> columns;
 
         // If loadTab() was not called within a TabInstance to apply these columns, it is possible that the given columns within ColumnContainer do not contain a TableView
         try {
 
             // Each row has its own modelClass which tells each column what data to display per row
             rowModelList = this.columnData.get(0).getTableView().getItems();
-            // Get columns as their names are needed to correlate corresponding methods to invoke to get data
-            columns = this.columnData.get(0).getColumns();
 
         } catch (NullPointerException e) {
 
@@ -146,11 +143,9 @@ public class ColumnContainer implements Iterable<TableColumn<ModelClass,Object>>
 
             List<Object> returnRow = new ArrayList<>();
 
-            // From the modelClass, invoke all methods in-order and add their returns to the Object list
-            for (int methodIndex = 0; methodIndex < row.getNumberOfMethods(); methodIndex++) {
-
-                returnRow.add(row.getData(columns.get(methodIndex).getText()));
-
+            // From the modelClass, invoke all methods in-order (by finding the corresponding column name for a Column object and invoking the method stored within) and add their returns to the Object list
+            for (TableColumn column : this.columnData) {
+                returnRow.add(row.getData(column.getText()));
             }
 
             return returnRow;
@@ -176,7 +171,6 @@ public class ColumnContainer implements Iterable<TableColumn<ModelClass,Object>>
         }
 
         List<Object> returnList = new ArrayList<>();
-        ObservableList<TableColumn<ModelClass, ?>> columns;
 
         // If loadTab() was not called within a TabInstance to apply these columns, it is possible that the given columns within ColumnContainer do not contain a TableView
         try {
