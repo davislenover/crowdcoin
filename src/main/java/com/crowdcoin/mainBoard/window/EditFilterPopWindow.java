@@ -9,7 +9,7 @@ import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
-import com.crowdcoin.mainBoard.table.Observe.ModifyDatabaseEvent;
+import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
 import com.crowdcoin.mainBoard.table.Observe.EventType;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.filter.Filter;
@@ -151,7 +151,7 @@ public class EditFilterPopWindow extends PopWindow {
 
                 // Call controller notify method to update
                 // This will trigger tab to notify TabBar to "refresh" the Tab
-                ModifyDatabaseEvent filterEvent = new ModifyDatabaseEvent(EventType.NEW_FILTER);
+                ModifyEvent filterEvent = new ModifyEvent(EventType.NEW_FILTER);
                 this.filterController.notifyObservers(filterEvent);
             }
 
@@ -175,7 +175,7 @@ public class EditFilterPopWindow extends PopWindow {
                 // Close both the Info and EditFilter window (as Filter no longer exists)
                 newInfoWindow.closeWindow();
                 super.closeWindow();
-                ModifyDatabaseEvent filterEvent = new ModifyDatabaseEvent(EventType.NEW_FILTER);
+                ModifyEvent filterEvent = new ModifyEvent(EventType.NEW_FILTER);
                 this.filterController.notifyObservers(filterEvent);
             }));
 

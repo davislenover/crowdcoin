@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Note Tabs are observable as they can change things that other classes may need to react to, such as application of new filters
-public class Tab implements Observable<ModifyDatabaseEvent>, Observer<ModifyDatabaseEvent> {
+public class Tab implements Observable<ModifyEvent>, Observer<ModifyEvent> {
 
     private ColumnContainer columnContainer;
     private ModelClass modelClass;
@@ -49,7 +49,7 @@ public class Tab implements Observable<ModifyDatabaseEvent>, Observer<ModifyData
     private double totalWidth;
 
     // Observer list
-    private List<Observer<ModifyDatabaseEvent>> subscriptionList;
+    private List<Observer<ModifyEvent>> subscriptionList;
 
     /**
      * Create a Tab object. Similar to a tab in a web browser, a Tab object stores a "state" of the TableView. Upon creation, a blank InteractiveTabPane is available for use
@@ -68,6 +68,8 @@ public class Tab implements Observable<ModifyDatabaseEvent>, Observer<ModifyData
         this.sqlTable = sqlTable;
         this.filterController = new FilterController();
         this.interactiveTabPane = new InteractiveTabPane();
+        // Set Tab to observe pane (if some class triggers the notify method to indicate changes were made to the pane)
+        this.interactiveTabPane.addObserver(this);
         // Build model class from model reference
         this.modelClass = this.factory.build(classToModel);
 
@@ -231,7 +233,7 @@ public class Tab implements Observable<ModifyDatabaseEvent>, Observer<ModifyData
     }
 
     @Override
-    public boolean addObserver(Observer<ModifyDatabaseEvent> observer) {
+    public boolean addObserver(Observer<ModifyEvent> observer) {
         if (!this.subscriptionList.contains(observer)) {
             return this.subscriptionList.add(observer);
         }
@@ -239,28 +241,30 @@ public class Tab implements Observable<ModifyDatabaseEvent>, Observer<ModifyData
     }
 
     @Override
-    public boolean removeObserver(Observer<ModifyDatabaseEvent> observer) {
+    public boolean removeObserver(Observer<ModifyEvent> observer) {
         return this.subscriptionList.remove(observer);
     }
 
     @Override
-    public void notifyObservers(ModifyDatabaseEvent event) {
+    public void notifyObservers(ModifyEvent event) {
 
-        if (event.getEventType() == EventType.NEW_FILTER) {
+        if (event.getEventType() != EventType.NEW_ROW) {
             event.setEventData(this.tabID);
         }
 
-        for (Observer<ModifyDatabaseEvent> observer : this.subscriptionList) {
+        for (Observer<ModifyEvent> observer : this.subscriptionList) {
             observer.update(event);
         }
     }
 
     // Tab will watch for changes to the SQLTable (mainly for Filter changes)
     @Override
-    public void update(ModifyDatabaseEvent passThroughObject) {
+    public void update(ModifyEvent passThroughObject) {
 
-        // Reset TableView manager
-        this.resetTableView();
+        if (passThroughObject.getEventType() != EventType.PANE_UPDATE) {
+            // Reset TableView manager
+            this.resetTableView();
+        }
         // Notify all Tab observers that this tab updated it's SQLTable
         this.notifyObservers(passThroughObject);
     }

@@ -3,18 +3,23 @@ package com.crowdcoin.mainBoard.Interactive;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.output.OutputField;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
+import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
+import com.crowdcoin.mainBoard.table.Observe.Observable;
+import com.crowdcoin.mainBoard.table.Observe.Observer;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 
 import java.util.*;
 
-public class InteractivePane implements Iterable<InputField> {
+public class InteractivePane implements Iterable<InputField>, Observable<ModifyEvent> {
 
     // The idea is to have some object which can be passed into a GUI that defines how said GUI interacts with the user
     private List<InputField> inputFieldsList;
     private List<OutputField> outputFieldList;
     private List<SubmitField> submitFieldList;
+
+    private List<Observer<ModifyEvent>> observers;
 
     /**
      * Creates an InteractivePane object. InteractivePane's define how a GUI interacts with a user (by convention). This is intended as a parent class (framework) for child (specific) classes
@@ -23,6 +28,7 @@ public class InteractivePane implements Iterable<InputField> {
         this.inputFieldsList = new ArrayList<>();
         this.submitFieldList = new ArrayList<>();
         this.outputFieldList = new ArrayList<>();
+        this.observers = new ArrayList<>();
     }
 
     /**
@@ -103,6 +109,27 @@ public class InteractivePane implements Iterable<InputField> {
     }
 
     /**
+     * Clear all fields from the InputField collection. This does not reset the attached InteractivePane to every InputField. To change the InteractivePane attached to any InputField, add to another pane
+     */
+    public void clearAllInputFields() {
+        this.inputFieldsList.clear();
+    }
+
+    /**
+     * Clear all fields from the SubmitField collection. This does not reset the attached InteractivePane to every SubmitField. To change the InteractivePane attached to any SubmitField, add to another pane
+     */
+    public void clearAllSubmitFields() {
+        this.submitFieldList.clear();
+    }
+
+    /**
+     * Clear all fields from the OutputField collection. This does not reset the attached InteractivePane to every OutputField. To change the InteractivePane attached to any OutputField, add to another pane
+     */
+    public void clearAllOutputFields() {
+        this.outputFieldList.clear();
+    }
+
+    /**
      * Gets a InputField object stored at the specified index position
      * @param fieldIndex the index position as an integer
      * @return an InputField object at the specified index position
@@ -144,13 +171,15 @@ public class InteractivePane implements Iterable<InputField> {
         // Get combined input and output field list
         List<Field> combinedList = this.getCombinedList();
 
-        // Update how much space each row will need (in height)
-        RowConstraints rowConstraint = new RowConstraints();
-        rowConstraint.percentHeightProperty().setValue(100/combinedList.size());
+        if (!combinedList.isEmpty()) {
+            // Update how much space each row will need (in height)
+            RowConstraints rowConstraint = new RowConstraints();
+            rowConstraint.percentHeightProperty().setValue(100/combinedList.size());
 
-        // Apply updated property for however many rows are needed
-        for (int i = 0; i < combinedList.size(); i++) {
-            parentFieldGridPane.getRowConstraints().add(rowConstraint);
+            // Apply updated property for however many rows are needed
+            for (int i = 0; i < combinedList.size(); i++) {
+                parentFieldGridPane.getRowConstraints().add(rowConstraint);
+            }
         }
 
     }
@@ -186,12 +215,14 @@ public class InteractivePane implements Iterable<InputField> {
 
         parentSubmitFieldGridPane.getColumnConstraints().clear();
 
-        ColumnConstraints columnConstraint = new ColumnConstraints();
-        columnConstraint.percentWidthProperty().setValue(100/this.submitFieldList.size());
+        if (!this.submitFieldList.isEmpty()) {
+            ColumnConstraints columnConstraint = new ColumnConstraints();
+            columnConstraint.percentWidthProperty().setValue(100/this.submitFieldList.size());
 
-        // Apply updated property for however many columns are needed
-        for (int i = 0; i < this.submitFieldList.size(); i++) {
-            parentSubmitFieldGridPane.getColumnConstraints().add(columnConstraint);
+            // Apply updated property for however many columns are needed
+            for (int i = 0; i < this.submitFieldList.size(); i++) {
+                parentSubmitFieldGridPane.getColumnConstraints().add(columnConstraint);
+            }
         }
 
     }
@@ -274,5 +305,26 @@ public class InteractivePane implements Iterable<InputField> {
 
         return combinedList;
 
+    }
+
+    @Override
+    public boolean addObserver(Observer<ModifyEvent> observer) {
+        if (!this.observers.contains(observer)) {
+            return this.observers.add(observer);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeObserver(Observer<ModifyEvent> observer) {
+        return this.observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(ModifyEvent event) {
+
+        for (Observer<ModifyEvent> observer : this.observers) {
+            observer.update(event);
+        }
     }
 }

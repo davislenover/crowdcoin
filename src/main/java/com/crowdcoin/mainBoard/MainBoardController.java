@@ -49,26 +49,14 @@ public class MainBoardController {
 
         // Test Tab 1
         Tab testTab = new Tab(model,table,"testTab");
-        testTab.setTabTableAction(new TabActionEvent() {
-            @Override
-            public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane) {
-
-                try {
-                    for (Object data : columnContainer.getSelectedRow()) {
-                        System.out.println(data.toString());
-                    }
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-        });
+        testTab.setTabTableAction(new ViewTableRowEvent());
 
         // an InteractiveTabPane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
-        InteractiveTabPane testPane = testTab.getInteractivePane();
+        //InteractiveTabPane testPane = testTab.getInteractivePane();
         // Add fields to the pane
-        testPane.addInputField(new InteractiveTextField("This is a test","This is a test combo object for textfield combo's 1",new FieldActionDummyEvent()));
-        testPane.addInputField(new InteractiveTextField("This is a test2","This is a test combo object for textfield combo's 2",new FieldActionDummyEvent()));
-        testPane.addInputField(new InteractiveTextField("This is a test3","This is a test combo object for textfield combo's 3",new FieldActionDummyEvent()));
+        //testPane.addInputField(new InteractiveTextField("This is a test","This is a test combo object for textfield combo's 1",new FieldActionDummyEvent()));
+        //testPane.addInputField(new InteractiveTextField("This is a test2","This is a test combo object for textfield combo's 2",new FieldActionDummyEvent()));
+        //testPane.addInputField(new InteractiveTextField("This is a test3","This is a test combo object for textfield combo's 3",new FieldActionDummyEvent()));
 
         // Testing buttons
         // One can specify how they would like a button to handle an ActionEvent by defining it within a specific class or on the fly
@@ -84,8 +72,8 @@ public class MainBoardController {
         button1.setOrder(0);
         SubmitField button2 = new InteractiveButton("Button2",testHandler);
         button2.setOrder(1);
-        testPane.addSubmitField(button1);
-        testPane.addSubmitField(button2);
+        //testPane.addSubmitField(button1);
+        //testPane.addSubmitField(button2);
 
         // Test Tab 2
         Tab testTab2 = new Tab(model,table2,"testTab2");

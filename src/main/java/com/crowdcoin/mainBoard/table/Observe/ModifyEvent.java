@@ -1,18 +1,18 @@
 package com.crowdcoin.mainBoard.table.Observe;
 
 /**
- * Event is triggered when anything related to an SQLTable object changes (such as when a new filter is added, or a new row was added to the database)
+ * Event is triggered when something is modified (say an SQL database has a new row or a new filter was added)
  */
-public class ModifyDatabaseEvent implements ObservableEvent<EventType> {
+public class ModifyEvent implements ObservableEvent<EventType> {
 
     private EventType eventType;
     private String eventData;
 
-    public ModifyDatabaseEvent(EventType eventType) {
+    public ModifyEvent(EventType eventType) {
         this.eventType = eventType;
     }
 
-    public ModifyDatabaseEvent(EventType eventType, String eventData) {
+    public ModifyEvent(EventType eventType, String eventData) {
         this.eventType = eventType;
         this.eventData = eventData;
     }

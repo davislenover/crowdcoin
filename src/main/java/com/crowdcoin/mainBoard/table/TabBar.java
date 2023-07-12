@@ -3,7 +3,7 @@ package com.crowdcoin.mainBoard.table;
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
-import com.crowdcoin.mainBoard.table.Observe.ModifyDatabaseEvent;
+import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
 import com.crowdcoin.mainBoard.table.Observe.EventType;
 import com.crowdcoin.mainBoard.table.Observe.Observer;
 import javafx.scene.control.Button;
@@ -17,7 +17,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TabBar implements Observer<ModifyDatabaseEvent> {
+public class TabBar implements Observer<ModifyEvent> {
 
     private TabPane controlBar;
     private Map<String,Tab> tabIDMap = new HashMap<>();
@@ -164,12 +164,12 @@ public class TabBar implements Observer<ModifyDatabaseEvent> {
     }
 
     @Override
-    public void update(ModifyDatabaseEvent passThroughObject) {
+    public void update(ModifyEvent passThroughObject) {
 
-        if (passThroughObject.getEventType() == EventType.NEW_FILTER) {
+        if (passThroughObject.getEventType() == EventType.NEW_FILTER || passThroughObject.getEventType() == EventType.PANE_UPDATE) {
             try {
 
-                // If the event is a new Filter, then the tabID is located in extra data
+                // If the event is a new Filter or a InteractivePane update, then the tabID is located in extra data
                 String tabID = passThroughObject.getEventData();
 
                 // Check if the Tab is currently selected

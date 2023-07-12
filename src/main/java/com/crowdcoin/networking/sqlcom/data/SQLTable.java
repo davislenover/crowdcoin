@@ -8,7 +8,6 @@ import com.crowdcoin.mainBoard.table.Observe.*;
 import com.crowdcoin.mainBoard.table.permissions.IsReadable;
 import com.crowdcoin.mainBoard.table.permissions.IsSystemWriteable;
 import com.crowdcoin.mainBoard.table.permissions.IsWriteable;
-import com.crowdcoin.mainBoard.table.permissions.Permission;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterManager;
@@ -19,9 +18,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class SQLTable implements Observable<ModifyDatabaseEvent> {
+public class SQLTable implements Observable<ModifyEvent> {
 
-    private List<Observer<ModifyDatabaseEvent>> subscriptionList;
+    private List<Observer<ModifyEvent>> subscriptionList;
 
     private String tableName;
     // Within the String array (inside the list), index 0 corresponds to table name, 1 is data type as specified in SQL table, 2 specifies the ordinal position
@@ -461,7 +460,7 @@ public class SQLTable implements Observable<ModifyDatabaseEvent> {
         this.connection.executeQuery(SQLDefaultQueries.insertValueIntoNewRow(this.tableName,columnsToInsertData,correspondingDataToInsert));
 
         // Because this is a new row being added, tabs will need to refresh to see changes, thus notify all tabs watching the table
-        ModifyDatabaseEvent event = new ModifyDatabaseEvent(EventType.NEW_ROW,this.getTableName());
+        ModifyEvent event = new ModifyEvent(EventType.NEW_ROW,this.getTableName());
         this.notifyObservers(event);
 
     }
@@ -502,7 +501,7 @@ public class SQLTable implements Observable<ModifyDatabaseEvent> {
         this.connection.executeQuery(SQLDefaultQueries.insertValueIntoNewRow(this.tableName,columnsToInsertData,correspondingDataToInsert));
 
         // Because this is a new row being added, tabs will need to refresh to see changes, thus notify all tabs watching the table
-        ModifyDatabaseEvent event = new ModifyDatabaseEvent(EventType.NEW_ROW,this.getTableName());
+        ModifyEvent event = new ModifyEvent(EventType.NEW_ROW,this.getTableName());
         this.notifyObservers(event);
 
     }
@@ -684,7 +683,7 @@ public class SQLTable implements Observable<ModifyDatabaseEvent> {
 
 
     @Override
-    public boolean addObserver(Observer<ModifyDatabaseEvent> observer) {
+    public boolean addObserver(Observer<ModifyEvent> observer) {
         if (!this.subscriptionList.contains(observer)) {
             return this.subscriptionList.add(observer);
         }
@@ -692,14 +691,14 @@ public class SQLTable implements Observable<ModifyDatabaseEvent> {
     }
 
     @Override
-    public boolean removeObserver(Observer<ModifyDatabaseEvent> observer) {
+    public boolean removeObserver(Observer<ModifyEvent> observer) {
         return this.subscriptionList.remove(observer);
     }
 
     @Override
-    public void notifyObservers(ModifyDatabaseEvent event) {
+    public void notifyObservers(ModifyEvent event) {
 
-        for (Observer<ModifyDatabaseEvent> observer : this.subscriptionList) {
+        for (Observer<ModifyEvent> observer : this.subscriptionList) {
             observer.update(event);
         }
     }
