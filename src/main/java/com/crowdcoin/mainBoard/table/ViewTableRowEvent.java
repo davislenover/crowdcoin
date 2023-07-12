@@ -10,6 +10,7 @@ import com.crowdcoin.mainBoard.table.Observe.EventType;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +24,9 @@ public class ViewTableRowEvent implements TabActionEvent {
 
             // Get selected row from TableView
             List<Object> selectedRow = columnContainer.getSelectedRow();
+            TableView tableView = columnContainer.iterator().next().getTableView();
             // Save row index to re-application later
-            int selectedRowIndex = columnContainer.iterator().next().getTableView().getSelectionModel().getSelectedIndex();
+            int selectedRowIndex = tableView.getSelectionModel().getSelectedIndex();
             // Get ModelClass to get column names (for headers in InputField)
             ObservableList<TableColumn<ModelClass,?>> columns = columnContainer.iterator().next().getTableView().getColumns();
 
@@ -56,7 +58,7 @@ public class ViewTableRowEvent implements TabActionEvent {
             pane.notifyObservers(new ModifyEvent(EventType.PANE_UPDATE));
 
             // notify method will re-apply tab to screen, thus unselecting the row, thus reselect row
-            columnContainer.iterator().next().getTableView().getSelectionModel().select(selectedRowIndex);
+            tableView.getSelectionModel().select(selectedRowIndex);
 
 
         } catch (Exception e) {
