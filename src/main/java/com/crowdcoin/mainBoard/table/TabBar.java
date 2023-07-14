@@ -186,7 +186,7 @@ public class TabBar implements Observer<ModifyEvent> {
                 // TODO add exception handling
             }
 
-        } else if (passThroughObject.getEventType() == ModifyEventType.NEW_ROW || passThroughObject.getEventType() == ModifyEventType.ROW_MODIFIED) {
+        } else if (passThroughObject.getEventType() == ModifyEventType.NEW_ROW || passThroughObject.getEventType() == ModifyEventType.ROW_MODIFIED || passThroughObject.getEventType() == ModifyEventType.ROW_REMOVED) {
 
             // If it's a new row event type, then event data contains the name of the SQL table (NOT object)
             String tableName = passThroughObject.getEventData();
@@ -202,6 +202,7 @@ public class TabBar implements Observer<ModifyEvent> {
 
                         String tabID = currentTab.getTabID();
                         currentTab.resetTableView();
+                        currentTab.resetInteractiveTabPane();
 
                         // Check if the Tab is currently selected
                         if (this.controlBar.getSelectionModel().getSelectedItem().getId().equals(tabID)) {

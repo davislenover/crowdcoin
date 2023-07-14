@@ -1,13 +1,6 @@
 package com.crowdcoin.mainBoard;
 
 import com.crowdcoin.FXTools.StageManager;
-import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
-import com.crowdcoin.mainBoard.Interactive.*;
-import com.crowdcoin.mainBoard.Interactive.input.InputField;
-import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
-import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
-import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
-import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.table.*;
 import com.crowdcoin.mainBoard.toolBar.MenuGroup;
 import com.crowdcoin.mainBoard.toolBar.MenuGroupContainer;
@@ -17,14 +10,10 @@ import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.SQLData;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import com.crowdcoin.mainBoard.table.Tab;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
-
-import java.util.Arrays;
 
 public class MainBoardController {
 
@@ -50,73 +39,9 @@ public class MainBoardController {
         // Test Tab 1
         Tab testTab = new Tab(model,table,"testTab");
         testTab.setTabTableAction(new ViewTableRowEvent());
-
-        // an InteractiveTabPane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
-        //InteractiveTabPane testPane = testTab.getInteractivePane();
-        // Add fields to the pane
-        //testPane.addInputField(new InteractiveTextField("This is a test","This is a test combo object for textfield combo's 1",new FieldActionDummyEvent()));
-        //testPane.addInputField(new InteractiveTextField("This is a test2","This is a test combo object for textfield combo's 2",new FieldActionDummyEvent()));
-        //testPane.addInputField(new InteractiveTextField("This is a test3","This is a test combo object for textfield combo's 3",new FieldActionDummyEvent()));
-
-        // Testing buttons
-        // One can specify how they would like a button to handle an ActionEvent by defining it within a specific class or on the fly
-        InteractiveButtonActionEvent testHandler = new InteractiveButtonActionEvent() {
-            @Override
-            public void buttonActionHandler(ActionEvent event, Button button, InteractivePane pane) {
-                System.out.println(event.getEventType().getName());
-                System.out.println(button.getText() + " fired an event!");
-            }
-        };
-
-        SubmitField button1 = new InteractiveButton("Button1",testHandler);
-        button1.setOrder(0);
-        SubmitField button2 = new InteractiveButton("Button2",testHandler);
-        button2.setOrder(1);
-        //testPane.addSubmitField(button1);
-        //testPane.addSubmitField(button2);
-
         // Test Tab 2
         Tab testTab2 = new Tab(model,table2,"testTab2");
-        testTab2.setTabTableAction(new TabActionEvent() {
-            @Override
-            public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane, SQLTable table) {
-                System.out.println("This tab 2 was pressed!");
-            }
-        });
-
-        // an InteractiveTabPane houses all data for a specific tab in regard to the rightDisplay and buttonGrid
-        InteractiveTabPane testPane2 = testTab2.getInteractivePane();
-        // Add fields to the pane
-        testPane2.addInputField(new InteractiveTextField("This is a test1","This is a test combo object for textfield combo's 1",new FieldActionDummyEvent()));
-        testPane2.addInputField(new InteractiveTextField("This is a test2","This is a test combo object for textfield combo's 2",new FieldActionDummyEvent()));
-        testPane2.addInputField(new InteractiveTextField("This is a test3","This is a test combo object for textfield combo's 3",new FieldActionDummyEvent()));
-        testPane2.addInputField(new InteractiveTextField("This is a test4","This is a test combo object for textfield combo's 4",new FieldActionDummyEvent()));
-        // Add choice field
-        InteractiveChoiceBox box = new InteractiveChoiceBox("This is a choice field","This is a test combo object for textfield combo's 4",new FieldActionDummyEvent());
-        box.addValue("Option1");
-        box.addValue("Option2");
-        box.addValue("Option3");
-        testPane2.addInputField(box);
-
-        // Testing buttons
-        // One can specify how they would like a button to handle an ActionEvent by defining it within a specific class or on the fly
-        InteractiveButtonActionEvent testHandler2 = new InteractiveButtonActionEvent() {
-            @Override
-            public void buttonActionHandler(ActionEvent event, Button button, InteractivePane pane) {
-                System.out.println(event.getEventType().getName());
-                System.out.println(button.getText() + " fired an event!");
-            }
-        };
-
-        SubmitField button2_1 = new InteractiveButton("Button1",testHandler2);
-        button2_1.setOrder(0);
-        SubmitField button2_2 = new InteractiveButton("Button2",testHandler2);
-        button2_2.setOrder(1);
-        SubmitField button2_3 = new InteractiveButton("Button3",testHandler2);
-        button2_3.setOrder(2);
-        testPane2.addSubmitField(button2_1);
-        testPane2.addSubmitField(button2_2);
-        testPane2.addSubmitField(button2_3);
+        testTab2.setTabTableAction(new ViewTableRowEvent());
 
         TabBar testBar = new TabBar(tabBar,mainTable,rightDisplay,buttonGrid,prevTableViewButton,nextTableViewButton,filters);
         testBar.addTab(testTab);
@@ -145,10 +70,5 @@ public class MainBoardController {
         testContainer.addMenuGroup(test1);
         testContainer.addMenuGroup(test2);
 
-
-
-
     }
-
-
 }

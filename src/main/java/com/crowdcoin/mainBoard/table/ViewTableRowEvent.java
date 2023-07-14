@@ -95,9 +95,6 @@ public class ViewTableRowEvent implements TabActionEvent {
                                     }
                                 }
 
-                                pane.clearAllSubmitFields();
-                                pane.clearAllInputFields();
-
                                 checkWindow.closeWindow();
 
                             });
@@ -113,7 +110,7 @@ public class ViewTableRowEvent implements TabActionEvent {
                         editRowButton.setOrder(1);
                         pane.addSubmitField(editRowButton);
 
-                        // Get pane to notify all observers (particularly it's corresponding Tab) that the InteractivePane has been changes, thus, update those changes to the screen
+                        // Get pane to notify all observers (particularly it's corresponding Tab) that the InteractivePane has changes, thus, update those changes to the screen
                         pane.notifyObservers(new ModifyEvent(ModifyEventType.PANE_UPDATE));
 
                         // notify method will re-apply tab to screen, thus unselecting the row, thus reselect row
@@ -137,11 +134,36 @@ public class ViewTableRowEvent implements TabActionEvent {
 
             SubmitField removeRowButton = new InteractiveButton("Remove entry",(event, button, pane1) -> {
 
-                InfoPopWindow checkWindow = new InfoPopWindow("Remove Row");
+                InfoPopWindow checkWindow = new InfoPopWindow("Remove Row",pane1);
                 checkWindow.setInfoMessage("Remove the row? This action cannot be undone!");
                 checkWindow.setOkButtonMessage("Yes");
 
-                return;});
+                SubmitField cancelConfirmation = new InteractiveButton("No",((event2, button1, pane3) -> {
+                    checkWindow.closeWindow();
+                }));
+                cancelConfirmation.setOrder(1);
+                checkWindow.getWindowPane().addSubmitField(cancelConfirmation);
+
+                checkWindow.setOkButtonAction((event1, button1, pane2) -> {
+
+                    try {
+                        table.deleteRow(0,tableView.getItems().get(selectedRowIndex).getData(0).toString());
+                    } catch (Exception e) {
+                        // TODO Exception handling
+                    }
+
+                    checkWindow.closeWindow();
+
+                });
+
+                try {
+                    checkWindow.start(StageManager.getStage(checkWindow));
+                } catch (Exception e) {
+                    // TODO Error handling
+                }
+
+            });
+
             removeRowButton.setOrder(0);
 
             pane.clearAllSubmitFields();

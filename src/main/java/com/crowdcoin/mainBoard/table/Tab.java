@@ -133,6 +133,15 @@ public class Tab implements Observable<ModifyEvent>, Observer<ModifyEvent> {
     }
 
     /**
+     * Clear all fields from the Tab pane
+     */
+    public void resetInteractiveTabPane() {
+        this.interactiveTabPane.clearAllInputFields();
+        this.interactiveTabPane.clearAllOutputFields();
+        this.interactiveTabPane.clearAllSubmitFields();
+    }
+
+    /**
      * Set the action to be performed when a user clicks within the TableView object. Note that one needs to load the tab to apply the corresponding event
      * @param event the arbitrary logic to invoke
      */
@@ -248,7 +257,7 @@ public class Tab implements Observable<ModifyEvent>, Observer<ModifyEvent> {
     @Override
     public void notifyObservers(ModifyEvent event) {
 
-        if (event.getEventType() != ModifyEventType.NEW_ROW && event.getEventType() != ModifyEventType.ROW_MODIFIED) {
+        if (event.getEventType() != ModifyEventType.NEW_ROW && event.getEventType() != ModifyEventType.ROW_MODIFIED && event.getEventType() != ModifyEventType.ROW_REMOVED) {
             event.setEventData(this.tabID);
         }
 

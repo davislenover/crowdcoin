@@ -122,4 +122,9 @@ public class SQLDefaultQueries {
 
     }
 
+    public static String deleteRow(String tableName, String whereColumn, String whereDataInColumn) {
+        String returnString = "DELETE FROM " + tableName + " WHERE " + whereColumn + "=" + "'" + whereDataInColumn +"'";
+        return returnString;
+    }
+
 }

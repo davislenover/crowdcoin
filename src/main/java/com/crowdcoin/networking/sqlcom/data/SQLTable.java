@@ -558,6 +558,23 @@ public class SQLTable implements Observable<ModifyEvent> {
     }
 
     /**
+     * Deletes a row from the SQL database table
+     * @param columnWhereIndex the corresponding column to look for data
+     * @param dataWhereRead the data within the corresponding column. This identifies the row which will be removed
+     */
+    public void deleteRow(int columnWhereIndex, String dataWhereRead) throws FailedQueryException {
+
+        if (columnWhereIndex > this.tableColumns.size() - 1) {
+            throw new IndexOutOfBoundsException("The specified column does not exist within the table (" + columnWhereIndex + " where max is " + (this.tableColumns.size()-1) + ")");
+        }
+
+        this.connection.executeQuery(SQLDefaultQueries.deleteRow(this.tableName,this.tableColumns.get(columnWhereIndex)[0],dataWhereRead));
+        ModifyEvent event = new ModifyEvent(ModifyEventType.ROW_REMOVED,this.getTableName());
+        this.notifyObservers(event);
+
+    }
+
+    /**
      * Get the number of columns the sql table has
      * @return the number of columns as an Integer
      */

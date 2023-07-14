@@ -168,7 +168,9 @@ public class PopWindow extends Application implements Observer<ModifyEvent>, Obs
 
     @Override
     public void removeObserving() {
-        callerPane.removeObserver(this);
+        if (callerPane != null) {
+            callerPane.removeObserver(this);
+        }
     }
 
     @Override
