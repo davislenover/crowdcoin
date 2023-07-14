@@ -96,6 +96,26 @@ public class SQLDefaultQueries {
 
     }
 
+    public static String insertValuesIntoExistingRow(String tableName, List<String> columnsToChange, List<String> correspondingDataToWrite, String whereColumn, String whereDataInColumn) {
+
+        String returnString = "UPDATE " + tableName + " SET";
+
+        for (int index = 0; index < correspondingDataToWrite.size(); index++) {
+
+            if (index != correspondingDataToWrite.size()-1) {
+                returnString+= " " + columnsToChange.get(index) + " = " + "'" + correspondingDataToWrite.get(index) + "',";
+            } else {
+                returnString+= " " + columnsToChange.get(index) + " = " + "'" + correspondingDataToWrite.get(index) + "'";
+            }
+
+        }
+
+        returnString+= " WHERE " + whereColumn + " = " + "'" + whereDataInColumn + "'";
+
+        return returnString;
+
+    }
+
     public static String insertValueIntoExistingRow(String tableName, String columnNameToInsertData, String specificData, String whereColumn, String whereDataInColumn) {
 
         return "UPDATE " + tableName + " SET " + columnNameToInsertData + " = " + "'" + specificData + "'" + " WHERE " + whereColumn + " = " + "'" + whereDataInColumn + "'";

@@ -186,7 +186,7 @@ public class TabBar implements Observer<ModifyEvent> {
                 // TODO add exception handling
             }
 
-        } else if (passThroughObject.getEventType() == EventType.NEW_ROW) {
+        } else if (passThroughObject.getEventType() == EventType.NEW_ROW || passThroughObject.getEventType() == EventType.ROW_MODIFIED) {
 
             // If it's a new row event type, then event data contains the name of the SQL table (NOT object)
             String tableName = passThroughObject.getEventData();

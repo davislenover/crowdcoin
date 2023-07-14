@@ -422,6 +422,57 @@ public class SQLTable implements Observable<ModifyEvent> {
         // Invoke query
         this.connection.executeQuery(SQLDefaultQueries.insertValueIntoExistingRow(this.tableName,this.tableColumns.get(columnWriteIndex)[0],dataToWrite,this.tableColumns.get(columnWhereIndex)[0],dataWhereRead));
 
+        ModifyEvent event = new ModifyEvent(EventType.ROW_MODIFIED,this.getTableName());
+        this.notifyObservers(event);
+
+    }
+
+    /**
+     * Write data to an existing row in the SQL table
+     * @param columnsToInsertData the list of column names as Strings to insert data into
+     * @param correspondingDataToInsert the list of data as Strings to insert into columns (this corresponds to each column within the columnsToInsertData list)
+     * @param columnWhereIndex specifies the column to look where specific data is contained (this is apart of identifying the given row to write the data to)
+     * @param dataWhereRead specifies the data to look for in the given column by columnWhereIndex (this is apart of identifying the given row to write the data to). The rows that contain this data in the given column will have data written to the rows in the specified column
+     * @throws FailedQueryException if the query fails
+     * @throws IndexOutOfBoundsException if the column indices are not correct
+     */
+    public void writeToRow(List<String> columnsToInsertData, List<String> correspondingDataToInsert, int columnWhereIndex, String dataWhereRead) throws FailedQueryException, IndexOutOfBoundsException, UnknownColumnNameException {
+
+        // Error checking
+
+        if (columnWhereIndex > this.tableColumns.size()-1) {
+            throw new IndexOutOfBoundsException("The specified column does not exist within the table (" + columnWhereIndex + " where max is " + (this.tableColumns.size()-1) + ")");
+        }
+
+        // Check if any column name is not within the table (error-checking)
+        for (String columnName : columnsToInsertData) {
+
+            boolean doesExist = false;
+            for (String[] checkName : this.tableColumns) {
+
+                if (checkName[0].equals(columnName)) {
+                    doesExist = true;
+                    break;
+                }
+
+            }
+
+            if (!doesExist) {
+                throw new UnknownColumnNameException(columnName);
+            }
+
+            if (!this.getColumnObject(columnName).checkPermissionValue(isWriteablePerm)) {
+                throw new IllegalAccessError("One or more columns user is not permitted to write to");
+            }
+
+        }
+
+        // Invoke query
+        this.connection.executeQuery(SQLDefaultQueries.insertValuesIntoExistingRow(this.tableName,columnsToInsertData,correspondingDataToInsert,this.tableColumns.get(columnWhereIndex)[0],dataWhereRead));
+
+        ModifyEvent event = new ModifyEvent(EventType.ROW_MODIFIED,this.getTableName());
+        this.notifyObservers(event);
+
     }
 
     /**

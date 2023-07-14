@@ -79,7 +79,7 @@ public class MainBoardController {
         Tab testTab2 = new Tab(model,table2,"testTab2");
         testTab2.setTabTableAction(new TabActionEvent() {
             @Override
-            public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane) {
+            public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane, SQLTable table) {
                 System.out.println("This tab 2 was pressed!");
             }
         });

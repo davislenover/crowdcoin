@@ -39,7 +39,7 @@ public class Tab implements Observable<ModifyEvent>, Observer<ModifyEvent> {
     // On instantiation, set action event to default
     private TabActionEvent tableSelectHandler = new TabActionEvent() {
         @Override
-        public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane) {
+        public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane, SQLTable table) {
             return;
         }
     };;
@@ -170,7 +170,7 @@ public class Tab implements Observable<ModifyEvent>, Observer<ModifyEvent> {
         destinationTable.setOnMouseClicked(null);
 
         // Change MouseCLicked event to the TableView object, to invoke the corresponding tableActionHandler method
-        destinationTable.setOnMouseClicked(mouseEvent -> this.tableSelectHandler.tableActionHandler(this.columnContainer,this.interactiveTabPane));
+        destinationTable.setOnMouseClicked(mouseEvent -> this.tableSelectHandler.tableActionHandler(this.columnContainer,this.interactiveTabPane,this.sqlTable));
 
         // Set previous and forward button logic for TableViewManager instance
         this.tableViewManager.applyPrevNextButtons(destinationTable,previous,next);
@@ -248,7 +248,7 @@ public class Tab implements Observable<ModifyEvent>, Observer<ModifyEvent> {
     @Override
     public void notifyObservers(ModifyEvent event) {
 
-        if (event.getEventType() != EventType.NEW_ROW) {
+        if (event.getEventType() != EventType.NEW_ROW && event.getEventType() != EventType.ROW_MODIFIED) {
             event.setEventData(this.tabID);
         }
 

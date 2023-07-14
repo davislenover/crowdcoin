@@ -1,6 +1,7 @@
 package com.crowdcoin.mainBoard.table;
 
 import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
+import com.crowdcoin.networking.sqlcom.data.SQLTable;
 
 public interface TabActionEvent {
 
@@ -9,6 +10,6 @@ public interface TabActionEvent {
      * @param columnContainer the columns found within the Tab TableView object
      * @param pane the corresponding pane found within the Tab beside the TableView
      */
-    void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane);
+    void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane, SQLTable table);
 
 }
