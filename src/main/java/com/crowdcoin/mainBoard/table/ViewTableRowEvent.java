@@ -44,6 +44,7 @@ public class ViewTableRowEvent implements TabActionEvent {
                 String columnName = columns.get(index).getText();
                 columnNames.add(columnName);
 
+                // Set InputField action to add an Edit button to the main InteractivePane
                 InputField newField = new InteractiveTextField(columns.get(index).getText(),"Value for the specified column",(event, field, pane1) -> {
 
                     // Check if there exists already two buttons (indicates an edit/remove button already exists)
@@ -137,7 +138,13 @@ public class ViewTableRowEvent implements TabActionEvent {
             pane.clearAllInputFields();
             pane.addAllInputFields(fieldsToAdd);
 
-            SubmitField removeRowButton = new InteractiveButton("Remove entry",(event, button, pane1) -> {return;});
+            SubmitField removeRowButton = new InteractiveButton("Remove entry",(event, button, pane1) -> {
+
+                InfoPopWindow checkWindow = new InfoPopWindow("Remove Row");
+                checkWindow.setInfoMessage("Remove the row? This action cannot be undone!");
+                checkWindow.setOkButtonMessage("Yes");
+
+                return;});
             removeRowButton.setOrder(0);
 
             pane.clearAllSubmitFields();
