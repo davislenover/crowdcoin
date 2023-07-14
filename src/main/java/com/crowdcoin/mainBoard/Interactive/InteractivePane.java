@@ -12,14 +12,14 @@ import javafx.scene.layout.RowConstraints;
 
 import java.util.*;
 
-public class InteractivePane implements Iterable<InputField>, Observable<ModifyEvent> {
+public class InteractivePane implements Iterable<InputField>, Observable<ModifyEvent,String> {
 
     // The idea is to have some object which can be passed into a GUI that defines how said GUI interacts with the user
     private List<InputField> inputFieldsList;
     private List<OutputField> outputFieldList;
     private List<SubmitField> submitFieldList;
 
-    private List<Observer<ModifyEvent>> subscriptionList;
+    private List<Observer<ModifyEvent,String>> subscriptionList;
 
     /**
      * Creates an InteractivePane object. InteractivePane's define how a GUI interacts with a user (by convention). This is intended as a parent class (framework) for child (specific) classes
@@ -316,7 +316,7 @@ public class InteractivePane implements Iterable<InputField>, Observable<ModifyE
     }
 
     @Override
-    public boolean addObserver(Observer<ModifyEvent> observer) {
+    public boolean addObserver(Observer<ModifyEvent,String> observer) {
         if (!this.subscriptionList.contains(observer)) {
             return this.subscriptionList.add(observer);
         }
@@ -324,14 +324,15 @@ public class InteractivePane implements Iterable<InputField>, Observable<ModifyE
     }
 
     @Override
-    public boolean removeObserver(Observer<ModifyEvent> observer) {
+    public boolean removeObserver(Observer<ModifyEvent,String> observer) {
         return this.subscriptionList.remove(observer);
     }
 
     @Override
     public void notifyObservers(ModifyEvent event) {
 
-        for (Observer<ModifyEvent> observer : this.subscriptionList) {
+        // Call copyOf() to avoid congruent exceptions (i.e., it's possible that some observers of this class may want to remove themselves as observers on certain events, thus let them do so without causing issues)
+        for (Observer<ModifyEvent,String> observer : List.copyOf(this.subscriptionList)) {
             observer.update(event);
         }
     }

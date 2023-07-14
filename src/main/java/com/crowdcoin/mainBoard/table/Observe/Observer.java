@@ -4,7 +4,7 @@ package com.crowdcoin.mainBoard.table.Observe;
  * Defines that a class can observe a specific type of class.
  * @param <T> the type of the ObservableEvent
  */
-public interface Observer<T extends ObservableEvent<? extends GeneralEventType>> {
+public interface Observer<T extends ObservableEvent<? extends GeneralEventType, S>, S> {
 
     /**
      * Stops a class from observing all it's observing. This typically involves the class keeping track of what it's observing and asking those Observable classes to remove the corresponding observer from their observer storage mechanism

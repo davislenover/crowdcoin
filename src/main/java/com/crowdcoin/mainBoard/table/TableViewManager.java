@@ -75,6 +75,43 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
     }
 
     /**
+     * Refreshes the current instance of TableViewManager with new data from the SQLTable. Useful if a row in the current TableView was modified
+     * @throws FailedQueryException
+     * @throws SQLException
+     * @throws InvalidRangeException
+     */
+    public void refreshCurrentView() throws FailedQueryException, SQLException, InvalidRangeException {
+
+        if (this.sqlTable.getRawRows(this.currentRowCount-(this.numOfRowsPerRequest),this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1).size() < this.numOfRowsPerRequest) {
+
+            int savedPosition = this.currentRowCount;
+            this.reset();
+
+            while(this.currentRowCount < savedPosition) {
+                setCurrentRowNext();
+                if (isAtLastRow()) {
+                    break;
+                }
+            }
+
+        } else {
+
+            this.previousRowSet.clear();
+            this.previousRowSet.addAll(this.sqlTable.getRawRows(this.currentRowCount-(this.currentRowSet.size()*2),this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1));
+
+            this.currentRowSet.clear();
+            this.currentRowSet.addAll(this.sqlTable.getRawRows(this.currentRowCount-(this.numOfRowsPerRequest),this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1));
+
+            this.nextRowSet.clear();
+            this.nextRowSet.addAll(this.sqlTable.getRawRows(this.currentRowCount,this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1));
+
+            checkRowPosition();
+
+        }
+
+    }
+
+    /**
      * Delete's all data and retrieves a fresh query result from the sqltable. This does not update button states, re-application will be required
      * @throws FailedQueryException
      * @throws SQLException
@@ -412,5 +449,4 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
 
 
     }
-
 }

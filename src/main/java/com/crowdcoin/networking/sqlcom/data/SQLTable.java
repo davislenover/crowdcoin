@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class SQLTable implements Observable<ModifyEvent> {
+public class SQLTable implements Observable<ModifyEvent,String> {
 
-    private List<Observer<ModifyEvent>> subscriptionList;
+    private List<Observer<ModifyEvent,String>> subscriptionList;
 
     private String tableName;
     // Within the String array (inside the list), index 0 corresponds to table name, 1 is data type as specified in SQL table, 2 specifies the ordinal position
@@ -751,7 +751,7 @@ public class SQLTable implements Observable<ModifyEvent> {
 
 
     @Override
-    public boolean addObserver(Observer<ModifyEvent> observer) {
+    public boolean addObserver(Observer<ModifyEvent,String> observer) {
         if (!this.subscriptionList.contains(observer)) {
             return this.subscriptionList.add(observer);
         }
@@ -759,14 +759,14 @@ public class SQLTable implements Observable<ModifyEvent> {
     }
 
     @Override
-    public boolean removeObserver(Observer<ModifyEvent> observer) {
+    public boolean removeObserver(Observer<ModifyEvent,String> observer) {
         return this.subscriptionList.remove(observer);
     }
 
     @Override
     public void notifyObservers(ModifyEvent event) {
 
-        for (Observer<ModifyEvent> observer : this.subscriptionList) {
+        for (Observer<ModifyEvent,String> observer : List.copyOf(this.subscriptionList)) {
             observer.update(event);
         }
     }

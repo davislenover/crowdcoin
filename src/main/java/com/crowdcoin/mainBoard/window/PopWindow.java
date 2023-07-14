@@ -1,7 +1,6 @@
 package com.crowdcoin.mainBoard.window;
 
 import com.crowdcoin.FXTools.StageManager;
-import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.InteractiveWindowPane;
 import com.crowdcoin.mainBoard.table.Observe.*;
 import javafx.application.Application;
@@ -13,11 +12,11 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PopWindow extends Application implements Observer<ModifyEvent>, Observable<WindowEvent> {
+public class PopWindow extends Application implements Observer<ModifyEvent,String>, Observable<WindowEvent,String> {
 
     private String windowName;
     private InteractiveWindowPane parentPane;
-    private InteractivePane callerPane;
+    private Observable<ModifyEvent,String> observableObject;
     private GridPane fieldPane;
     private GridPane buttonPane;
 
@@ -31,15 +30,15 @@ public class PopWindow extends Application implements Observer<ModifyEvent>, Obs
     private Scene scene;
     private VBox root;
 
-    private List<Observer<WindowEvent>> subscriptionList = new ArrayList<>();
+    private List<Observer<WindowEvent,String>> subscriptionList = new ArrayList<>();
 
     /**
      * Creates a new PopWindow object. PopWindows are used to create pop-up windows
      * @param windowName the name of the window
-     * @param callerPane the invoking window with it's interactive pane. Used to react to events from the InteractivePane (such as if the pane has changed and the PopWindow needs to close)
+     * @param observableObject an observable object which the PopWindow will react to (such as if the pane has changed and the PopWindow needs to close)
      */
-    public PopWindow(String windowName, InteractivePane callerPane) {
-        this.callerPane = callerPane;
+    public PopWindow(String windowName, Observable<ModifyEvent,String> observableObject) {
+        this.observableObject = observableObject;
         this.windowName = windowName;
         this.parentPane = new InteractiveWindowPane();
 
@@ -49,7 +48,7 @@ public class PopWindow extends Application implements Observer<ModifyEvent>, Obs
         this.root = new VBox();
         this.scene = new Scene(root,this.windowWidth,this.windowHeight);
 
-        callerPane.addObserver(this);
+        this.observableObject.addObserver(this);
 
     }
 
@@ -168,8 +167,8 @@ public class PopWindow extends Application implements Observer<ModifyEvent>, Obs
 
     @Override
     public void removeObserving() {
-        if (callerPane != null) {
-            callerPane.removeObserver(this);
+        if (observableObject != null) {
+            observableObject.removeObserver(this);
         }
     }
 
@@ -181,7 +180,7 @@ public class PopWindow extends Application implements Observer<ModifyEvent>, Obs
     }
 
     @Override
-    public boolean addObserver(Observer<WindowEvent> observer) {
+    public boolean addObserver(Observer<WindowEvent,String> observer) {
         if (!this.subscriptionList.contains(observer)) {
             return this.subscriptionList.add(observer);
         }
@@ -189,13 +188,13 @@ public class PopWindow extends Application implements Observer<ModifyEvent>, Obs
     }
 
     @Override
-    public boolean removeObserver(Observer<WindowEvent> observer) {
+    public boolean removeObserver(Observer<WindowEvent,String> observer) {
         return this.subscriptionList.remove(observer);
     }
 
     @Override
     public void notifyObservers(WindowEvent event) {
-        for (Observer<WindowEvent> observer : this.subscriptionList) {
+        for (Observer<WindowEvent,String> observer : List.copyOf(this.subscriptionList)) {
             observer.update(event);
         }
     }

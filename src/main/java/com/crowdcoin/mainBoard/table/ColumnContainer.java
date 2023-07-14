@@ -17,6 +17,7 @@ public class ColumnContainer implements Iterable<TableColumn<ModelClass,Object>>
 
     // Columns can be any data type (Object), runtime type will decide
     private List<TableColumn<ModelClass,Object>> columnData;
+    private int currentSelectedRelativeIndex;
 
     /**
      * Creates a ColumnContainer object. Acts as a container for columns
@@ -160,7 +161,7 @@ public class ColumnContainer implements Iterable<TableColumn<ModelClass,Object>>
 
     /**
      * Get the currently selected row of data as a list of Objects. Data is returned in order of left to right in the TableView
-     * @return a list of Objects corresponding to the given selected row
+     * @return a list of Objects corresponding to the given selected row. Returns an empty list if no row was selected
      * @throws NoColumnsException if there are no columns currently within the ColumnContainer instance (i.e., it is impossible to retrieve any data from nothing)
      * @throws NoTableViewInstanceException if columns do not contain a TableView instance. This is mostly likely caused by failure to load the Tab (that contains the ColumnContainer instance) into a TableView using the loadTab() method
      */
@@ -179,21 +180,48 @@ public class ColumnContainer implements Iterable<TableColumn<ModelClass,Object>>
 
             // All cells are of the ModelClass type
             ObservableList<ModelClass> selectedRows = tableView.getSelectionModel().getSelectedItems();
-            // Each cell carries the same model class per row, thus, get the only ModelClass in the list
-            ModelClass rowModelClass = selectedRows.get(0);
 
-            // Loop through columns and use their names to get the cell data
-            for (TableColumn column : this.columnData) {
-                // Add the cell data to the return list
-                returnList.add(rowModelClass.getData(column.getText()));
+            if (!selectedRows.isEmpty()) {
+                // Each cell carries the same model class per row, thus, get the only ModelClass in the list
+                ModelClass rowModelClass = selectedRows.get(0);
+
+                // Loop through columns and use their names to get the cell data
+                for (TableColumn column : this.columnData) {
+                    // Add the cell data to the return list
+                    returnList.add(rowModelClass.getData(column.getText()));
+                }
+
+                return returnList;
             }
-
-            return returnList;
 
         } catch (NullPointerException e) {
             throw new NoTableViewInstanceException();
         }
 
+        return returnList;
+
+    }
+
+    /**
+     * Sets the selected row for storage. Gets SelectionModel from TableView and gets the current selected index
+     */
+    public void setSelectedRow() {
+        this.currentSelectedRelativeIndex = this.columnData.get(0).getTableView().getSelectionModel().getSelectedIndex();
+    }
+
+    /**
+     * Resets the current selected row relative index to 0
+     */
+    public void resetSelectedRowIndex() {
+        this.currentSelectedRelativeIndex = 0;
+    }
+
+    /**
+     * Gets the selected row relative to the TableView has was (or has) been previously stored
+     * @return the previous selected row as an Integer
+     */
+    public int getCurrentSelectedRelativeIndex() {
+        return this.currentSelectedRelativeIndex;
     }
 
 

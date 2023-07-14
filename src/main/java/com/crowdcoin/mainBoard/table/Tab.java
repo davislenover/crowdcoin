@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Note Tabs are observable as they can change things that other classes may need to react to, such as application of new filters
-public class Tab implements Observable<ModifyEvent>, Observer<ModifyEvent> {
+public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent,String> {
 
     private ColumnContainer columnContainer;
     private ModelClass modelClass;
@@ -49,7 +49,7 @@ public class Tab implements Observable<ModifyEvent>, Observer<ModifyEvent> {
     private double totalWidth;
 
     // Observer list
-    private List<Observer<ModifyEvent>> subscriptionList;
+    private List<Observer<ModifyEvent,String>> subscriptionList;
 
     /**
      * Create a Tab object. Similar to a tab in a web browser, a Tab object stores a "state" of the TableView. Upon creation, a blank InteractiveTabPane is available for use
@@ -190,6 +190,9 @@ public class Tab implements Observable<ModifyEvent>, Observer<ModifyEvent> {
         // Apply filters
         this.filterController.applyFilters(filterButton,this.sqlTable.getFilterManager(),this.sqlTable);
 
+        // Select any previously saved row in TableView
+        destinationTable.getSelectionModel().select(this.columnContainer.getCurrentSelectedRelativeIndex());
+
     }
 
     @Override
@@ -241,8 +244,16 @@ public class Tab implements Observable<ModifyEvent>, Observer<ModifyEvent> {
         }
     }
 
+    public void refreshTableView() {
+        try {
+            this.tableViewManager.refreshCurrentView();
+        } catch (Exception e) {
+            // TODO Error handling
+        }
+    }
+
     @Override
-    public boolean addObserver(Observer<ModifyEvent> observer) {
+    public boolean addObserver(Observer<ModifyEvent,String> observer) {
         if (!this.subscriptionList.contains(observer)) {
             return this.subscriptionList.add(observer);
         }
@@ -250,18 +261,17 @@ public class Tab implements Observable<ModifyEvent>, Observer<ModifyEvent> {
     }
 
     @Override
-    public boolean removeObserver(Observer<ModifyEvent> observer) {
+    public boolean removeObserver(Observer<ModifyEvent,String> observer) {
         return this.subscriptionList.remove(observer);
     }
 
     @Override
     public void notifyObservers(ModifyEvent event) {
+        event.addEventData(this.tabID);
+        // Also add the currently selected index of the TableView for classes (such as TabBar) to reference later
+        event.addEventData(String.valueOf(this.columnContainer.getCurrentSelectedRelativeIndex()));
 
-        if (event.getEventType() != ModifyEventType.NEW_ROW && event.getEventType() != ModifyEventType.ROW_MODIFIED && event.getEventType() != ModifyEventType.ROW_REMOVED) {
-            event.setEventData(this.tabID);
-        }
-
-        for (Observer<ModifyEvent> observer : this.subscriptionList) {
+        for (Observer<ModifyEvent,String> observer : List.copyOf(this.subscriptionList)) {
             observer.update(event);
         }
     }
@@ -271,15 +281,10 @@ public class Tab implements Observable<ModifyEvent>, Observer<ModifyEvent> {
         this.subscriptionList.clear();
     }
 
-    // Tab will watch for changes to the SQLTable (mainly for Filter changes)
+    // Tab will watch for changes to observing objects (mainly for events like Filter/Database changes)
     @Override
     public void update(ModifyEvent passThroughObject) {
-
-        if (passThroughObject.getEventType() != ModifyEventType.PANE_UPDATE) {
-            // Reset TableView manager
-            this.resetTableView();
-        }
-        // Notify all Tab observers that this tab updated it's SQLTable
+        // Notify all Tab observers that this tab updated an object
         this.notifyObservers(passThroughObject);
     }
 }

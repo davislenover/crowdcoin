@@ -15,9 +15,10 @@ import javafx.scene.layout.GridPane;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class TabBar implements Observer<ModifyEvent> {
+public class TabBar implements Observer<ModifyEvent,String> {
 
     private TabPane controlBar;
     private Map<String,Tab> tabIDMap = new HashMap<>();
@@ -166,11 +167,14 @@ public class TabBar implements Observer<ModifyEvent> {
     @Override
     public void update(ModifyEvent passThroughObject) {
 
-        if (passThroughObject.getEventType() == ModifyEventType.NEW_FILTER || passThroughObject.getEventType() == ModifyEventType.PANE_UPDATE) {
+        if (passThroughObject.getEventType() == ModifyEventType.NEW_FILTER) {
             try {
 
-                // If the event is a new Filter or a InteractivePane update, then the tabID is located in extra data
-                String tabID = passThroughObject.getEventData();
+                // If the event is a new Filter, then the tabID is located in index 0
+                String tabID = passThroughObject.getEventData().get(0);
+
+                Tab tab = this.tabIDMap.get(tabID);
+                tab.resetTableView();
 
                 // Check if the Tab is currently selected
                 if (this.controlBar.getSelectionModel().getSelectedItem().getId().equals(tabID)) {
@@ -188,8 +192,12 @@ public class TabBar implements Observer<ModifyEvent> {
 
         } else if (passThroughObject.getEventType() == ModifyEventType.NEW_ROW || passThroughObject.getEventType() == ModifyEventType.ROW_MODIFIED || passThroughObject.getEventType() == ModifyEventType.ROW_REMOVED) {
 
-            // If it's a new row event type, then event data contains the name of the SQL table (NOT object)
-            String tableName = passThroughObject.getEventData();
+            List<String> eventData = passThroughObject.getEventData();
+
+            // If it's a modified row event type (New,Modified,Removed...), then event data contains the name of the SQL table (NOT object)
+            String tableName = eventData.get(0);
+            // Get the tab that fired the event
+            String invokedTabID = eventData.get(1);
 
             // If a new row was inserted, refresh all tabs
             for (Tab currentTab : this.tabIDMap.values()) {
@@ -201,7 +209,7 @@ public class TabBar implements Observer<ModifyEvent> {
                     try {
 
                         String tabID = currentTab.getTabID();
-                        currentTab.resetTableView();
+                        currentTab.refreshTableView();
                         currentTab.resetInteractiveTabPane();
 
                         // Check if the Tab is currently selected
@@ -214,6 +222,9 @@ public class TabBar implements Observer<ModifyEvent> {
                             this.controlBar.getSelectionModel().select(this.getJavaFXTab(tabID));
                         }
 
+                        // Return to the tab that fired the event
+                        this.controlBar.getSelectionModel().select(this.getJavaFXTab(invokedTabID));
+
                     } catch (Exception e) {
                         // TODO add exception handling
                     }
@@ -223,6 +234,25 @@ public class TabBar implements Observer<ModifyEvent> {
 
             }
 
+        } else if (passThroughObject.getEventType() == ModifyEventType.PANE_UPDATE) {
+            try {
+
+                // If the event is an InteractivePane update, then the tabID is located in index 0
+                String tabID = passThroughObject.getEventData().get(0);
+
+                // Check if the Tab is currently selected
+                if (this.controlBar.getSelectionModel().getSelectedItem().getId().equals(tabID)) {
+                    // Force call openTab() (as onSelectionChanged event would not be triggered
+                    this.openTab(tabID);
+                } else {
+                    // If not selected, select it
+                    // This will trigger the onSelectionChanged event and thus, call openTab()
+                    this.controlBar.getSelectionModel().select(this.getJavaFXTab(tabID));
+                }
+
+            } catch (Exception e) {
+                // TODO add exception handling
+            }
         }
 
     }
