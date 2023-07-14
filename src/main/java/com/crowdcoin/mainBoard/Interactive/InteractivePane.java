@@ -4,6 +4,7 @@ import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.output.OutputField;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
+import com.crowdcoin.mainBoard.table.Observe.ModifyEventType;
 import com.crowdcoin.mainBoard.table.Observe.Observable;
 import com.crowdcoin.mainBoard.table.Observe.Observer;
 import javafx.scene.layout.ColumnConstraints;
@@ -117,24 +118,34 @@ public class InteractivePane implements Iterable<InputField>, Observable<ModifyE
     }
 
     /**
-     * Clear all fields from the InputField collection. This does not reset the attached InteractivePane to every InputField. To change the InteractivePane attached to any InputField, add to another pane
+     * Clear all fields from the InputField collection. This does not reset the attached InteractivePane to every InputField. To change the InteractivePane attached to any InputField, add to another pane. This does not fire any events
      */
     public void clearAllInputFields() {
         this.inputFieldsList.clear();
     }
 
     /**
-     * Clear all fields from the SubmitField collection. This does not reset the attached InteractivePane to every SubmitField. To change the InteractivePane attached to any SubmitField, add to another pane
+     * Clear all fields from the SubmitField collection. This does not reset the attached InteractivePane to every SubmitField. To change the InteractivePane attached to any SubmitField, add to another pane. This does not fire any events
      */
     public void clearAllSubmitFields() {
         this.submitFieldList.clear();
     }
 
     /**
-     * Clear all fields from the OutputField collection. This does not reset the attached InteractivePane to every OutputField. To change the InteractivePane attached to any OutputField, add to another pane
+     * Clear all fields from the OutputField collection. This does not reset the attached InteractivePane to every OutputField. To change the InteractivePane attached to any OutputField, add to another pane. This does not fire any events
      */
     public void clearAllOutputFields() {
         this.outputFieldList.clear();
+    }
+
+    /**
+     * Clears all fields from the InteractivePane. Fires PANE_UPDATE event
+     */
+    public void clearAllFields() {
+        this.inputFieldsList.clear();
+        this.submitFieldList.clear();
+        this.outputFieldList.clear();
+        this.notifyObservers(new ModifyEvent(ModifyEventType.PANE_UPDATE));
     }
 
     /**

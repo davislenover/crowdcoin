@@ -3,6 +3,10 @@ package com.crowdcoin.mainBoard.table;
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
+import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
+import com.crowdcoin.mainBoard.table.Observe.ModifyEventType;
+import com.crowdcoin.mainBoard.table.Observe.Observable;
+import com.crowdcoin.mainBoard.table.Observe.Observer;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
@@ -15,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class TableViewManager implements Iterator<List<List<Object>>> {
+public class TableViewManager implements Iterator<List<List<Object>>>, Observable<ModifyEvent,String> {
 
     // The purpose of this class is to store the previous, current and next set of rows to display to the TableView object
     // It aims to reduce queries by storing recently viewed portions of the TableView to memory
@@ -31,6 +35,8 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
     private boolean isFirstRow = true;
     private int currentRowCount;
     private int numOfRowsPerRequest = 10;
+
+    private List<Observer<ModifyEvent,String>> subscriptionList;
 
     /**
      * Handles access of rows in an SQL Table in an ordered/iterative fashion.
@@ -51,7 +57,7 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
         this.currentRowSet = new ArrayList<>();
         this.nextRowSet = new ArrayList<>();
         this.previousRowSet = new ArrayList<>();
-
+        this.subscriptionList = new ArrayList<>();
         this.setupIterator();
 
     }
@@ -82,31 +88,14 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
      */
     public void refreshCurrentView() throws FailedQueryException, SQLException, InvalidRangeException {
 
-        if (this.sqlTable.getRawRows(this.currentRowCount-(this.numOfRowsPerRequest),this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1).size() < this.numOfRowsPerRequest) {
+        int savedPosition = this.currentRowCount;
+        this.reset();
 
-            int savedPosition = this.currentRowCount;
-            this.reset();
-
-            while(this.currentRowCount < savedPosition) {
-                setCurrentRowNext();
-                if (isAtLastRow()) {
-                    break;
-                }
+        while(this.currentRowCount < savedPosition) {
+            setCurrentRowNext();
+            if (isAtLastRow()) {
+                break;
             }
-
-        } else {
-
-            this.previousRowSet.clear();
-            this.previousRowSet.addAll(this.sqlTable.getRawRows(this.currentRowCount-(this.currentRowSet.size()*2),this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1));
-
-            this.currentRowSet.clear();
-            this.currentRowSet.addAll(this.sqlTable.getRawRows(this.currentRowCount-(this.numOfRowsPerRequest),this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1));
-
-            this.nextRowSet.clear();
-            this.nextRowSet.addAll(this.sqlTable.getRawRows(this.currentRowCount,this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1));
-
-            checkRowPosition();
-
         }
 
     }
@@ -414,6 +403,8 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
                 next.setDisable(this.isAtLastRow());
                 previous.setDisable(this.isAtFirstRow());
 
+                this.notifyObservers(new ModifyEvent(ModifyEventType.APPLIED_NEW_VIEW));
+
             } catch (NotZeroArgumentException e) {
                 throw new RuntimeException(e);
             } catch (InvocationTargetException e) {
@@ -434,6 +425,8 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
                 next.setDisable(this.isAtLastRow());
                 previous.setDisable(this.isAtFirstRow());
 
+                this.notifyObservers(new ModifyEvent(ModifyEventType.APPLIED_NEW_VIEW));
+
             } catch (NotZeroArgumentException e) {
                 throw new RuntimeException(e);
             } catch (InvocationTargetException e) {
@@ -448,5 +441,30 @@ public class TableViewManager implements Iterator<List<List<Object>>> {
         });
 
 
+    }
+
+    @Override
+    public boolean addObserver(Observer<ModifyEvent,String> observer) {
+        if (!this.subscriptionList.contains(observer)) {
+            return this.subscriptionList.add(observer);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeObserver(Observer<ModifyEvent,String> observer) {
+        return this.subscriptionList.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(ModifyEvent event) {
+        for (Observer<ModifyEvent,String> observer : List.copyOf(this.subscriptionList)) {
+            observer.update(event);
+        }
+    }
+
+    @Override
+    public void clearObservers() {
+        this.subscriptionList.clear();
     }
 }

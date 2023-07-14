@@ -89,6 +89,8 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
         this.filterController.addObserver(this);
         // Observe SQL Table for any other changes
         this.sqlTable.addObserver(this);
+        // Observe TableViewManager for updates to TableView rows
+        this.tableViewManager.addObserver(this);
 
     }
 
@@ -136,9 +138,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
      * Clear all fields from the Tab pane
      */
     public void resetInteractiveTabPane() {
-        this.interactiveTabPane.clearAllInputFields();
-        this.interactiveTabPane.clearAllOutputFields();
-        this.interactiveTabPane.clearAllSubmitFields();
+        this.interactiveTabPane.clearAllFields();
     }
 
     /**
@@ -199,6 +199,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
     public void removeObserving() {
         this.sqlTable.removeObserver(this);
         this.filterController.removeObserver(this);
+        this.tableViewManager.removeObserver(this);
     }
 
     /**
@@ -284,6 +285,13 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
     // Tab will watch for changes to observing objects (mainly for events like Filter/Database changes)
     @Override
     public void update(ModifyEvent passThroughObject) {
+
+        // Erase InteractiveTabPane if new rows were added to table view (prevents editing/removing incorrect rows)
+        if (passThroughObject.getEventType() == ModifyEventType.APPLIED_NEW_VIEW) {
+            this.resetInteractiveTabPane();
+            return;
+        }
+
         // Notify all Tab observers that this tab updated an object
         this.notifyObservers(passThroughObject);
     }
