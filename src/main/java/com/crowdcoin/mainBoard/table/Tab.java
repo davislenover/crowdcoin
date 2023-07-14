@@ -288,6 +288,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
 
         // Erase InteractiveTabPane if new rows were added to table view (prevents editing/removing incorrect rows)
         if (passThroughObject.getEventType() == ModifyEventType.APPLIED_NEW_VIEW) {
+            this.columnContainer.resetSelectedRowIndex();
             this.resetInteractiveTabPane();
             return;
         }

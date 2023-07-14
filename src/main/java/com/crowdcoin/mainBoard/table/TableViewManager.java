@@ -345,6 +345,8 @@ public class TableViewManager implements Iterator<List<List<Object>>>, Observabl
             destinationTable.getItems().add(this.factory.buildClone(this.modelClass,row.toArray()));
         }
 
+        destinationTable.getSelectionModel().select(0);
+
     }
 
     /**
@@ -386,6 +388,8 @@ public class TableViewManager implements Iterator<List<List<Object>>>, Observabl
             });
             return row;
         });
+
+        destinationTable.getSelectionModel().select(0);
 
     }
 
