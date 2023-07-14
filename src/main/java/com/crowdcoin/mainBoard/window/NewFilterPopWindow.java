@@ -9,6 +9,7 @@ import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
 import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
+import com.crowdcoin.mainBoard.WindowManager;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEventType;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
@@ -35,17 +36,21 @@ public class NewFilterPopWindow extends PopWindow {
     private SplitMenuButton filterButton;
     private FilterController filterController;
 
+    private WindowManager windowManager;
+
     private List<String> allOperators = new ArrayList<>() {{
         addAll(GeneralFilterOperators.getNames());
         addAll(ExtendedFilterOperators.getNames());
     }};
 
-    public NewFilterPopWindow(SplitMenuButton filterButton, FilterManager filterManager, SQLTable table, FilterController filterController) {
+    public NewFilterPopWindow(SplitMenuButton filterButton, FilterManager filterManager, SQLTable table, FilterController filterController, WindowManager windowManager) {
         super("New Filter");
         this.filterButton = filterButton;
         this.filterManager = filterManager;
         this.table = table;
         this.filterController = filterController;
+        this.windowManager = windowManager;
+        windowManager.addWindow(this);
     }
 
     @Override
@@ -136,7 +141,7 @@ public class NewFilterPopWindow extends PopWindow {
         // Create Cancel field
         SubmitField cancelField = new InteractiveButton("Cancel",((event, button, pane) -> {
             // Cancel will open confirmation window to close adding filter
-            InfoPopWindow confirmationWindow = new InfoPopWindow("Confirmation");
+            InfoPopWindow confirmationWindow = new InfoPopWindow("Confirmation",windowManager);
             confirmationWindow.setInfoMessage("Cancel adding a filter?");
             confirmationWindow.setOkButtonAction(((event1, button1, pane1) -> {
                 super.closeWindow();

@@ -6,9 +6,11 @@ import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.output.OutputField;
 import com.crowdcoin.mainBoard.Interactive.output.OutputPrintField;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
+import com.crowdcoin.mainBoard.WindowManager;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 /**
  * A class for display a short message along with button actions to the screen. By default, one OutputPrintField and SubmitField (order of 0) are present within the InteractivePane upon calling {@link com.crowdcoin.mainBoard.window.InfoPopWindow#start(Stage)}
@@ -28,6 +30,8 @@ public class InfoPopWindow extends PopWindow {
     private static int windowHeight = 150;
     private static int windowWidth = 300;
 
+    private WindowManager windowManager;
+
     /**
      * Creates an InfoPopWindow
      * @param windowName the given window name
@@ -42,9 +46,18 @@ public class InfoPopWindow extends PopWindow {
      * @param windowName the given window name
      * @param callerPane the given windows pane which called this InfoWindow. If a PANE_UPDATE event is called, this window will close
      */
-    public InfoPopWindow(String windowName, InteractivePane callerPane) {
+    public InfoPopWindow(String windowName, InteractivePane callerPane, WindowManager windowManager) {
         super(windowName, callerPane);
         this.messageField = new OutputPrintField("This is the default message");
+        this.windowManager = windowManager;
+        windowManager.addWindow(this);
+    }
+
+    public InfoPopWindow(String windowName,WindowManager windowManager) {
+        super(windowName);
+        this.messageField = new OutputPrintField("This is the default message");
+        this.windowManager = windowManager;
+        windowManager.addWindow(this);
     }
 
     /**

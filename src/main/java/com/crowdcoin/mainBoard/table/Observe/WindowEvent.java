@@ -24,7 +24,6 @@ public class WindowEvent implements ObservableEvent<WindowEventType,String> {
     public WindowEventType getEventType() {
         return this.winodwEventType;
     }
-
     @Override
     public List<String> getEventData() {
         return this.eventData;

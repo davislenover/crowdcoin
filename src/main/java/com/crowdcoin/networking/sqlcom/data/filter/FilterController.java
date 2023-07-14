@@ -1,6 +1,7 @@
 package com.crowdcoin.networking.sqlcom.data.filter;
 
 import com.crowdcoin.FXTools.StageManager;
+import com.crowdcoin.mainBoard.WindowManager;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
 import com.crowdcoin.mainBoard.window.EditFilterPopWindow;
 import com.crowdcoin.mainBoard.window.NewFilterPopWindow;
@@ -31,7 +32,7 @@ public class FilterController implements Observable<ModifyEvent,String> {
      * @param filterButton the target SplitMenuButton
      * @param filterManager the FilterManager object to get the Filter objects from
      */
-    public void applyFilters(SplitMenuButton filterButton, FilterManager filterManager, SQLTable table) {
+    public void applyFilters(SplitMenuButton filterButton, FilterManager filterManager, SQLTable table, WindowManager manager) {
         filterButton.getItems().clear();
 
         // Get all nodes
@@ -41,7 +42,7 @@ public class FilterController implements Observable<ModifyEvent,String> {
             // OnAction create an edit filter window and pass corresponding arguments
             filterNode.setOnAction(event -> {
                 try {
-                    PopWindow editFilterWindow = new EditFilterPopWindow(filterNodes.get(filterNode), filterManager,table,this);
+                    PopWindow editFilterWindow = new EditFilterPopWindow(filterNodes.get(filterNode), filterManager,table,this,manager);
                     editFilterWindow.start(StageManager.getStage(editFilterWindow));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -57,7 +58,7 @@ public class FilterController implements Observable<ModifyEvent,String> {
         newFilter.setOnAction(event -> {
             try {
                 // Create a new FilterPopWindow and display on screen (start)
-                PopWindow newFilterWindow = new NewFilterPopWindow(filterButton,filterManager,table,this);
+                PopWindow newFilterWindow = new NewFilterPopWindow(filterButton,filterManager,table,this,manager);
                 newFilterWindow.start(StageManager.getStage(newFilterWindow));
             } catch (Exception e) {
                 throw new RuntimeException(e);

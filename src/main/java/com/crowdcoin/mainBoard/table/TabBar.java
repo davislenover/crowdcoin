@@ -27,6 +27,7 @@ public class TabBar implements Observer<ModifyEvent,String> {
     private GridPane buttonGrid;
     private Button previous;
     private Button next;
+    private String selectedTabId;
 
     private SplitMenuButton filterButton;
 
@@ -80,6 +81,10 @@ public class TabBar implements Observer<ModifyEvent,String> {
         // Note selection changed means the current tab was selected but then the user selected another tab
         javaFXTab.setOnSelectionChanged(p -> {
             try {
+                if (this.selectedTabId != null) {
+                    Tab previousTab = this.tabIDMap.get(this.selectedTabId);
+                    previousTab.closeWindows();
+                }
                 this.openTab(javaFXTab.getId());
             } catch (Exception e) {
                 // TODO add exception handling
@@ -91,6 +96,7 @@ public class TabBar implements Observer<ModifyEvent,String> {
         // Set the new Tab to be currently selected in the TabPane
         // Note this will invoke selectionChanged event
         this.controlBar.getSelectionModel().select(javaFXTab);
+        this.selectedTabId = javaFXTab.getId();
 
         // Add TabBar to Tabs observer subscription list
         tab.addObserver(this);
@@ -122,6 +128,7 @@ public class TabBar implements Observer<ModifyEvent,String> {
         removeTab(tabID);
         if (tabIDMap.isEmpty()) {
             clearScreen();
+            this.selectedTabId = null;
         }
 
     }
@@ -138,6 +145,8 @@ public class TabBar implements Observer<ModifyEvent,String> {
 
         // Load the corresponding data Tab
         tabToLoad.loadTab(this.mainTable,this.fieldGrid,this.buttonGrid,this.previous,this.next,this.filterButton);
+
+        this.selectedTabId = tabID;
 
     }
 

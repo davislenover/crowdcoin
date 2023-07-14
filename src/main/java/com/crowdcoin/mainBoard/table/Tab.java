@@ -7,6 +7,7 @@ import com.crowdcoin.exceptions.tab.IncompatibleModelClassMethodNamesException;
 import com.crowdcoin.exceptions.tab.ModelClassConstructorTypeException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
+import com.crowdcoin.mainBoard.WindowManager;
 import com.crowdcoin.mainBoard.table.Observe.*;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterController;
@@ -32,6 +33,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
     private SQLTable sqlTable;
     private InteractiveTabPane interactiveTabPane;
     private FilterController filterController;
+    private WindowManager windowManager;
     private String tabID;
 
     // TabActionEvent is intended to allow arbitrary logic to be invoked when a user selects anything within the TableView object within the Tab
@@ -39,7 +41,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
     // On instantiation, set action event to default
     private TabActionEvent tableSelectHandler = new TabActionEvent() {
         @Override
-        public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane, SQLTable table) {
+        public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane, SQLTable table, WindowManager manager) {
             return;
         }
     };;
@@ -81,6 +83,8 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
         setupTab();
 
         this.tabID = tabID;
+
+        this.windowManager = new WindowManager();
 
         // The "subscription list" will be defined by an ArrayList
         this.subscriptionList = new ArrayList<>();
@@ -135,6 +139,13 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
     }
 
     /**
+     * Close any windows associated with this Tab from it's WindowManager
+     */
+    public void closeWindows() {
+        this.windowManager.closeAllWindows();
+    }
+
+    /**
      * Clear all fields from the Tab pane
      */
     public void resetInteractiveTabPane() {
@@ -179,7 +190,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
         destinationTable.setOnMouseClicked(null);
 
         // Change MouseCLicked event to the TableView object, to invoke the corresponding tableActionHandler method
-        destinationTable.setOnMouseClicked(mouseEvent -> this.tableSelectHandler.tableActionHandler(this.columnContainer,this.interactiveTabPane,this.sqlTable));
+        destinationTable.setOnMouseClicked(mouseEvent -> this.tableSelectHandler.tableActionHandler(this.columnContainer,this.interactiveTabPane,this.sqlTable,this.windowManager));
 
         // Set previous and forward button logic for TableViewManager instance
         this.tableViewManager.applyPrevNextButtons(destinationTable,previous,next);
@@ -188,10 +199,13 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
         this.interactiveTabPane.applyInteractivePane(fieldPane, buttonPane);
 
         // Apply filters
-        this.filterController.applyFilters(filterButton,this.sqlTable.getFilterManager(),this.sqlTable);
+        this.filterController.applyFilters(filterButton,this.sqlTable.getFilterManager(),this.sqlTable,this.windowManager);
 
         // Select any previously saved row in TableView
         destinationTable.getSelectionModel().select(this.columnContainer.getCurrentSelectedRelativeIndex());
+
+        // Open any closed windows
+        this.windowManager.openAllWindows();
 
     }
 

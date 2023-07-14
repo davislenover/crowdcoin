@@ -6,6 +6,7 @@ import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
 import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
+import com.crowdcoin.mainBoard.WindowManager;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEventType;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
 import com.crowdcoin.mainBoard.window.InfoPopWindow;
@@ -21,7 +22,7 @@ import java.util.List;
 public class ViewTableRowEvent implements TabActionEvent {
 
     @Override
-    public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane, SQLTable table) {
+    public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane, SQLTable table, WindowManager manager) {
 
         // Save the selected row
         columnContainer.setSelectedRow();
@@ -56,7 +57,7 @@ public class ViewTableRowEvent implements TabActionEvent {
                             // Add Edit/Remove buttons
                             SubmitField editRowButton = new InteractiveButton("Submit edits to entry",(event1, button, pane2) -> {
                                 // Giving pane1 (or rather the Tab InteractivePane) to the PopWindow will cause it to close whenever a PANE_UPDATE event is fired
-                                InfoPopWindow checkWindow = new InfoPopWindow("Edit Row",pane1);
+                                InfoPopWindow checkWindow = new InfoPopWindow("Edit Row",pane1,manager);
                                 checkWindow.setInfoMessage("Submit edits to this row?");
                                 checkWindow.setOkButtonMessage("Yes");
 
@@ -140,7 +141,7 @@ public class ViewTableRowEvent implements TabActionEvent {
 
                 SubmitField removeRowButton = new InteractiveButton("Remove entry",(event, button, pane1) -> {
 
-                    InfoPopWindow checkWindow = new InfoPopWindow("Remove Row",pane1);
+                    InfoPopWindow checkWindow = new InfoPopWindow("Remove Row",pane1,manager);
                     checkWindow.setInfoMessage("Remove the row? This action cannot be undone!");
                     checkWindow.setOkButtonMessage("Yes");
 

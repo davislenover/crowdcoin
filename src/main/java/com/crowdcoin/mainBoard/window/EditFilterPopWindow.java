@@ -9,6 +9,7 @@ import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
+import com.crowdcoin.mainBoard.WindowManager;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEventType;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
@@ -34,17 +35,21 @@ public class EditFilterPopWindow extends PopWindow {
     private Filter filter;
     private FilterController filterController;
 
+    private WindowManager windowManager;
+
     private List<String> allOperators = new ArrayList<>() {{
         addAll(GeneralFilterOperators.getNames());
         addAll(ExtendedFilterOperators.getNames());
     }};
 
-    public EditFilterPopWindow(Filter filter, FilterManager filterManager, SQLTable table, FilterController filterController) {
+    public EditFilterPopWindow(Filter filter, FilterManager filterManager, SQLTable table, FilterController filterController, WindowManager windowManager) {
         super("Edit Filter");
         this.filter = filter;
         this.filterManager = filterManager;
         this.table = table;
         this.filterController = filterController;
+        this.windowManager = windowManager;
+        windowManager.addWindow(this);
     }
 
     @Override
@@ -167,7 +172,7 @@ public class EditFilterPopWindow extends PopWindow {
         // Create remove filter field
         SubmitField removeFilter = new InteractiveButton("Remove Filter",((event, button, pane) -> {
 
-            InfoPopWindow newInfoWindow = new InfoPopWindow("Confirmation");
+            InfoPopWindow newInfoWindow = new InfoPopWindow("Confirmation",windowManager);
             newInfoWindow.setInfoMessage("Are you sure you want to remove this filter?");
             newInfoWindow.setOkButtonAction(((event1, button1, pane1) -> {
                 // If ok button is pressed, remove the filter and notify controller for refresh to Tab

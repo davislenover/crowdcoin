@@ -76,7 +76,6 @@ public class PopWindow extends Application implements Observer<ModifyEvent,Strin
     public void start(Stage stage) throws Exception {
 
         this.stage = stage;
-
         this.root.getChildren().addAll(this.fieldPane,this.buttonPane);
 
         // Set space between GridPanes
@@ -162,7 +161,23 @@ public class PopWindow extends Application implements Observer<ModifyEvent,Strin
         this.stage.close();
         // Remove stage from StageManager (if present)
         StageManager.removeStage(this);
+
+        this.notifyObservers(new WindowEvent(WindowEventType.CLOSE_WINDOW,String.valueOf(this.hashCode())));
         removeObserving();
+    }
+
+    /**
+     * Close window stage. But keeps all references to JavaFX Scene object and all observing classes. Intended to reopen the window later
+     */
+    public void minimizeWindow() {
+        this.stage.close();
+    }
+
+    /**
+     * Opens window stage. Typically used to re-open a window if start() method then minimizeWindow() were already invoked
+     */
+    public void showWindow() {
+        this.stage.show();
     }
 
     @Override
