@@ -40,6 +40,14 @@ public class InteractivePane implements Iterable<InputField>, Observable<ModifyE
     }
 
     /**
+     * Gets the size (count) of all SubmitFields within the InteractivePane
+     * @return the size as an integer
+     */
+    public int getSubmitFieldsSize() {
+        return this.submitFieldList.size();
+    }
+
+    /**
      * Add an InputField to the InteractivePane. Sets the parent pane of the InputField to this instance of InteractivePane. By convention, InputFields are added vertically in a GridPane (i.e., one row contains one InputField). The object's order dictates the order in which object's a added to the GridPane (top to bottom)
      * @param newField the InputField object to add
      * @return true if the InputField object was added, false otherwise
