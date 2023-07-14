@@ -19,7 +19,7 @@ public class InteractivePane implements Iterable<InputField>, Observable<ModifyE
     private List<OutputField> outputFieldList;
     private List<SubmitField> submitFieldList;
 
-    private List<Observer<ModifyEvent>> observers;
+    private List<Observer<ModifyEvent>> subscriptionList;
 
     /**
      * Creates an InteractivePane object. InteractivePane's define how a GUI interacts with a user (by convention). This is intended as a parent class (framework) for child (specific) classes
@@ -28,7 +28,7 @@ public class InteractivePane implements Iterable<InputField>, Observable<ModifyE
         this.inputFieldsList = new ArrayList<>();
         this.submitFieldList = new ArrayList<>();
         this.outputFieldList = new ArrayList<>();
-        this.observers = new ArrayList<>();
+        this.subscriptionList = new ArrayList<>();
     }
 
     /**
@@ -317,22 +317,27 @@ public class InteractivePane implements Iterable<InputField>, Observable<ModifyE
 
     @Override
     public boolean addObserver(Observer<ModifyEvent> observer) {
-        if (!this.observers.contains(observer)) {
-            return this.observers.add(observer);
+        if (!this.subscriptionList.contains(observer)) {
+            return this.subscriptionList.add(observer);
         }
         return false;
     }
 
     @Override
     public boolean removeObserver(Observer<ModifyEvent> observer) {
-        return this.observers.remove(observer);
+        return this.subscriptionList.remove(observer);
     }
 
     @Override
     public void notifyObservers(ModifyEvent event) {
 
-        for (Observer<ModifyEvent> observer : this.observers) {
+        for (Observer<ModifyEvent> observer : this.subscriptionList) {
             observer.update(event);
         }
+    }
+
+    @Override
+    public void clearObservers() {
+        this.subscriptionList.clear();
     }
 }

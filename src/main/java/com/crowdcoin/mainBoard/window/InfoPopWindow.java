@@ -38,6 +38,16 @@ public class InfoPopWindow extends PopWindow {
     }
 
     /**
+     * Creates an InfoPopWindow with a caller pane. This window will react to changes made by the caller pane
+     * @param windowName the given window name
+     * @param callerPane the given windows pane which called this InfoWindow. If a PANE_UPDATE event is called, this window will close
+     */
+    public InfoPopWindow(String windowName, InteractivePane callerPane) {
+        super(windowName, callerPane);
+        this.messageField = new OutputPrintField("This is the default message");
+    }
+
+    /**
      * Sets the message to display in the OutputField. If this method is not invoke, message will default to "This is the default message"
      * @param message the given message as a String
      */

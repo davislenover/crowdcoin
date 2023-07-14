@@ -248,7 +248,7 @@ public class Tab implements Observable<ModifyEvent>, Observer<ModifyEvent> {
     @Override
     public void notifyObservers(ModifyEvent event) {
 
-        if (event.getEventType() != EventType.NEW_ROW && event.getEventType() != EventType.ROW_MODIFIED) {
+        if (event.getEventType() != ModifyEventType.NEW_ROW && event.getEventType() != ModifyEventType.ROW_MODIFIED) {
             event.setEventData(this.tabID);
         }
 
@@ -257,11 +257,16 @@ public class Tab implements Observable<ModifyEvent>, Observer<ModifyEvent> {
         }
     }
 
+    @Override
+    public void clearObservers() {
+        this.subscriptionList.clear();
+    }
+
     // Tab will watch for changes to the SQLTable (mainly for Filter changes)
     @Override
     public void update(ModifyEvent passThroughObject) {
 
-        if (passThroughObject.getEventType() != EventType.PANE_UPDATE) {
+        if (passThroughObject.getEventType() != ModifyEventType.PANE_UPDATE) {
             // Reset TableView manager
             this.resetTableView();
         }

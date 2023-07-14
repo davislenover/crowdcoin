@@ -86,4 +86,9 @@ public class FilterController implements Observable<ModifyEvent> {
             observer.update(event);
         }
     }
+
+    @Override
+    public void clearObservers() {
+        this.subscriptionList.clear();
+    }
 }

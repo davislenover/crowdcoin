@@ -1,21 +1,18 @@
 package com.crowdcoin.mainBoard.table;
 
 import com.crowdcoin.FXTools.StageManager;
-import com.crowdcoin.mainBoard.Interactive.Field;
 import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
-import com.crowdcoin.mainBoard.Interactive.output.OutputField;
 import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
-import com.crowdcoin.mainBoard.table.Observe.EventType;
+import com.crowdcoin.mainBoard.table.Observe.ModifyEventType;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
 import com.crowdcoin.mainBoard.window.InfoPopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +49,8 @@ public class ViewTableRowEvent implements TabActionEvent {
 
                         // Add Edit/Remove buttons
                         SubmitField editRowButton = new InteractiveButton("Submit edits to entry",(event1, button, pane2) -> {
-
-                            InfoPopWindow checkWindow = new InfoPopWindow("Edit Row");
+                            // Giving pane1 (or rather the Tab InteractivePane) to the PopWindow will cause it to close whenever a PANE_UPDATE event is fired
+                            InfoPopWindow checkWindow = new InfoPopWindow("Edit Row",pane1);
                             checkWindow.setInfoMessage("Submit edits to this row?");
                             checkWindow.setOkButtonMessage("Yes");
 
@@ -117,7 +114,7 @@ public class ViewTableRowEvent implements TabActionEvent {
                         pane.addSubmitField(editRowButton);
 
                         // Get pane to notify all observers (particularly it's corresponding Tab) that the InteractivePane has been changes, thus, update those changes to the screen
-                        pane.notifyObservers(new ModifyEvent(EventType.PANE_UPDATE));
+                        pane.notifyObservers(new ModifyEvent(ModifyEventType.PANE_UPDATE));
 
                         // notify method will re-apply tab to screen, thus unselecting the row, thus reselect row
                         tableView.getSelectionModel().select(selectedRowIndex);
@@ -151,7 +148,7 @@ public class ViewTableRowEvent implements TabActionEvent {
             pane.addSubmitField(removeRowButton);
 
             // Get pane to notify all observers (particularly it's corresponding Tab) that the InteractivePane has been changes, thus, update those changes to the screen
-            pane.notifyObservers(new ModifyEvent(EventType.PANE_UPDATE));
+            pane.notifyObservers(new ModifyEvent(ModifyEventType.PANE_UPDATE));
 
             // notify method will re-apply tab to screen, thus unselecting the row, thus reselect row
             tableView.getSelectionModel().select(selectedRowIndex);

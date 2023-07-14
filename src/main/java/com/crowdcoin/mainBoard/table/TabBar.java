@@ -4,7 +4,7 @@ import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
-import com.crowdcoin.mainBoard.table.Observe.EventType;
+import com.crowdcoin.mainBoard.table.Observe.ModifyEventType;
 import com.crowdcoin.mainBoard.table.Observe.Observer;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitMenuButton;
@@ -166,7 +166,7 @@ public class TabBar implements Observer<ModifyEvent> {
     @Override
     public void update(ModifyEvent passThroughObject) {
 
-        if (passThroughObject.getEventType() == EventType.NEW_FILTER || passThroughObject.getEventType() == EventType.PANE_UPDATE) {
+        if (passThroughObject.getEventType() == ModifyEventType.NEW_FILTER || passThroughObject.getEventType() == ModifyEventType.PANE_UPDATE) {
             try {
 
                 // If the event is a new Filter or a InteractivePane update, then the tabID is located in extra data
@@ -186,7 +186,7 @@ public class TabBar implements Observer<ModifyEvent> {
                 // TODO add exception handling
             }
 
-        } else if (passThroughObject.getEventType() == EventType.NEW_ROW || passThroughObject.getEventType() == EventType.ROW_MODIFIED) {
+        } else if (passThroughObject.getEventType() == ModifyEventType.NEW_ROW || passThroughObject.getEventType() == ModifyEventType.ROW_MODIFIED) {
 
             // If it's a new row event type, then event data contains the name of the SQL table (NOT object)
             String tableName = passThroughObject.getEventData();

@@ -422,7 +422,7 @@ public class SQLTable implements Observable<ModifyEvent> {
         // Invoke query
         this.connection.executeQuery(SQLDefaultQueries.insertValueIntoExistingRow(this.tableName,this.tableColumns.get(columnWriteIndex)[0],dataToWrite,this.tableColumns.get(columnWhereIndex)[0],dataWhereRead));
 
-        ModifyEvent event = new ModifyEvent(EventType.ROW_MODIFIED,this.getTableName());
+        ModifyEvent event = new ModifyEvent(ModifyEventType.ROW_MODIFIED,this.getTableName());
         this.notifyObservers(event);
 
     }
@@ -470,7 +470,7 @@ public class SQLTable implements Observable<ModifyEvent> {
         // Invoke query
         this.connection.executeQuery(SQLDefaultQueries.insertValuesIntoExistingRow(this.tableName,columnsToInsertData,correspondingDataToInsert,this.tableColumns.get(columnWhereIndex)[0],dataWhereRead));
 
-        ModifyEvent event = new ModifyEvent(EventType.ROW_MODIFIED,this.getTableName());
+        ModifyEvent event = new ModifyEvent(ModifyEventType.ROW_MODIFIED,this.getTableName());
         this.notifyObservers(event);
 
     }
@@ -511,7 +511,7 @@ public class SQLTable implements Observable<ModifyEvent> {
         this.connection.executeQuery(SQLDefaultQueries.insertValueIntoNewRow(this.tableName,columnsToInsertData,correspondingDataToInsert));
 
         // Because this is a new row being added, tabs will need to refresh to see changes, thus notify all tabs watching the table
-        ModifyEvent event = new ModifyEvent(EventType.NEW_ROW,this.getTableName());
+        ModifyEvent event = new ModifyEvent(ModifyEventType.NEW_ROW,this.getTableName());
         this.notifyObservers(event);
 
     }
@@ -552,7 +552,7 @@ public class SQLTable implements Observable<ModifyEvent> {
         this.connection.executeQuery(SQLDefaultQueries.insertValueIntoNewRow(this.tableName,columnsToInsertData,correspondingDataToInsert));
 
         // Because this is a new row being added, tabs will need to refresh to see changes, thus notify all tabs watching the table
-        ModifyEvent event = new ModifyEvent(EventType.NEW_ROW,this.getTableName());
+        ModifyEvent event = new ModifyEvent(ModifyEventType.NEW_ROW,this.getTableName());
         this.notifyObservers(event);
 
     }
@@ -752,5 +752,10 @@ public class SQLTable implements Observable<ModifyEvent> {
         for (Observer<ModifyEvent> observer : this.subscriptionList) {
             observer.update(event);
         }
+    }
+
+    @Override
+    public void clearObservers() {
+        this.subscriptionList.clear();
     }
 }

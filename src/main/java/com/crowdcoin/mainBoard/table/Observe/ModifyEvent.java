@@ -3,23 +3,23 @@ package com.crowdcoin.mainBoard.table.Observe;
 /**
  * Event is triggered when something is modified (say an SQL database has a new row or a new filter was added)
  */
-public class ModifyEvent implements ObservableEvent<EventType> {
+public class ModifyEvent implements ObservableEvent<ModifyEventType> {
 
-    private EventType eventType;
+    private ModifyEventType modifyEventType;
     private String eventData;
 
-    public ModifyEvent(EventType eventType) {
-        this.eventType = eventType;
+    public ModifyEvent(ModifyEventType modifyEventType) {
+        this.modifyEventType = modifyEventType;
     }
 
-    public ModifyEvent(EventType eventType, String eventData) {
-        this.eventType = eventType;
+    public ModifyEvent(ModifyEventType modifyEventType, String eventData) {
+        this.modifyEventType = modifyEventType;
         this.eventData = eventData;
     }
 
     @Override
-    public EventType getEventType() {
-        return eventType;
+    public ModifyEventType getEventType() {
+        return modifyEventType;
     }
 
     public void setEventData(String data) {
