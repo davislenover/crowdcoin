@@ -7,6 +7,7 @@ import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
+import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
 import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.WindowManager;
@@ -94,20 +95,7 @@ public class NewFilterPopWindow extends PopWindow {
         // Create submit filter SubmitField
         SubmitField submitNewFilter = new InteractiveButton("OK", ((actionEvent, button, pane) -> {
 
-            boolean areFieldsGood = true;
-
-            for (InputField field : newPane) {
-                try {
-                    field.validateField();
-                    field.hideInfo();
-                } catch (ValidationException e) {
-                    field.getInfoBox().setInfoText(e.getMessage());
-                    field.showInfo();
-                    areFieldsGood = false;
-                }
-            }
-
-            if (areFieldsGood) {
+            if (PaneValidator.isInputValid(newPane)) {
 
                 // Parse all input (i.e., organize into ordered list)
                 List<Object> parsedInput = FilterOperatorTools.parseInput(pane.getAllInput());

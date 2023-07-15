@@ -7,6 +7,7 @@ import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
+import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
 import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.table.CoinModel;
@@ -55,20 +56,7 @@ public class NewEntryPopWindow extends PopWindow {
 
         SubmitField addEntry = new InteractiveButton("Add Entry",((event, button, pane) -> {
 
-            boolean areFieldsGood = true;
-
-            for (InputField field : pane) {
-                try {
-                    field.validateField();
-                    field.hideInfo();
-                } catch (ValidationException e) {
-                    field.getInfoBox().setInfoText(e.getMessage());
-                    field.showInfo();
-                    areFieldsGood = false;
-                }
-            }
-
-            if (areFieldsGood) {
+            if (PaneValidator.isInputValid(pane)) {
                 // Get all fields
                 List<String> fieldInput = pane.getAllInput();
 

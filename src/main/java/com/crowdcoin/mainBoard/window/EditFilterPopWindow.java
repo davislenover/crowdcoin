@@ -3,6 +3,7 @@ package com.crowdcoin.mainBoard.window;
 import com.crowdcoin.FXTools.StageManager;
 import com.crowdcoin.exceptions.validation.ValidationException;
 import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
+import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
 import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
@@ -118,21 +119,7 @@ public class EditFilterPopWindow extends PopWindow {
 
             // Perform basically the same actions as NewFilterPopWindowClass
 
-            boolean areFieldsGood = true;
-
-            for (InputField field : newPane) {
-                try {
-                    field.validateField();
-                    field.hideInfo();
-                } catch (ValidationException e) {
-                    field.getInfoBox().setInfoText(e.getMessage());
-                    field.showInfo();
-                    areFieldsGood = false;
-                }
-            }
-
-            if (areFieldsGood) {
-
+            if (PaneValidator.isInputValid(newPane)) {
                 // Remove current filter
                 // It's much easier to just create a new filter rather than performing a bunch of checks to determine if a new filter is needed
                 filterManager.remove(filter);
@@ -159,8 +146,6 @@ public class EditFilterPopWindow extends PopWindow {
                 ModifyEvent filterEvent = new ModifyEvent(ModifyEventType.NEW_FILTER);
                 this.filterController.notifyObservers(filterEvent);
             }
-
-
         });
 
         // Set the order of submitFilterEdit to appear on the very left of the window
@@ -217,6 +202,5 @@ public class EditFilterPopWindow extends PopWindow {
         // Set the value of the ChoiceBoxOperation to the given Filter operator
         // This will trigger the action defined above to populate the given inputs for the field
         choiceBoxOperation.setValue(this.filter.getOperator().toString());
-
     }
 }

@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class InputValidatorTest {
     @Test
-    public void estTypeValidator() throws ValidationException {
+    public void testTypeValidator() throws ValidationException {
 
         // Test Integer
         InputValidator validator = new TypeValidator(Integer.class);
@@ -24,6 +24,18 @@ class InputValidatorTest {
         assertEquals(true,validator2.isInputValid("12.00"));
 
         // Should be noted that Double does not work well, however, this class is only really always going to check for whole numbers (integers)
+
+    }
+
+    @Test
+    public void testMatchValidator() throws ValidationException {
+
+        InputValidator validator = new MatchValidator("MatchThis");
+
+        assertThrows(ValidationException.class, () -> validator.isInputValid("matchThis"));
+        assertThrows(ValidationException.class, () -> validator.isInputValid("matchthis"));
+        assertThrows(ValidationException.class, () -> validator.isInputValid("OK"));
+        assertEquals(true,validator.isInputValid("MatchThis"));
 
     }
 

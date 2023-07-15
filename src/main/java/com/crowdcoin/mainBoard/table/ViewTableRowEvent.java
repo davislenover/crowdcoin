@@ -1,9 +1,12 @@
 package com.crowdcoin.mainBoard.table;
 
 import com.crowdcoin.FXTools.StageManager;
+import com.crowdcoin.exceptions.validation.ValidationException;
 import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
+import com.crowdcoin.mainBoard.Interactive.input.validation.MatchValidator;
+import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
 import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.WindowManager;
@@ -56,60 +59,63 @@ public class ViewTableRowEvent implements TabActionEvent {
 
                             // Add Edit/Remove buttons
                             SubmitField editRowButton = new InteractiveButton("Submit edits to entry",(event1, button, pane2) -> {
-                                // Giving pane1 (or rather the Tab InteractivePane) to the PopWindow will cause it to close whenever a PANE_UPDATE event is fired
-                                InfoPopWindow checkWindow = new InfoPopWindow("Edit Row",pane1,manager);
-                                checkWindow.setInfoMessage("Submit edits to this row?");
-                                checkWindow.setOkButtonMessage("Yes");
 
-                                SubmitField cancelConfirmation = new InteractiveButton("No",((event2, button1, pane3) -> {
-                                    checkWindow.closeWindow();
-                                }));
-                                cancelConfirmation.setOrder(1);
-                                checkWindow.getWindowPane().addSubmitField(cancelConfirmation);
+                                if (PaneValidator.isInputValid(pane2)) {
+                                    // Giving pane1 (or rather the Tab InteractivePane) to the PopWindow will cause it to close whenever a PANE_UPDATE event is fired
+                                    InfoPopWindow checkWindow = new InfoPopWindow("Edit Row",pane1,manager);
+                                    checkWindow.setInfoMessage("Submit edits to this row?");
+                                    checkWindow.setOkButtonMessage("Yes");
 
-                                checkWindow.setOkButtonAction((event2, button1, pane3) -> {
+                                    SubmitField cancelConfirmation = new InteractiveButton("No",((event2, button1, pane3) -> {
+                                        checkWindow.closeWindow();
+                                    }));
+                                    cancelConfirmation.setOrder(1);
+                                    checkWindow.getWindowPane().addSubmitField(cancelConfirmation);
 
-                                    // Setup
-                                    List<String> columnsToChange = new ArrayList<>();
-                                    List<String> correspondingDataToWrite = new ArrayList<>();
-                                    boolean isWriteNeeded = false;
+                                    checkWindow.setOkButtonAction((event2, button1, pane3) -> {
 
-                                    // Get all input from InputFields
-                                    List<String> inputToCheck = pane1.getAllInput();
+                                        // Setup
+                                        List<String> columnsToChange = new ArrayList<>();
+                                        List<String> correspondingDataToWrite = new ArrayList<>();
+                                        boolean isWriteNeeded = false;
 
-                                    // Loop through all fields, check if their input differs from the storedInput (i.e., when selecting the row, storedInput has what was originally in the row)
-                                    for (int fieldIndex = 0; fieldIndex < inputToCheck.size(); fieldIndex++) {
+                                        // Get all input from InputFields
+                                        List<String> inputToCheck = pane1.getAllInput();
 
-                                        String currentInput = inputToCheck.get(fieldIndex);
-                                        String storedInput = savedInput.get(fieldIndex);
+                                        // Loop through all fields, check if their input differs from the storedInput (i.e., when selecting the row, storedInput has what was originally in the row)
+                                        for (int fieldIndex = 0; fieldIndex < inputToCheck.size(); fieldIndex++) {
 
-                                        // If both inputs differ, store the changed input along with it's corresponding column in lists
-                                        if (!currentInput.equals(storedInput)) {
-                                            columnsToChange.add(columnNames.get(fieldIndex));
-                                            correspondingDataToWrite.add(currentInput);
-                                            isWriteNeeded = true;
+                                            String currentInput = inputToCheck.get(fieldIndex);
+                                            String storedInput = savedInput.get(fieldIndex);
+
+                                            // If both inputs differ, store the changed input along with it's corresponding column in lists
+                                            if (!currentInput.equals(storedInput)) {
+                                                columnsToChange.add(columnNames.get(fieldIndex));
+                                                correspondingDataToWrite.add(currentInput);
+                                                isWriteNeeded = true;
+                                            }
                                         }
-                                    }
 
-                                    if (isWriteNeeded) {
-                                        try {
-                                            // Write all the changed input to the SQL database
-                                            // This will trigger MODIFIED_ROW event in SQLTable
-                                            // Using tableview to get data to get the ModelClass guarantees getting the first column data correctly (first column is treated as an ID that should not be changed)
-                                            table.writeToRow(columnsToChange,correspondingDataToWrite,0,tableView.getItems().get(selectedRowIndex).getData(0).toString());
-                                        } catch (Exception e) {
-                                            // TODO Error Handling
+                                        if (isWriteNeeded) {
+                                            try {
+                                                // Write all the changed input to the SQL database
+                                                // This will trigger MODIFIED_ROW event in SQLTable
+                                                // Using tableview to get data to get the ModelClass guarantees getting the first column data correctly (first column is treated as an ID that should not be changed)
+                                                table.writeToRow(columnsToChange,correspondingDataToWrite,0,tableView.getItems().get(selectedRowIndex).getData(0).toString());
+                                            } catch (Exception e) {
+                                                // TODO Error Handling
+                                            }
                                         }
+
+                                        checkWindow.closeWindow();
+
+                                    });
+
+                                    try {
+                                        checkWindow.start(StageManager.getStage(checkWindow));
+                                    } catch (Exception e) {
+                                        // TODO Error handling
                                     }
-
-                                    checkWindow.closeWindow();
-
-                                });
-
-                                try {
-                                    checkWindow.start(StageManager.getStage(checkWindow));
-                                } catch (Exception e) {
-                                    // TODO Error handling
                                 }
 
                             });
@@ -133,6 +139,11 @@ public class ViewTableRowEvent implements TabActionEvent {
                     newField.setOrder(index);
                     fieldsToAdd.add(newField);
 
+                    // Index 0 is the ID column, thus this should not be changed by the user
+                    if (index == 0) {
+                        newField.addValidator(new MatchValidator(fieldValue));
+                    }
+
                 }
 
                 // Clear all already present fields and add new ones
@@ -141,34 +152,36 @@ public class ViewTableRowEvent implements TabActionEvent {
 
                 SubmitField removeRowButton = new InteractiveButton("Remove entry",(event, button, pane1) -> {
 
-                    InfoPopWindow checkWindow = new InfoPopWindow("Remove Row",pane1,manager);
-                    checkWindow.setInfoMessage("Remove the row? This action cannot be undone!");
-                    checkWindow.setOkButtonMessage("Yes");
+                    if (PaneValidator.isInputValid(pane1)) {
+                        InfoPopWindow checkWindow = new InfoPopWindow("Remove Row",pane1,manager);
+                        checkWindow.setInfoMessage("Remove the row? This action cannot be undone!");
+                        checkWindow.setOkButtonMessage("Yes");
 
-                    SubmitField cancelConfirmation = new InteractiveButton("No",((event2, button1, pane3) -> {
-                        checkWindow.closeWindow();
-                    }));
-                    cancelConfirmation.setOrder(1);
-                    checkWindow.getWindowPane().addSubmitField(cancelConfirmation);
+                        SubmitField cancelConfirmation = new InteractiveButton("No",((event2, button1, pane3) -> {
+                            checkWindow.closeWindow();
+                        }));
+                        cancelConfirmation.setOrder(1);
+                        checkWindow.getWindowPane().addSubmitField(cancelConfirmation);
 
-                    checkWindow.setOkButtonAction((event1, button1, pane2) -> {
+                        checkWindow.setOkButtonAction((event1, button1, pane2) -> {
+
+                            try {
+                                // Since entry was removed, the row index is no longer valid
+                                columnContainer.resetSelectedRowIndex();
+                                table.deleteRow(0,tableView.getItems().get(selectedRowIndex).getData(0).toString());
+                            } catch (Exception e) {
+                                // TODO Exception handling
+                            }
+
+                            checkWindow.closeWindow();
+
+                        });
 
                         try {
-                            // Since entry was removed, the row index is no longer valid
-                            columnContainer.resetSelectedRowIndex();
-                            table.deleteRow(0,tableView.getItems().get(selectedRowIndex).getData(0).toString());
+                            checkWindow.start(StageManager.getStage(checkWindow));
                         } catch (Exception e) {
-                            // TODO Exception handling
+                            // TODO Error handling
                         }
-
-                        checkWindow.closeWindow();
-
-                    });
-
-                    try {
-                        checkWindow.start(StageManager.getStage(checkWindow));
-                    } catch (Exception e) {
-                        // TODO Error handling
                     }
 
                 });
@@ -180,7 +193,6 @@ public class ViewTableRowEvent implements TabActionEvent {
 
                 // Get pane to notify all observers (particularly it's corresponding Tab) that the InteractivePane has been changed, thus, update those changes to the screen
                 pane.notifyObservers(new ModifyEvent(ModifyEventType.PANE_UPDATE));
-
 
                 // notify method will re-apply tab to screen, thus unselecting the row, thus reselect row
                 tableView.getSelectionModel().select(selectedRowIndex);
