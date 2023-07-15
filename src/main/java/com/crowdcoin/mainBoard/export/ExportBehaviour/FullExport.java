@@ -4,42 +4,86 @@ import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
-import com.crowdcoin.mainBoard.table.ModelClass;
-import com.crowdcoin.mainBoard.table.TableViewManager;
+import com.crowdcoin.mainBoard.table.*;
+import com.crowdcoin.mainBoard.table.permissions.IsReadable;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.scene.control.TableView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FullExport implements ExportBehaviour {
 
     private InteractivePane pane;
     private PopWindow window;
-    private SQLTable table;
+    private SQLTable sqlTable;
+    private ModelClass modelClass;
+    private int numOfRowsPerRequest = 10;
 
-    public FullExport(InteractivePane pane, PopWindow window, SQLTable table) {
+    private String isReadablePerm = IsReadable.class.getSimpleName();
+
+    public FullExport(InteractivePane pane, PopWindow window, SQLTable table, ModelClass modelClass) {
         this.pane = pane;
         this.window = window;
-        this.table = table;
+        this.sqlTable = table;
+        this.modelClass = modelClass;
     }
 
     @Override
     public List<String> getColumns() {
-        return table.getColumnNames();
+        return sqlTable.getColumnNames();
     }
 
     @Override
     public List<List<String>> getEntries() {
 
+        // Setup
+        ModelClassFactory factory = new ModelClassFactory();
+        List<String> columnNames = this.sqlTable.getRawColumnNames();
+        int currentRowIndex = 0;
+        boolean hasReachedEnd = false;
 
+        List<List<String>> entries = new ArrayList<>();
 
-        return null;
+        try {
+
+            while (!hasReachedEnd) {
+                // Get a group of rows
+                List<List<Object>> rows = this.sqlTable.getRawRows(currentRowIndex,this.numOfRowsPerRequest,0,columnNames.size()-1);
+                // Loop through one row at a time, construct it into one entry list and add that to the entries list
+                for (List<Object> row : rows) {
+                    // Build modelClass for the given row
+                    ModelClass clonedClass = factory.buildClone(modelClass,row.toArray());
+                    List<String> newEntry = new ArrayList<>();
+                    // Add all columns with specified permissions to newEntry list
+                    for (Column column : clonedClass.getColumns()) {
+                        // Check Perms
+                        if(column.checkPermissionValue(this.isReadablePerm)) {
+                            newEntry.add(clonedClass.getData(column.getColumnName()).toString());
+                        }
+                    }
+                    // Add entry to list
+                    entries.add(newEntry);
+                }
+                // Stop if the rows list is smaller than that requested (meaning this loop has reached the end of the database table)
+                if (rows.size() < this.numOfRowsPerRequest) {
+                    hasReachedEnd = true;
+                }
+                currentRowIndex+=this.numOfRowsPerRequest;
+            }
+
+        } catch (Exception e) {
+
+        }
+
+        return entries;
     }
 
     @Override
     public void applyInputFieldsOnWindow() {
         InputField field = new InteractiveTextField("Filename","The name to be given to the exported file",(event, field1, pane1) -> {return;});
         field.addValidator(new LengthValidator(1));
+        this.pane.addInputField(field);
     }
 }
