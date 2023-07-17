@@ -28,6 +28,7 @@ public class MainBoardController {
     @FXML private Button prevTableViewButton;
     @FXML private Button nextTableViewButton;
     @FXML private SplitMenuButton filters;
+    @FXML private Button exportTabButton;
 
     // Method to initialize coin list on startup
     public void initializeList() throws Exception {
@@ -44,7 +45,7 @@ public class MainBoardController {
         Tab testTab2 = new Tab(model,table2,"testTab2");
         testTab2.setTabTableAction(new ViewTableRowEvent());
 
-        TabBar testBar = new TabBar(tabBar,mainTable,rightDisplay,buttonGrid,prevTableViewButton,nextTableViewButton,filters);
+        TabBar testBar = new TabBar(tabBar,mainTable,rightDisplay,buttonGrid,prevTableViewButton,nextTableViewButton,filters,exportTabButton);
         testBar.addTab(testTab);
         testBar.addTab(testTab2);
 

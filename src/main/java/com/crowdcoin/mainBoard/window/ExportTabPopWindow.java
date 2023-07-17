@@ -5,7 +5,12 @@ import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveDirectoryField;
+import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
+import com.crowdcoin.mainBoard.Interactive.input.validation.ValidatorManager;
+import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
+import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.WindowManager;
+import com.crowdcoin.mainBoard.export.CSVExporter;
 import com.crowdcoin.mainBoard.export.ExportBehaviour.ExportBehaviour;
 import com.crowdcoin.mainBoard.export.ExportBehaviour.ExportBehaviourFactory;
 import com.crowdcoin.mainBoard.export.ExportBehaviour.GeneralExportBehaviours;
@@ -19,6 +24,7 @@ public class ExportTabPopWindow extends PopWindow {
     private SQLTable sqlTable;
     private ModelClass modelClass;
     private WindowManager manager;
+    private ExportBehaviour exportBehaviour;
 
     public ExportTabPopWindow(String windowName, SQLTable sqlTable, ModelClass modelClass, WindowManager manager) {
         super(windowName);
@@ -38,6 +44,8 @@ public class ExportTabPopWindow extends PopWindow {
             ExportBehaviourFactory factory = new ExportBehaviourFactory(pane1,this,this.sqlTable,this.modelClass);
             ExportBehaviour behaviour = factory.constructExportBehaviour(choiceBox.getValue().toString());
             behaviour.applyInputFieldsOnWindow();
+            this.exportBehaviour = behaviour;
+            super.updateWindow();
 
             });
 
@@ -47,8 +55,26 @@ public class ExportTabPopWindow extends PopWindow {
         InputField chooseFile = new InteractiveDirectoryField("Directory Path","Choose the directory for the file to be saved to",(event, field, pane1) -> {return;}, StageManager.getStage(this));
         pane.addInputField(chooseFile);
 
-        super.setWindowWidth(460);
+        SubmitField exportButton = new InteractiveButton("Export",(event, button, pane1) -> {
 
+            if (PaneValidator.isInputValid(pane1)) {
+
+                CSVExporter exporter = new CSVExporter(chooseFile.getInput().split(","));
+
+                try {
+                    exporter.writeToFile(this.exportBehaviour.getColumns(),this.exportBehaviour.getEntries(),pane1.getInputField(2).getInput());
+                    super.closeWindow();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // TODO Error handling
+                }
+
+            }
+
+        });
+
+        pane.addSubmitField(exportButton);
+        super.setWindowWidth(460);
         super.start(stage);
     }
 }

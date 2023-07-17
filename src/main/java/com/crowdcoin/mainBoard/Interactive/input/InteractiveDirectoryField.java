@@ -12,6 +12,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class InteractiveDirectoryField extends InteractiveTextField {
     private static int linkTextTranslateX = 320;
@@ -42,6 +44,24 @@ public class InteractiveDirectoryField extends InteractiveTextField {
     public void setSpacing(int spacing) {
         this.fileActionLink.setTranslateX(linkTextTranslateX+spacing);
         super.setSpacing(spacing);
+    }
+
+    @Override
+    public String getInput() {
+        String returnString = "";
+        String rawInput = super.getInput();
+
+        String[] array = rawInput.split(Pattern.quote(File.separator));
+
+        for (int index = 0; index < array.length; index++) {
+            if (index == (array.length - 1)) {
+                returnString+=array[index];
+            } else {
+                returnString+=array[index]+",";
+            }
+
+        }
+        return returnString;
     }
 
     private class FileLinkAction implements EventHandler {

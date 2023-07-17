@@ -57,5 +57,6 @@
          </GridPane.margin>
       </Button>
       <SplitMenuButton fx:id="filters" mnemonicParsing="false" text="SplitMenuButton" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+      <Button fx:id="exportTabButton" mnemonicParsing="false" text="Export" GridPane.rowIndex="3" />
    </children>
 </GridPane>

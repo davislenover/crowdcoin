@@ -27,6 +27,7 @@ public class TabBar implements Observer<ModifyEvent,String> {
     private GridPane buttonGrid;
     private Button previous;
     private Button next;
+    private Button exportButton;
     private String selectedTabId;
 
     private SplitMenuButton filterButton;
@@ -38,7 +39,7 @@ public class TabBar implements Observer<ModifyEvent,String> {
      * @param fieldGrid the JavaFX GridPane object to control for fields. This GridPane houses user interactable TextFields and is where Tabs will load their InteractiveTextFields into
      * @param buttonGrid the JavaFX GridPane object to control for buttons. This GridPane houses user interactable Buttons and is where Tabs will load their InteractiveButtons into
      */
-    public TabBar(TabPane controlTabPane, TableView mainTable, GridPane fieldGrid, GridPane buttonGrid, Button previous, Button next, SplitMenuButton filterButton) {
+    public TabBar(TabPane controlTabPane, TableView mainTable, GridPane fieldGrid, GridPane buttonGrid, Button previous, Button next, SplitMenuButton filterButton, Button exportButton) {
 
         this.controlBar = controlTabPane;
         this.controlBar.getTabs().clear();
@@ -50,6 +51,7 @@ public class TabBar implements Observer<ModifyEvent,String> {
         this.previous = previous;
         this.next = next;
         this.filterButton = filterButton;
+        this.exportButton = exportButton;
 
     }
 
@@ -144,7 +146,7 @@ public class TabBar implements Observer<ModifyEvent,String> {
         Tab tabToLoad = tabIDMap.get(newlySelectedTab.getId());
 
         // Load the corresponding data Tab
-        tabToLoad.loadTab(this.mainTable,this.fieldGrid,this.buttonGrid,this.previous,this.next,this.filterButton);
+        tabToLoad.loadTab(this.mainTable,this.fieldGrid,this.buttonGrid,this.previous,this.next,this.filterButton,this.exportButton);
 
         this.selectedTabId = tabID;
 

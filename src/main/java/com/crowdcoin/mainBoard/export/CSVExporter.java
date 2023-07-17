@@ -19,8 +19,6 @@ public class CSVExporter {
      */
     public CSVExporter(String ... filePathDirs) {
 
-        path+=System.getProperty(this.home);
-
         for (int index = 0; index < filePathDirs.length; index++) {
             path+= File.separator+filePathDirs[index];
         }

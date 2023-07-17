@@ -56,11 +56,17 @@ public class FullExport implements ExportBehaviour {
                     // Build modelClass for the given row
                     ModelClass clonedClass = factory.buildClone(modelClass,row.toArray());
                     List<String> newEntry = new ArrayList<>();
-                    // Add all columns with specified permissions to newEntry list
-                    for (Column column : clonedClass.getColumns()) {
-                        // Check Perms
-                        if(column.checkPermissionValue(this.isReadablePerm)) {
-                            newEntry.add(clonedClass.getData(column.getColumnName()).toString());
+
+                    for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
+                        // Add all columns with specified permissions to newEntry list
+                        for (Column column : clonedClass.getColumns()) {
+                            // Since column list may not be ordered, find the correct one by matching names (the names returned by SQLTable, in which each row returned by the same SQLTable would also correspond)
+                            if (column.getColumnName().equals(columnNames.get(columnIndex))) {
+                                // Check Perms
+                                if(column.checkPermissionValue(this.isReadablePerm)) {
+                                    newEntry.add(clonedClass.getData(column.getColumnName()).toString());
+                                }
+                            }
                         }
                     }
                     // Add entry to list
@@ -85,5 +91,6 @@ public class FullExport implements ExportBehaviour {
         InputField field = new InteractiveTextField("Filename","The name to be given to the exported file",(event, field1, pane1) -> {return;});
         field.addValidator(new LengthValidator(1));
         this.pane.addInputField(field);
+        this.window.setWindowHeight(300);
     }
 }

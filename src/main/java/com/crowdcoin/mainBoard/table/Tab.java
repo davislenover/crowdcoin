@@ -1,5 +1,6 @@
 package com.crowdcoin.mainBoard.table;
 
+import com.crowdcoin.FXTools.StageManager;
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.tab.IncompatibleModelClassException;
@@ -9,6 +10,8 @@ import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
 import com.crowdcoin.mainBoard.WindowManager;
 import com.crowdcoin.mainBoard.table.Observe.*;
+import com.crowdcoin.mainBoard.window.ExportTabPopWindow;
+import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterController;
 import javafx.scene.control.Button;
@@ -44,7 +47,9 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
         public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane, SQLTable table, WindowManager manager) {
             return;
         }
-    };;
+    };
+
+    private TabActionEvent openExport;
 
 
     private int defaultNumberOfRows = 10;
@@ -95,6 +100,8 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
         this.sqlTable.addObserver(this);
         // Observe TableViewManager for updates to TableView rows
         this.tableViewManager.addObserver(this);
+
+        this.openExport = new ExportTabEvent(this.modelClass);
 
     }
 
@@ -174,7 +181,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public void loadTab(TableView destinationTable, GridPane fieldPane, GridPane buttonPane, Button previous, Button next, SplitMenuButton filterButton) throws FailedQueryException, SQLException, InvalidRangeException, NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void loadTab(TableView destinationTable, GridPane fieldPane, GridPane buttonPane, Button previous, Button next, SplitMenuButton filterButton, Button exportButton) throws FailedQueryException, SQLException, InvalidRangeException, NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         // Clear current data and columns
         destinationTable.getItems().clear();
@@ -203,6 +210,9 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
 
         // Select any previously saved row in TableView
         destinationTable.getSelectionModel().select(this.columnContainer.getCurrentSelectedRelativeIndex());
+
+        // Set Export Button Action
+        exportButton.setOnAction(buttonEvent -> this.openExport.tableActionHandler(this.columnContainer,this.interactiveTabPane,this.sqlTable,this.windowManager));
 
         // Open any closed windows
         this.windowManager.openAllWindows();
