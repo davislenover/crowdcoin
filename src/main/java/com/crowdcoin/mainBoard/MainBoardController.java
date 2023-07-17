@@ -63,14 +63,6 @@ public class MainBoardController {
                 throw new RuntimeException(e);
             }
         }));
-        test1.addOption(new MenuOption("Export to File",option -> {
-            PopWindow exportWindow = new ExportTabPopWindow("Export to File",table,modelClass);
-            try {
-                exportWindow.start(StageManager.getStage(exportWindow));
-            } catch (Exception e) {
-
-            }
-        }));
         MenuGroup test2 = new MenuGroup("Test2");
 
         // Note that options are cloned thus updates need to be made before adding to container (this might change in the future)

@@ -7,15 +7,16 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 
-public class InteractiveFileField extends InteractiveTextField {
+public class InteractiveDirectoryField extends InteractiveTextField {
     private static int linkTextTranslateX = 320;
     private Hyperlink fileActionLink;
+    private Stage stage;
 
     /**
      * Houses three node objects which are used in a single row on a GridPane
@@ -25,12 +26,13 @@ public class InteractiveFileField extends InteractiveTextField {
      * @param actionEvent
      * @Note this is the lower level object used in InteractivePane's
      */
-    public InteractiveFileField(String header, String description, InteractiveFieldActionEvent actionEvent) {
+    public InteractiveDirectoryField(String header, String description, InteractiveFieldActionEvent actionEvent, Stage stage) {
         super(header, description, actionEvent);
+        this.stage = stage;
 
         Pane containnerPane = super.getPane();
         this.fileActionLink = new Hyperlink("Browse");
-        this.fileActionLink.setOnAction(new FileLinkAction("Test"));
+        this.fileActionLink.setOnAction(new FileLinkAction("Test",this));
         containnerPane.getChildren().add(this.fileActionLink);
         this.fileActionLink.setTranslateX(linkTextTranslateX);
 
@@ -45,17 +47,19 @@ public class InteractiveFileField extends InteractiveTextField {
     private class FileLinkAction implements EventHandler {
 
         private String windowName;
+        private InteractiveTextField textField;
 
-        public FileLinkAction(String windowName) {
+        public FileLinkAction(String windowName,InteractiveTextField textField) {
             this.windowName = windowName;
+            this.textField = textField;
         }
 
         @Override
         public void handle(Event event) {
-            FileChooser chooser = new FileChooser();
+            DirectoryChooser chooser = new DirectoryChooser();
             chooser.setTitle(this.windowName);
-            File choosenFile = chooser.showSaveDialog(StageManager.getStage(this));
-            System.out.println(choosenFile);
+            File choosenFile = chooser.showDialog(stage);
+            textField.setValue(choosenFile.getAbsolutePath());
         }
     }
 
