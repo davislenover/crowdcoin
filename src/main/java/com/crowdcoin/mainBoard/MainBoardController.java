@@ -5,6 +5,7 @@ import com.crowdcoin.mainBoard.table.*;
 import com.crowdcoin.mainBoard.toolBar.MenuGroup;
 import com.crowdcoin.mainBoard.toolBar.MenuGroupContainer;
 import com.crowdcoin.mainBoard.toolBar.MenuOption;
+import com.crowdcoin.mainBoard.window.ExportTabPopWindow;
 import com.crowdcoin.mainBoard.window.NewEntryPopWindow;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.SQLData;
@@ -60,6 +61,14 @@ public class MainBoardController {
                 newEntry.start(StageManager.getStage(newEntry));
             } catch (Exception e) {
                 throw new RuntimeException(e);
+            }
+        }));
+        test1.addOption(new MenuOption("Export to File",option -> {
+            PopWindow exportWindow = new ExportTabPopWindow("Export to File",table,modelClass);
+            try {
+                exportWindow.start(StageManager.getStage(exportWindow));
+            } catch (Exception e) {
+
             }
         }));
         MenuGroup test2 = new MenuGroup("Test2");
