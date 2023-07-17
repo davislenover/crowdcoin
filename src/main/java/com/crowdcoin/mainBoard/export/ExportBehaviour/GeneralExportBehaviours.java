@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum GeneralExportBehaviours implements ExportBehaviours {
-    FULLEXPORT(FullExport.class);
+    FULLEXPORT(FullExport.class),RANGEEXPORT(RangeExport.class);
 
     private Class<? extends ExportBehaviour> exportClass;
     GeneralExportBehaviours(Class<? extends ExportBehaviour> exportClass) {

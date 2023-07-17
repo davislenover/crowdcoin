@@ -15,9 +15,10 @@ public interface ExportBehaviour {
 
     /**
      * Gets all entries to write to the export file
+     * @param params any extra parameters for the specific ExportBehaviour implementation
      * @return a List with a List of Strings, each List within is an entry for the Export file
      */
-    List<List<String>> getEntries();
+    List<List<String>> getEntries(Object ... params);
 
 
      /**

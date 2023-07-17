@@ -34,6 +34,7 @@ public class ExportBehaviourFactory {
         try {
             return (ExportBehaviour) behaviourClass.getConstructors()[0].newInstance(this.pane,this.window,this.table,this.modelClass);
         } catch (Exception e) {
+            e.printStackTrace();
             // TODO Error handling
         }
 

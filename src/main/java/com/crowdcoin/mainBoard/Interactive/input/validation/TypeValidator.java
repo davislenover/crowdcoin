@@ -23,7 +23,6 @@ public class TypeValidator implements InputValidator {
             type.getConstructors()[0].newInstance(input);
             return true;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             throw new ValidationException(message + this.type.getSimpleName());
         }
 

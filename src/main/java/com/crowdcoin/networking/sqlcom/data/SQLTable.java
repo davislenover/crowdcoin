@@ -614,9 +614,7 @@ public class SQLTable implements Observable<ModifyEvent,String> {
 
             // Check perms before adding
             if (columnToCheck.checkPermissionValue(isReadablePerm)) {
-                System.out.println("Yes!");
                 if (columnToCheck.checkPermissionValue(permission)) {
-                    System.out.println("Yes2!");
                     columnNames.add(this.tableColumns.get(index)[0]);
                 }
             }

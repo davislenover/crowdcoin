@@ -36,7 +36,7 @@ public class FullExport implements ExportBehaviour {
     }
 
     @Override
-    public List<List<String>> getEntries() {
+    public List<List<String>> getEntries(Object ... params) {
 
         // Setup
         ModelClassFactory factory = new ModelClassFactory();
@@ -88,9 +88,6 @@ public class FullExport implements ExportBehaviour {
 
     @Override
     public void applyInputFieldsOnWindow() {
-        InputField field = new InteractiveTextField("Filename","The name to be given to the exported file",(event, field1, pane1) -> {return;});
-        field.addValidator(new LengthValidator(1));
-        this.pane.addInputField(field);
         this.window.setWindowHeight(300);
     }
 }
