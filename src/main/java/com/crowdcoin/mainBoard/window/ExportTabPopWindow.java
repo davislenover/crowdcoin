@@ -18,6 +18,7 @@ import com.crowdcoin.mainBoard.export.ExportBehaviour.ExportBehaviour;
 import com.crowdcoin.mainBoard.export.ExportBehaviour.ExportBehaviourFactory;
 import com.crowdcoin.mainBoard.export.ExportBehaviour.GeneralExportBehaviours;
 import com.crowdcoin.mainBoard.table.ModelClass;
+import com.crowdcoin.mainBoard.table.TableViewManager;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.scene.control.ChoiceBox;
 import javafx.stage.Stage;
@@ -27,14 +28,14 @@ import java.util.ArrayList;
 public class ExportTabPopWindow extends PopWindow {
 
     private SQLTable sqlTable;
-    private ModelClass modelClass;
+    private TableViewManager tableManager;
     private WindowManager manager;
     private ExportBehaviour exportBehaviour;
 
-    public ExportTabPopWindow(String windowName, SQLTable sqlTable, ModelClass modelClass, WindowManager manager) {
+    public ExportTabPopWindow(String windowName, SQLTable sqlTable, TableViewManager tableManager, WindowManager manager) {
         super(windowName);
         this.sqlTable = sqlTable;
-        this.modelClass = modelClass;
+        this.tableManager = tableManager;
         this.manager = manager;
         this.manager.addWindow(this);
         super.setWindowHeight(500);
@@ -51,7 +52,7 @@ public class ExportTabPopWindow extends PopWindow {
                 add(pane1.getInputField(2));
             }});
             ChoiceBox choiceBox = (ChoiceBox) field;
-            ExportBehaviourFactory factory = new ExportBehaviourFactory(pane1,this,this.sqlTable,this.modelClass);
+            ExportBehaviourFactory factory = new ExportBehaviourFactory(pane1,this,this.sqlTable,this.tableManager.getModelClass());
             ExportBehaviour behaviour = factory.constructExportBehaviour(choiceBox.getValue().toString());
             behaviour.applyInputFieldsOnWindow();
             this.exportBehaviour = behaviour;
@@ -81,6 +82,7 @@ public class ExportTabPopWindow extends PopWindow {
                     exporter.writeToFile(this.exportBehaviour.getColumns(),this.exportBehaviour.getEntries(this.getAdditionalParams()),pane1.getInputField(2).getInput());
                     super.closeWindow();
                 } catch (Exception e) {
+                    e.printStackTrace();
                     // TODO Error handling
                 }
 
@@ -97,15 +99,25 @@ public class ExportTabPopWindow extends PopWindow {
     private Object[] getAdditionalParams() {
 
         InteractivePane pane = super.getWindowPane();
-        // The main InputFields are Mode, File Path and Filename (3 objects) thus, the rest are for input arguments to an ExportBehaviour object
-        Object[] returnParams = new String[pane.getFieldsSize()-3];
 
-        // Start at index 3 (as the last index in pane, 2, would be filename) and get all other input
-        for(int index = 3; index < pane.getFieldsSize(); index++) {
-            returnParams[index-3] = pane.getInputField(index).getInput();
+        if(pane.getFieldsSize() != 3) {
+
+            // The main InputFields are Mode, File Path and Filename (3 objects) thus, the rest are for input arguments to an ExportBehaviour object
+            Object[] returnParams = new String[pane.getFieldsSize()-3];
+
+            // Start at index 3 (as the last index in pane, 2, would be filename) and get all other input
+            for(int index = 3; index < pane.getFieldsSize(); index++) {
+                returnParams[index-3] = pane.getInputField(index).getInput();
+            }
+
+            return returnParams;
+
+        // If 3, then it's a Tab view export
+        } else {
+            Object[] returnParams = new Object[1];
+            returnParams[0] = this.tableManager.getCurrentRowSet();
+            return returnParams;
         }
-
-        return returnParams;
 
     }
 }

@@ -1,12 +1,10 @@
 package com.crowdcoin.mainBoard.export.ExportBehaviour;
 
-import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public enum GeneralExportBehaviours implements ExportBehaviours {
-    FULLEXPORT(FullExport.class),RANGEEXPORT(RangeExport.class);
+    FULLEXPORT(FullExport.class),RANGEEXPORT(RangeExport.class),TABVIEW(TabViewExport.class);
 
     private Class<? extends ExportBehaviour> exportClass;
     GeneralExportBehaviours(Class<? extends ExportBehaviour> exportClass) {

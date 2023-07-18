@@ -79,7 +79,9 @@ public class InteractiveDirectoryField extends InteractiveTextField {
             DirectoryChooser chooser = new DirectoryChooser();
             chooser.setTitle(this.windowName);
             File choosenFile = chooser.showDialog(stage);
-            textField.setValue(choosenFile.getAbsolutePath());
+            if (choosenFile != null) {
+                textField.setValue(choosenFile.getAbsolutePath());
+            }
         }
     }
 

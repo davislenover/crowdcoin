@@ -447,6 +447,22 @@ public class TableViewManager implements Iterator<List<List<Object>>>, Observabl
 
     }
 
+    /**
+     * Gets the modelClass the TableViewManager instance is utilizing
+     * @return
+     */
+    public ModelClass getModelClass() {
+        return this.modelClass;
+    }
+
+    /**
+     * Gets the number of rows the TableViewManager instance is getting per query to the SQL database
+     * @return
+     */
+    public int getNumOfRowsPerRequest() {
+        return this.numOfRowsPerRequest;
+    }
+
     @Override
     public boolean addObserver(Observer<ModifyEvent,String> observer) {
         if (!this.subscriptionList.contains(observer)) {

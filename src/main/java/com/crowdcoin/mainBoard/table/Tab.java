@@ -101,7 +101,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
         // Observe TableViewManager for updates to TableView rows
         this.tableViewManager.addObserver(this);
 
-        this.openExport = new ExportTabEvent(this.modelClass);
+        this.openExport = new ExportTabEvent(this.tableViewManager);
 
     }
 

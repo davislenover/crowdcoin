@@ -9,19 +9,18 @@ import com.crowdcoin.networking.sqlcom.data.SQLTable;
 
 public class ExportTabEvent implements TabActionEvent {
 
-    private ModelClass modelClass;
+    private TableViewManager tableViewManager;
 
-    public ExportTabEvent(ModelClass modelClass) {
-        this.modelClass = modelClass;
+    public ExportTabEvent(TableViewManager tableViewManager) {
+        this.tableViewManager = tableViewManager;
     }
 
     @Override
     public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane, SQLTable table, WindowManager manager) {
-        PopWindow exportWindow = new ExportTabPopWindow("Export to File",table,this.modelClass,manager);
+        PopWindow exportWindow = new ExportTabPopWindow("Export to File",table,this.tableViewManager,manager);
         try {
             exportWindow.start(StageManager.getStage(exportWindow));
         } catch (Exception e) {
-            e.printStackTrace();
             // TODO Error handling
         }
     }
