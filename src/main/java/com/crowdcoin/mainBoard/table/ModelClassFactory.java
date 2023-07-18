@@ -48,6 +48,7 @@ public class ModelClassFactory {
                 newColumn.addPermission(new IsReadable(methodCandidate.getAnnotation(TableReadable.class).isUserReadable()));
                 newColumn.addPermission(new IsWriteable(methodCandidate.getAnnotation(TableReadable.class).isUserWriteable()));
                 newColumn.addPermission(new IsSystemWriteable(methodCandidate.getAnnotation(TableReadable.class).isSystemWriteable()));
+                newColumn.setOrdinalPosition(methodCandidate.getAnnotation(TableReadable.class).order());
                 columnList.add(newColumn);
 
             }
@@ -57,6 +58,7 @@ public class ModelClassFactory {
         // TableReadable has order attribute which allows the user to specify the order in which methods are added to this list
         // Thus we sort methodList with a comparator that compares order attributes
         Collections.sort(methodList, Comparator.comparingInt((Method o) -> o.getAnnotation(TableReadable.class).order()));
+        Collections.sort(columnList,Comparator.comparingInt((Column o) -> o.getOrdinalPosition()));
         return new ModelClass(classInstance,methodList,columnList);
 
     }
