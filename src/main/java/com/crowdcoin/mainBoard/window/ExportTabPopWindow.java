@@ -8,8 +8,6 @@ import com.crowdcoin.mainBoard.Interactive.input.InteractiveDirectoryField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
 import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
-import com.crowdcoin.mainBoard.Interactive.input.validation.TypeValidator;
-import com.crowdcoin.mainBoard.Interactive.input.validation.ValidatorManager;
 import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.WindowManager;
@@ -17,9 +15,8 @@ import com.crowdcoin.mainBoard.export.CSVExporter;
 import com.crowdcoin.mainBoard.export.ExportBehaviour.ExportBehaviour;
 import com.crowdcoin.mainBoard.export.ExportBehaviour.ExportBehaviourFactory;
 import com.crowdcoin.mainBoard.export.ExportBehaviour.GeneralExportBehaviours;
-import com.crowdcoin.mainBoard.table.ModelClass;
-import com.crowdcoin.mainBoard.table.TableViewManager;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
+import com.crowdcoin.networking.sqlcom.data.SQLTableReader;
 import javafx.scene.control.ChoiceBox;
 import javafx.stage.Stage;
 
@@ -28,14 +25,14 @@ import java.util.ArrayList;
 public class ExportTabPopWindow extends PopWindow {
 
     private SQLTable sqlTable;
-    private TableViewManager tableManager;
+    private SQLTableReader sqlTableReader;
     private WindowManager manager;
     private ExportBehaviour exportBehaviour;
 
-    public ExportTabPopWindow(String windowName, SQLTable sqlTable, TableViewManager tableManager, WindowManager manager) {
+    public ExportTabPopWindow(String windowName, SQLTable sqlTable, SQLTableReader sqlTableReader, WindowManager manager) {
         super(windowName);
         this.sqlTable = sqlTable;
-        this.tableManager = tableManager;
+        this.sqlTableReader = sqlTableReader;
         this.manager = manager;
         this.manager.addWindow(this);
         super.setWindowHeight(500);
@@ -52,7 +49,7 @@ public class ExportTabPopWindow extends PopWindow {
                 add(pane1.getInputField(2));
             }});
             ChoiceBox choiceBox = (ChoiceBox) field;
-            ExportBehaviourFactory factory = new ExportBehaviourFactory(pane1,this,this.sqlTable,this.tableManager.getModelClass());
+            ExportBehaviourFactory factory = new ExportBehaviourFactory(pane1,this,this.sqlTableReader);
             ExportBehaviour behaviour = factory.constructExportBehaviour(choiceBox.getValue().toString());
             behaviour.applyInputFieldsOnWindow();
             this.exportBehaviour = behaviour;
@@ -100,24 +97,14 @@ public class ExportTabPopWindow extends PopWindow {
 
         InteractivePane pane = super.getWindowPane();
 
-        if(pane.getFieldsSize() != 3) {
+        // The main InputFields are Mode, File Path and Filename (3 objects) thus, the rest are for input arguments to an ExportBehaviour object
+        Object[] returnParams = new String[pane.getFieldsSize() - 3];
 
-            // The main InputFields are Mode, File Path and Filename (3 objects) thus, the rest are for input arguments to an ExportBehaviour object
-            Object[] returnParams = new String[pane.getFieldsSize()-3];
-
-            // Start at index 3 (as the last index in pane, 2, would be filename) and get all other input
-            for(int index = 3; index < pane.getFieldsSize(); index++) {
-                returnParams[index-3] = pane.getInputField(index).getInput();
-            }
-
-            return returnParams;
-
-        // If 3, then it's a Tab view export
-        } else {
-            Object[] returnParams = new Object[1];
-            returnParams[0] = this.tableManager.getCurrentRowSet();
-            return returnParams;
+        // Start at index 3 (as the last index in pane, 2, would be filename) and get all other input
+        for (int index = 3; index < pane.getFieldsSize(); index++) {
+            returnParams[index - 3] = pane.getInputField(index).getInput();
         }
 
+        return returnParams;
     }
 }

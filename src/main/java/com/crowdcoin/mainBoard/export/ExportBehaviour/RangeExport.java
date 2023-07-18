@@ -12,6 +12,7 @@ import com.crowdcoin.mainBoard.table.ModelClassFactory;
 import com.crowdcoin.mainBoard.table.permissions.IsReadable;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
+import com.crowdcoin.networking.sqlcom.data.SQLTableReader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,21 +22,25 @@ public class RangeExport implements ExportBehaviour {
 
     private InteractivePane pane;
     private PopWindow window;
-    private SQLTable sqlTable;
-    private ModelClass modelClass;
+    private SQLTableReader tableReader;
 
     private String isReadablePerm = IsReadable.class.getSimpleName();
 
-    public RangeExport(InteractivePane pane, PopWindow window, SQLTable table, ModelClass modelClass) {
+    public RangeExport(InteractivePane pane, PopWindow window, SQLTableReader tableReader) {
         this.pane = pane;
         this.window = window;
-        this.sqlTable = table;
-        this.modelClass = modelClass;
+        this.tableReader = tableReader;
     }
 
     @Override
     public List<String> getColumns() {
-        return sqlTable.getColumnNames();
+        List<String> columnNames = new ArrayList<>();
+        for (Column column : tableReader.getModelClass().getColumns()) {
+            if (column.checkPermissionValue(isReadablePerm)) {
+                columnNames.add(column.getColumnName());
+            }
+        }
+        return columnNames;
     }
 
     /**
@@ -44,8 +49,6 @@ public class RangeExport implements ExportBehaviour {
     @Override
     public List<List<String>> getEntries(Object ... params) {
         // Setup
-        ModelClassFactory factory = new ModelClassFactory();
-        List<String> columnNames = this.sqlTable.getRawColumnNames();
         int startingIndex = Integer.valueOf(params[0].toString());
         int endingIndex = Integer.valueOf(params[1].toString());
         int numOfRows = endingIndex-startingIndex;
@@ -53,29 +56,24 @@ public class RangeExport implements ExportBehaviour {
         List<List<String>> entries = new ArrayList<>();
 
         try {
-            // Get a group of rows
-            List<List<Object>> rows = this.sqlTable.getRawRows(startingIndex,numOfRows,0,columnNames.size()-1);
-            // Loop through one row at a time, construct it into one entry list and add that to the entries list
-            for (List<Object> row : rows) {
-                // Build modelClass for the given row
-                ModelClass clonedClass = factory.buildClone(modelClass,row.toArray());
-                List<String> newEntry = new ArrayList<>();
 
-                for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
-                    // Add all columns with specified permissions to newEntry list
-                    for (Column column : clonedClass.getColumns()) {
-                        // Since column list may not be ordered, find the correct one by matching names (the names returned by SQLTable, in which each row returned by the same SQLTable would also correspond)
-                        if (column.getColumnName().equals(columnNames.get(columnIndex))) {
-                            // Check Perms
-                            if(column.checkPermissionValue(this.isReadablePerm)) {
-                                newEntry.add(clonedClass.getData(column.getColumnName()).toString());
-                            }
-                        }
+            // Get a group of rows
+            List<ModelClass> modelClasses = this.tableReader.getRows(startingIndex,numOfRows);
+            // Loop through one row at a time, construct it into one entry list and add that to the entries list
+            for (ModelClass row : modelClasses) {
+                // Build modelClass for the given row
+
+                List<String> newEntry = new ArrayList<>();
+                for (Column column : row.getColumns()) {
+                    if (column.checkPermissionValue(isReadablePerm)) {
+                        newEntry.add(row.getData(column.getColumnName()).toString());
                     }
                 }
+
                 // Add entry to list
                 entries.add(newEntry);
             }
+
 
         } catch (Exception e) {
             // TODO Error handling

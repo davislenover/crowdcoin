@@ -7,6 +7,7 @@ import com.crowdcoin.mainBoard.table.ModelClassFactory;
 import com.crowdcoin.mainBoard.table.permissions.IsReadable;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
+import com.crowdcoin.networking.sqlcom.data.SQLTableReader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,21 +16,25 @@ public class TabViewExport implements ExportBehaviour {
 
     private InteractivePane pane;
     private PopWindow window;
-    private SQLTable sqlTable;
-    private ModelClass modelClass;
+    private SQLTableReader tableReader;
 
     private String isReadablePerm = IsReadable.class.getSimpleName();
 
-    public TabViewExport(InteractivePane pane, PopWindow window, SQLTable table, ModelClass modelClass) {
+    public TabViewExport(InteractivePane pane, PopWindow window, SQLTableReader reader) {
         this.pane = pane;
         this.window = window;
-        this.sqlTable = table;
-        this.modelClass = modelClass;
+        this.tableReader = reader;
     }
 
     @Override
     public List<String> getColumns() {
-        return this.sqlTable.getColumnNames();
+        List<String> columnNames = new ArrayList<>();
+        for (Column column : tableReader.getModelClass().getColumns()) {
+            if (column.checkPermissionValue(isReadablePerm)) {
+                columnNames.add(column.getColumnName());
+            }
+        }
+        return columnNames;
     }
 
     /**
@@ -40,32 +45,21 @@ public class TabViewExport implements ExportBehaviour {
     @Override
     public List<List<String>> getEntries(Object... params) {
         // Setup
-        ModelClassFactory factory = new ModelClassFactory();
-        List<String> columnNames = this.sqlTable.getRawColumnNames();
-
         List<List<String>> entries = new ArrayList<>();
 
         try {
-            // Get a group of rows
-            List<List<Object>> rows = (List<List<Object>>) params[0];
+            // Get the current group of rows
+            List<ModelClass> rows = this.tableReader.getCurrentModelClassSet();
             // Loop through one row at a time, construct it into one entry list and add that to the entries list
-            for (List<Object> row : rows) {
+            for (ModelClass row : rows) {
                 // Build modelClass for the given row
-                ModelClass clonedClass = factory.buildClone(modelClass,row.toArray());
                 List<String> newEntry = new ArrayList<>();
-
-                for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
-                    // Add all columns with specified permissions to newEntry list
-                    for (Column column : clonedClass.getColumns()) {
-                        // Since column list may not be ordered, find the correct one by matching names (the names returned by SQLTable, in which each row returned by the same SQLTable would also correspond)
-                        if (column.getColumnName().equals(columnNames.get(columnIndex))) {
-                            // Check Perms
-                            if(column.checkPermissionValue(this.isReadablePerm)) {
-                                newEntry.add(clonedClass.getData(column.getColumnName()).toString());
-                            }
-                        }
+                for (Column column : row.getColumns()) {
+                    if (column.checkPermissionValue(isReadablePerm)) {
+                        newEntry.add(row.getData(column.getColumnName()).toString());
                     }
                 }
+
                 // Add entry to list
                 entries.add(newEntry);
             }
