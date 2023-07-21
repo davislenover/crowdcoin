@@ -1,5 +1,8 @@
 package com.crowdcoin.mainBoard.table;
 
+import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterCount;
+import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterTypeException;
+import com.crowdcoin.exceptions.modelClass.MultipleVariableMethodsException;
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.tab.IncompatibleModelClassException;
 import com.crowdcoin.exceptions.tab.IncompatibleModelClassMethodNamesException;
@@ -24,18 +27,34 @@ public class ModelClassFactory {
      * @throws NotZeroArgumentException if any method that is annotated contains more than zero arguments
      * @Note for a method to be added to the ModelClass, one must specify an @TableReadable annotation above the specified method
      */
-    public ModelClass build(Object classInstance) throws NotZeroArgumentException {
+    public ModelClass build(Object classInstance) throws NotZeroArgumentException, MultipleVariableMethodsException, InvalidVariableMethodParameterCount, InvalidVariableMethodParameterTypeException {
 
         List<Method> methodList = new ArrayList<>();
         List<Column> columnList = new ArrayList<>();
+        boolean isVariable = false;
 
         for (Method methodCandidate : classInstance.getClass().getMethods()) {
 
             // For all methods found within class, check if TableReadable annotation is attached
             if (methodCandidate.isAnnotationPresent(TableReadable.class)) {
 
-                if (methodCandidate.getParameterCount() != 0) {
-                    throw new NotZeroArgumentException(methodCandidate.getName());
+                if (methodCandidate.getAnnotation(TableReadable.class).isVariable()) {
+                    if (!isVariable) {
+                        isVariable = true;
+
+                        if (methodCandidate.getParameterCount() != 1) {
+                            throw new InvalidVariableMethodParameterCount(String.valueOf(methodCandidate.getParameterCount()));
+                        }
+                        if (methodCandidate.getParameterTypes()[0].equals(Integer.class)) {
+                            throw new InvalidVariableMethodParameterTypeException();
+                        }
+                    } else {
+                        throw new MultipleVariableMethodsException();
+                    }
+                } else {
+                    if (methodCandidate.getParameterCount() != 0) {
+                        throw new NotZeroArgumentException(methodCandidate.getName());
+                    }
                 }
 
                 // This means method is an intended value getter for TableColumn as specified by user
@@ -59,6 +78,11 @@ public class ModelClassFactory {
         // Thus we sort methodList with a comparator that compares order attributes
         Collections.sort(methodList, Comparator.comparingInt((Method o) -> o.getAnnotation(TableReadable.class).order()));
         Collections.sort(columnList,Comparator.comparingInt((Column o) -> o.getOrdinalPosition()));
+
+        if (isVariable) {
+            return new DynamicModelClass(classInstance,methodList,columnList);
+        }
+
         return new ModelClass(classInstance,methodList,columnList);
 
     }
@@ -74,7 +98,7 @@ public class ModelClassFactory {
      * @throws InstantiationException if the specified class cannot be instantiated
      * @throws IllegalAccessException if the class access modifiers prohibit instantiation in this manner
      */
-    public ModelClass buildClone(ModelClass modelClass, Object ... params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NotZeroArgumentException {
+    public ModelClass buildClone(ModelClass modelClass, Object ... params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NotZeroArgumentException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount {
 
         // params are variable arguments and thus are treated as an array
         // To find the correct constructor, one needs all parameter types of the constructor in an array

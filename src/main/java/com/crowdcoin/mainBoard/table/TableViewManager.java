@@ -1,5 +1,8 @@
 package com.crowdcoin.mainBoard.table;
 
+import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterCount;
+import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterTypeException;
+import com.crowdcoin.exceptions.modelClass.MultipleVariableMethodsException;
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
@@ -51,7 +54,7 @@ public class TableViewManager extends SQLTableReader {
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public void applyNextRows(TableView destinationTable) throws NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void applyNextRows(TableView destinationTable) throws NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount {
 
         // Clear current data and columns
         destinationTable.getItems().clear();
@@ -83,7 +86,7 @@ public class TableViewManager extends SQLTableReader {
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public void applyPreviousRows(TableView destinationTable) throws NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void applyPreviousRows(TableView destinationTable) throws NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount {
 
         // Clear current data and columns
         destinationTable.getItems().clear();
@@ -111,7 +114,7 @@ public class TableViewManager extends SQLTableReader {
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public void applyCurrentRows(TableView destinationTable) throws NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void applyCurrentRows(TableView destinationTable) throws NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount {
 
         // Clear current data and columns
         destinationTable.getItems().clear();
@@ -171,6 +174,12 @@ public class TableViewManager extends SQLTableReader {
                 throw new RuntimeException(e);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
+            } catch (MultipleVariableMethodsException e) {
+                throw new RuntimeException(e);
+            } catch (InvalidVariableMethodParameterTypeException e) {
+                throw new RuntimeException(e);
+            } catch (InvalidVariableMethodParameterCount e) {
+                throw new RuntimeException(e);
             }
         });
 
@@ -192,6 +201,12 @@ public class TableViewManager extends SQLTableReader {
             } catch (InstantiationException e) {
                 throw new RuntimeException(e);
             } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (MultipleVariableMethodsException e) {
+                throw new RuntimeException(e);
+            } catch (InvalidVariableMethodParameterTypeException e) {
+                throw new RuntimeException(e);
+            } catch (InvalidVariableMethodParameterCount e) {
                 throw new RuntimeException(e);
             }
         });

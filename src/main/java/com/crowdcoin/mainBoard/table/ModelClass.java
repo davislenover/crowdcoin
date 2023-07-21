@@ -23,7 +23,7 @@ public class ModelClass {
     }
 
     /**
-     * Get data from a specified method found within the class instance
+     * Get data from a specified method found within the class instance. This method does NOT take into account dynamic methods within a ModelClass
      * @param methodIndex the index at which the method is stored within the ModelClass instance
      * @return an Object instance containing the return of the specified method
      * @throws IndexOutOfBoundsException if the method it not within the ModelClass instance

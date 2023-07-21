@@ -1,5 +1,8 @@
 package com.crowdcoin.mainBoard.table;
 
+import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterCount;
+import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterTypeException;
+import com.crowdcoin.exceptions.modelClass.MultipleVariableMethodsException;
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ModelClassFactoryTest {
 
     @Test
-    public void modelClassTest() throws NotZeroArgumentException {
+    public void modelClassTest() throws NotZeroArgumentException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount {
 
         int testInteger = 2;
         String testString = "HelloWorld";
@@ -27,7 +30,7 @@ class ModelClassFactoryTest {
     }
 
     @Test
-    public void testBlankClass() throws NotZeroArgumentException {
+    public void testBlankClass() throws NotZeroArgumentException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount {
         class blankClass {
             public int dummyMethod() {
                 return 0;
@@ -56,7 +59,7 @@ class ModelClassFactoryTest {
     }
 
     @Test
-    public void testClone() throws NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void testClone() throws NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount {
 
 
         int testInteger = 2;

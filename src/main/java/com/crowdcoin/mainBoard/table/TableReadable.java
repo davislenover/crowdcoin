@@ -40,6 +40,11 @@ public @interface TableReadable {
     boolean isSystemWriteable() default true;
 
     /**
+     * Defines is a given method is responsible for any number of columns. If true, the method should have the highest order (or rather last order) and contain an integer parameter denoting the index of the column (it's ordinal position within the SQL Table)
+     */
+    boolean isVariable() default false;
+
+    /**
      * Specifies the name of the column within the table within the SQL database. Each method MUST specify this
      * @return the name of the column as a String object
      */
