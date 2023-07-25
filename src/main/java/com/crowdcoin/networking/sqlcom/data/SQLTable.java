@@ -5,6 +5,7 @@ import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.exceptions.table.UnknownColumnNameException;
 import com.crowdcoin.mainBoard.table.Column;
 import com.crowdcoin.mainBoard.table.Observe.*;
+import com.crowdcoin.mainBoard.table.TableReadable;
 import com.crowdcoin.mainBoard.table.permissions.IsReadable;
 import com.crowdcoin.mainBoard.table.permissions.IsSystemWriteable;
 import com.crowdcoin.mainBoard.table.permissions.IsWriteable;
@@ -117,11 +118,19 @@ public class SQLTable implements Observable<ModifyEvent,String> {
                 }
 
                 if (!hasMatch) {
-                    throw new UnknownColumnNameException("Column name, " + column.getColumnName() + ", from Column objects does not have a corresponding SQL column name");
+                    if (!column.isVariable()) {
+                        throw new UnknownColumnNameException("Column name, " + column.getColumnName() + ", from Column objects does not have a corresponding SQL column name");
+                    }
                 }
 
             }
         } else {
+
+            for (Column column : this.columnsPermList) {
+                if (column.isVariable()) {
+                    return;
+                }
+            }
             throw new IndexOutOfBoundsException("Column object list and SQL table columns list are not the same size");
         }
 
@@ -589,11 +598,18 @@ public class SQLTable implements Observable<ModifyEvent,String> {
     public List<String> getColumnNames() {
 
         List<String> columnNames = new ArrayList<>();
-
-        for (int index = 0; index < this.tableColumns.size(); index++) {
-            // Check perms before adding
-            if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
-                columnNames.add(this.tableColumns.get(index)[0]);
+        for(String[] column : this.tableColumns) {
+            for (Column columnObject : this.columnsPermList) {
+                // Take into account columns can house variable methods (thus only need to partially match the column name, for prefix)
+                if (columnObject.isVariable() && column[0].contains(columnObject.getColumnName())) {
+                    if (columnObject.checkPermissionValue(isReadablePerm)) {
+                        columnNames.add(column[0]);
+                    }
+                } else if (column[0].equals(columnObject.getColumnName())) {
+                    if (columnObject.checkPermissionValue(isReadablePerm)) {
+                        columnNames.add(column[0]);
+                    }
+                }
             }
         }
 
@@ -608,14 +624,20 @@ public class SQLTable implements Observable<ModifyEvent,String> {
     public List<String> getColumnNames(String permission) {
         List<String> columnNames = new ArrayList<>();
 
-        for (int index = 0; index < this.tableColumns.size(); index++) {
-
-            Column columnToCheck = this.columnsPermList.get(index);
-
-            // Check perms before adding
-            if (columnToCheck.checkPermissionValue(isReadablePerm)) {
-                if (columnToCheck.checkPermissionValue(permission)) {
-                    columnNames.add(this.tableColumns.get(index)[0]);
+        for(String[] column : this.tableColumns) {
+            for (Column columnObject : this.columnsPermList) {
+                if (columnObject.isVariable() && column[0].contains(columnObject.getColumnName())) {
+                    if (columnObject.checkPermissionValue(isReadablePerm)) {
+                        if (columnObject.checkPermissionValue(permission)) {
+                            columnNames.add(column[0]);
+                        }
+                    }
+                } else if (column[0].equals(columnObject.getColumnName())) {
+                    if (columnObject.checkPermissionValue(isReadablePerm)) {
+                        if (columnObject.checkPermissionValue(permission)) {
+                            columnNames.add(column[0]);
+                        }
+                    }
                 }
             }
         }
@@ -734,7 +756,7 @@ public class SQLTable implements Observable<ModifyEvent,String> {
     private Column getColumnObject(String columnName) {
 
         for (Column column : this.columnsPermList) {
-            if (column.getColumnName().equals(columnName)) {
+            if (columnName.contains(column.getColumnName())) {
                 return column;
             }
         }

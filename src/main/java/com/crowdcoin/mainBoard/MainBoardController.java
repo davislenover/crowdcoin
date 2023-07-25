@@ -38,6 +38,12 @@ public class MainBoardController {
         SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
         SQLTable table2 = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
 
+        userModel userModel = new userModel(101,false,"test");
+        ModelClass modelClassUser = new ModelClassFactory().build(userModel);
+        System.out.println(modelClassUser.getColumns().size());
+        SQLTable table3 = new SQLTable(SQLData.getSqlConnection(),"userData", modelClassUser.getColumns());
+        Tab testWorkTab = new Tab(userModel,table3,"testWorkTab");
+
         // Test Tab 1
         Tab testTab = new Tab(model,table,"testTab");
         testTab.setTabTableAction(new ViewTableRowEvent());
@@ -48,6 +54,7 @@ public class MainBoardController {
         TabBar testBar = new TabBar(tabBar,mainTable,rightDisplay,buttonGrid,prevTableViewButton,nextTableViewButton,filters,exportTabButton);
         testBar.addTab(testTab);
         testBar.addTab(testTab2);
+        testBar.addTab(testWorkTab);
 
         // Test adding MenuOptions
         MenuGroupContainer testContainer = new MenuGroupContainer(this.toolBar);

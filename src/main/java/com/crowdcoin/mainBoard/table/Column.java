@@ -17,12 +17,27 @@ public class Column implements Privileged {
     private Class columnDataType;
     private Method columnDataMethod;
     private int ordinalPosition = 0;
+    private boolean isVariable = false;
 
     public Column(String columnName,Class columnDataType, Method columnDataMethod) {
         this.columnName = columnName;
         this.permissions = new ArrayList<>();
         this.columnDataType = columnDataType;
         this.columnDataMethod = columnDataMethod;
+    }
+
+    /**
+     * Sets if a given Column contains a variable method (true means the Column object is responsible for an arbitrary number of columns in the database)
+     */
+    public void setVariable(boolean setBool) {
+        this.isVariable = setBool;
+    }
+
+    /**
+     * Gets if a given Column contains a variable method (true means the Column object is responsible for an arbitrary number of columns in the database)
+     */
+    public boolean isVariable() {
+        return this.isVariable;
     }
 
     /**

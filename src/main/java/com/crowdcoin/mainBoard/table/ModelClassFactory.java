@@ -67,6 +67,7 @@ public class ModelClassFactory {
                 newColumn.addPermission(new IsWriteable(methodCandidate.getAnnotation(TableReadable.class).isUserWriteable()));
                 newColumn.addPermission(new IsSystemWriteable(methodCandidate.getAnnotation(TableReadable.class).isSystemWriteable()));
                 newColumn.setOrdinalPosition(methodCandidate.getAnnotation(TableReadable.class).order());
+                newColumn.setVariable(!methodCandidate.getAnnotation(TableReadable.class).variableName().isEmpty());
                 columnList.add(newColumn);
 
             }
@@ -157,9 +158,15 @@ public class ModelClassFactory {
             } catch (IndexOutOfBoundsException e) {
                 doesntHaveIssue = false;
                 break;
+                // Null pointer indicates variable arguments (which indicates a DynamicModelClass) thus, allow it
+            } catch (NullPointerException e) {
+                doesntHaveIssue = true;
+                break;
             }
             constructorTypeIndex++;
         }
+
+        System.out.println(doesntHaveIssue);
 
         if (!doesntHaveIssue) {
             throw new ModelClassConstructorTypeException();
@@ -173,6 +180,9 @@ public class ModelClassFactory {
 
         for (Column column : klass.getColumns()) {
             if (!columnNames.contains(column.getColumnName())) {
+                if (column.isVariable()) {
+                    return;
+                }
                 throw new IncompatibleModelClassMethodNamesException();
             }
         }
@@ -182,6 +192,12 @@ public class ModelClassFactory {
     private static void checkNumOfParams(ModelClass klass, SQLTable table) throws IncompatibleModelClassException {
         // Check that the number of methods within the model reference are the same as the number of columns within the sql database table
         if (table.getNumberOfColumns() != klass.getNumberOfMethods()) {
+            // If the methods do not match, check if a ModelClass contains a variable method (thus, it's possible that the ModelClass is supposed to not have the same number of methods as there are columns)
+            for (Column column : klass.getColumns()) {
+                if (column.isVariable()) {
+                    return;
+                }
+            }
             throw new IncompatibleModelClassException(klass.getNumberOfMethods(),table.getNumberOfColumns());
         }
     }
