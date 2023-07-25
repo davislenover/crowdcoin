@@ -38,7 +38,7 @@ public class ModelClassFactory {
             // For all methods found within class, check if TableReadable annotation is attached
             if (methodCandidate.isAnnotationPresent(TableReadable.class)) {
 
-                if (!methodCandidate.getAnnotation(TableReadable.class).variableName().isEmpty()) {
+                if (methodCandidate.getAnnotation(TableReadable.class).isVariable()) {
                     if (!isVariable) {
                         isVariable = true;
 
@@ -68,7 +68,7 @@ public class ModelClassFactory {
                 newColumn.addPermission(new IsWriteable(methodCandidate.getAnnotation(TableReadable.class).isUserWriteable()));
                 newColumn.addPermission(new IsSystemWriteable(methodCandidate.getAnnotation(TableReadable.class).isSystemWriteable()));
                 newColumn.setOrdinalPosition(methodCandidate.getAnnotation(TableReadable.class).order());
-                newColumn.setVariable(!methodCandidate.getAnnotation(TableReadable.class).variableName().isEmpty());
+                newColumn.setVariable(methodCandidate.getAnnotation(TableReadable.class).isVariable());
                 columnList.add(newColumn);
 
             }

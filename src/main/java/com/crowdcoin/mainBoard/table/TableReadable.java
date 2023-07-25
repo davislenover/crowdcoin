@@ -43,7 +43,7 @@ public @interface TableReadable {
      * Defines is a given method is responsible for any number of columns. If String is not empty, then the method shall handle calls for any given number of columns that are prefixed with said variableName(). The data that is returned depends on the ID number in the column name right after the prefix.
      * The constructor for this class must also include variable arguments to allow for arbitrary data for an arbitrary number of columns with the same data type
      */
-    String variableName() default "";
+    boolean isVariable() default false;
 
     /**
      * Specifies the name of the column within the table within the SQL database. Each method MUST specify this

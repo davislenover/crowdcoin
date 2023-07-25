@@ -33,7 +33,7 @@ public class userModel {
         return this.isGraded;
     }
 
-    @TableReadable(order = 2, columnName = "USERID", variableName = "USERID")
+    @TableReadable(order = 2, columnName = "USERID", isVariable = true)
     public String USERID(int positionToGet) {
         return this.variableMap.get(positionToGet);
     }
