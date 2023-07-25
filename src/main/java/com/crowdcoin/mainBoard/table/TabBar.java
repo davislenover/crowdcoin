@@ -1,5 +1,8 @@
 package com.crowdcoin.mainBoard.table;
 
+import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterCount;
+import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterTypeException;
+import com.crowdcoin.exceptions.modelClass.MultipleVariableMethodsException;
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
@@ -137,7 +140,7 @@ public class TabBar implements Observer<ModifyEvent,String> {
 
     // Method to load data Tab to screen
     // This method is invoked from OnSelectionChanged event from created JavaFX Tab
-    private void openTab(String tabID) throws FailedQueryException, SQLException, InvalidRangeException, NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    private void openTab(String tabID) throws FailedQueryException, SQLException, InvalidRangeException, NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount {
 
         // Find the JavaFX tab that was selected
         javafx.scene.control.Tab newlySelectedTab = this.controlBar.getSelectionModel().getSelectedItem();

@@ -40,9 +40,9 @@ public @interface TableReadable {
     boolean isSystemWriteable() default true;
 
     /**
-     * Defines is a given method is responsible for any number of columns. If true, the method should have the highest order (or rather last order) and contain an integer parameter denoting the index of the column (it's ordinal position within the SQL Table)
+     * Defines is a given method is responsible for any number of columns. If String is not empty, then the method shall handle calls for any given number of columns that are prefixed with said variableName(). The data that is returned depends on the ID number in the column name right after the prefix
      */
-    boolean isVariable() default false;
+    String variableName() default "";
 
     /**
      * Specifies the name of the column within the table within the SQL database. Each method MUST specify this

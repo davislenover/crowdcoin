@@ -28,7 +28,6 @@ public class ModelClassFactory {
      * @Note for a method to be added to the ModelClass, one must specify an @TableReadable annotation above the specified method
      */
     public ModelClass build(Object classInstance) throws NotZeroArgumentException, MultipleVariableMethodsException, InvalidVariableMethodParameterCount, InvalidVariableMethodParameterTypeException {
-
         List<Method> methodList = new ArrayList<>();
         List<Column> columnList = new ArrayList<>();
         boolean isVariable = false;
@@ -38,7 +37,7 @@ public class ModelClassFactory {
             // For all methods found within class, check if TableReadable annotation is attached
             if (methodCandidate.isAnnotationPresent(TableReadable.class)) {
 
-                if (methodCandidate.getAnnotation(TableReadable.class).isVariable()) {
+                if (!methodCandidate.getAnnotation(TableReadable.class).variableName().isEmpty()) {
                     if (!isVariable) {
                         isVariable = true;
 
@@ -79,12 +78,11 @@ public class ModelClassFactory {
         Collections.sort(methodList, Comparator.comparingInt((Method o) -> o.getAnnotation(TableReadable.class).order()));
         Collections.sort(columnList,Comparator.comparingInt((Column o) -> o.getOrdinalPosition()));
 
-        if (isVariable) {
+        if(isVariable) {
             return new DynamicModelClass(classInstance,methodList,columnList);
         }
 
         return new ModelClass(classInstance,methodList,columnList);
-
     }
 
     /**

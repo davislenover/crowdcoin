@@ -1,5 +1,8 @@
 package com.crowdcoin.networking.sqlcom.data;
 
+import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterCount;
+import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterTypeException;
+import com.crowdcoin.exceptions.modelClass.MultipleVariableMethodsException;
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
@@ -141,7 +144,7 @@ public class SQLTableReader implements Iterator<List<List<Object>>>, Observable<
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public List<ModelClass> getRows(int startingIndex, int endingIndex) throws InvalidRangeException, FailedQueryException, SQLException, NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public List<ModelClass> getRows(int startingIndex, int endingIndex) throws InvalidRangeException, FailedQueryException, SQLException, NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount {
 
         if (startingIndex > endingIndex) {
             throw new InvalidRangeException(String.valueOf(startingIndex),String.valueOf(endingIndex));
@@ -318,7 +321,7 @@ public class SQLTableReader implements Iterator<List<List<Object>>>, Observable<
      * Gets the current set of rows as ModelClass objects from the given (on instantiation) SQL Table. Unlike next() and previous() this method does NOT shift the next set of rows to get (they stay the same).
      * @return a copy list of rows each as a list of Objects
      */
-    public List<ModelClass> getCurrentModelClassSet() throws NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public List<ModelClass> getCurrentModelClassSet() throws NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount {
 
         List<ModelClass> entries = new ArrayList<>();
         for (List<Object> row : this.currentRowSet) {

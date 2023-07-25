@@ -1,6 +1,9 @@
 package com.crowdcoin.mainBoard.table;
 
 import com.crowdcoin.FXTools.StageManager;
+import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterCount;
+import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterTypeException;
+import com.crowdcoin.exceptions.modelClass.MultipleVariableMethodsException;
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.tab.IncompatibleModelClassException;
@@ -67,7 +70,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
      * @throws IncompatibleModelClassException if the model class does not contain the same number of invokable methods as there are columns within the given table within the database (as specified within the SQLTable object)
      * @throws ModelClassConstructorTypeException if the modelClass constructor contains an argument type mismatch to one or more columns within the database table. This could mean the constructor arguments of the modeling class are not in the correct order. Note that SQLTable returns a list where each element is a row of the database table sorted in ordinal position thus it is imperative to organize constructor parameters in the same position as column ordinal position
      */
-    public Tab(Object classToModel, SQLTable sqlTable, String tabID) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException, FailedQueryException, SQLException, InvalidRangeException, IncompatibleModelClassMethodNamesException {
+    public Tab(Object classToModel, SQLTable sqlTable, String tabID) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException, FailedQueryException, SQLException, InvalidRangeException, IncompatibleModelClassMethodNamesException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount {
 
         // Create instances needed
         this.columnContainer = new ColumnContainer();
@@ -181,7 +184,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public void loadTab(TableView destinationTable, GridPane fieldPane, GridPane buttonPane, Button previous, Button next, SplitMenuButton filterButton, Button exportButton) throws FailedQueryException, SQLException, InvalidRangeException, NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void loadTab(TableView destinationTable, GridPane fieldPane, GridPane buttonPane, Button previous, Button next, SplitMenuButton filterButton, Button exportButton) throws FailedQueryException, SQLException, InvalidRangeException, NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount {
 
         // Clear current data and columns
         destinationTable.getItems().clear();
