@@ -7,7 +7,7 @@ public class userModel {
 
     private int coinID;
     private boolean isGraded;
-    private Map<Integer,Object> variableMap;
+    private Map<Integer,String> variableMap;
 
     public userModel(Integer coinID, Boolean isGraded, String ... mapArgs) {
         this.variableMap = new HashMap<>();
@@ -16,7 +16,7 @@ public class userModel {
         this.isGraded = isGraded;
 
         int prefixIndex = 1;
-        for (Object arg : mapArgs) {
+        for (String arg : mapArgs) {
             this.variableMap.put(prefixIndex,arg);
             prefixIndex++;
         }
@@ -34,7 +34,7 @@ public class userModel {
     }
 
     @TableReadable(order = 2, columnName = "USERID-", variableName = "USERID-")
-    public Object USERID(int positionToGet) {
+    public String USERID(int positionToGet) {
         return this.variableMap.get(positionToGet);
     }
 

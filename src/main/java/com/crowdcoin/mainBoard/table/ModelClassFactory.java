@@ -145,28 +145,42 @@ public class ModelClassFactory {
 
         // Loop through the column types
         int constructorTypeIndex = 0;
+        int holdIndex = 0;
+        boolean isArray = false;
+
         for (String columnType : table.getRawColumnTypes()) {
 
             try {
                 // Queries class contains a hashmap that provides the corresponding class for the given column type in sql
                 // Check if both the columnType class and the corresponding constructor parameter match
-                if (!SQLDefaultQueries.SQLToJavaType.get(columnType.toUpperCase()).getName().toUpperCase().contains(modelClassConstructorTypes[constructorTypeIndex].getName().toUpperCase())) {
-                    doesntHaveIssue = false;
-                    break;
+                // Check isArray() function last because if isArray boolean is true (not function), that is the last constructor type, thus, checking for an index higher will result in an IndexOutOfBoundsException
+                if (!isArray && !modelClassConstructorTypes[constructorTypeIndex].isArray()) {
+                    if (!SQLDefaultQueries.SQLToJavaType.get(columnType.toUpperCase()).getName().toUpperCase().contains(modelClassConstructorTypes[constructorTypeIndex].getName().toUpperCase())) {
+                        doesntHaveIssue = false;
+                        break;
+                    }
+                    // If the type is an array, then this indicates that there is variable arguments and thus, this modelClass is a DynamicModelClass so, check if all the rest of the columnTypes match with the array type
+                    // Copy the current type index and don't increment to get the array type all the time
+                } else if (!isArray) {
+                    isArray = true;
+                    holdIndex = constructorTypeIndex;
                 }
+
+                if (isArray) {
+                    // Use getComponentType() instead of just getName as we have to parse array first
+                    if (!SQLDefaultQueries.SQLToJavaType.get(columnType.toUpperCase()).getName().toUpperCase().contains(modelClassConstructorTypes[holdIndex].getComponentType().getName().toUpperCase())) {
+                        doesntHaveIssue = false;
+                        break;
+                    }
+                }
+
                 // Index out of bounds also indicates there are more columns than there are arguments in the constructor
             } catch (IndexOutOfBoundsException e) {
                 doesntHaveIssue = false;
                 break;
-                // Null pointer indicates variable arguments (which indicates a DynamicModelClass) thus, allow it
-            } catch (NullPointerException e) {
-                doesntHaveIssue = true;
-                break;
             }
             constructorTypeIndex++;
         }
-
-        System.out.println(doesntHaveIssue);
 
         if (!doesntHaveIssue) {
             throw new ModelClassConstructorTypeException();

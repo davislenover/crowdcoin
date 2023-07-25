@@ -18,6 +18,7 @@ public class SQLDefaultQueries {
     {{
         put("BLOB", Byte[].class);
         put("BOOLEAN", Boolean.class);
+        put("TINYINT", Boolean.class);
         put("BYTE", Byte[].class);
         put("CHAR", String.class);
         put("CHARACTER", String.class);

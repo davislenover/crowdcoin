@@ -40,7 +40,6 @@ public class MainBoardController {
 
         userModel userModel = new userModel(101,false,"test");
         ModelClass modelClassUser = new ModelClassFactory().build(userModel);
-        System.out.println(modelClassUser.getColumns().size());
         SQLTable table3 = new SQLTable(SQLData.getSqlConnection(),"userData", modelClassUser.getColumns());
         Tab testWorkTab = new Tab(userModel,table3,"testWorkTab");
 
