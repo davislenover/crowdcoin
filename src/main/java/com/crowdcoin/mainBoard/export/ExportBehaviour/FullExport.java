@@ -8,6 +8,7 @@ import com.crowdcoin.networking.sqlcom.data.SQLTableReader;
 import javafx.scene.control.TableView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FullExport implements ExportBehaviour {
@@ -28,14 +29,30 @@ public class FullExport implements ExportBehaviour {
     @Override
     public List<String> getColumns() {
 
-        List<String> columnNames = new ArrayList<>();
-        for (Column column : tableReader.getModelClass().getColumns()) {
-            if (column.checkPermissionValue(isReadablePerm)) {
-                columnNames.add(column.getColumnName());
+        try {
+            List<String> columnNames = new ArrayList<>();
+            ModelClass klass = tableReader.getCurrentModelClassSet().get(0);
+            for (Column column : klass.getColumns()) {
+                if (column.checkPermissionValue(isReadablePerm)) {
+                    if (column.isVariable()) {
+                        int addIndex = 1;
+                        do {
+                            columnNames.add(column.getColumnName() + addIndex);
+                            addIndex++;
+                        } while (klass.getData(column.getColumnName() + addIndex) != null);
+                    } else {
+                        columnNames.add(column.getColumnName());
+                    }
+                }
             }
+
+            return columnNames;
+
+        } catch (Exception e) {
+            // TODO Error handling
         }
 
-        return columnNames;
+        return null;
 
     }
 
@@ -60,7 +77,15 @@ public class FullExport implements ExportBehaviour {
                     List<String> newEntry = new ArrayList<>();
                     for (Column column : row.getColumns()) {
                         if (column.checkPermissionValue(isReadablePerm)) {
-                            newEntry.add(row.getData(column.getColumnName()).toString());
+                            if (column.isVariable()) {
+                                int addIndex = 1;
+                                do {
+                                    newEntry.add(row.getData(column.getColumnName()+addIndex).toString());
+                                    addIndex++;
+                                } while (row.getData(column.getColumnName()+addIndex) != null);
+                            } else {
+                                newEntry.add(row.getData(column.getColumnName()).toString());
+                            }
                         }
                     }
 
