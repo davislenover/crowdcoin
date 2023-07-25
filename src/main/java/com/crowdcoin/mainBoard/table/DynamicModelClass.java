@@ -28,7 +28,7 @@ public class DynamicModelClass extends ModelClass {
     public Object getData(String columnName) {
         try {
             for (Column column : super.getColumns()) {
-                if (column.getColumnName().contains(columnName)) {
+                if (columnName.contains(column.getColumnName())) {
                     String name = column.getColumnDataMethod().getAnnotation(TableReadable.class).variableName();
                     if (!name.isEmpty()) {
                         try{

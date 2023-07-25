@@ -13,6 +13,7 @@ import com.crowdcoin.mainBoard.table.permissions.IsWriteable;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -98,6 +99,40 @@ public class ModelClassFactory {
      * @throws IllegalAccessException if the class access modifiers prohibit instantiation in this manner
      */
     public ModelClass buildClone(ModelClass modelClass, Object ... params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NotZeroArgumentException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount {
+
+        if (isVariable(modelClass)) {
+            // Setup
+            Class<?>[] paramTypes = new Class<?>[modelClass.getNumberOfMethods()];
+            Object[] constructorInputs = new Object[modelClass.getNumberOfMethods()];
+            int numOfModelClassMethods = modelClass.getNumberOfMethods();
+            // Get all specific classes of params and add them to the paramTypes array
+            for (int i = 0; i < numOfModelClassMethods - 1; i++) {
+                // Note that Object is the static type of each param, getClass returns the runtime type
+                paramTypes[i] = params[i].getClass();
+                constructorInputs[i] = params[i];
+            }
+            // Because the last parameter in the constructor is of varargs, it has to be treated as an array of the given type
+            paramTypes[numOfModelClassMethods - 1] = Array.newInstance(params[numOfModelClassMethods - 1].getClass(),1).getClass();
+
+            // For the rest of inputs (after the methods that aren't variable), add to one array
+            Object[] varargsInputs = (Object[]) Array.newInstance(params[numOfModelClassMethods - 1].getClass(),params.length - (numOfModelClassMethods-1));
+            for(int varargsIndex = 0; varargsIndex <  params.length - (numOfModelClassMethods-1); varargsIndex++) {
+                varargsInputs[varargsIndex] = params[varargsIndex + (numOfModelClassMethods-1)];
+            }
+
+            // Set newly created array to last index in constructor inputs
+            constructorInputs[numOfModelClassMethods - 1] = varargsInputs;
+
+            // Attempt to find constructor with specified signature
+            Constructor constructor = modelClass.getInstanceClass().getDeclaredConstructor(paramTypes);
+
+            // Use actual parameter values to create new class instance
+            Object newInstance = constructor.newInstance(constructorInputs);
+
+            // Create new ModelClass
+            return this.build(newInstance);
+
+        }
 
         // params are variable arguments and thus are treated as an array
         // To find the correct constructor, one needs all parameter types of the constructor in an array
@@ -226,6 +261,15 @@ public class ModelClassFactory {
             }
             throw new IncompatibleModelClassException(klass.getNumberOfMethods(),table.getNumberOfColumns());
         }
+    }
+
+    private boolean isVariable(ModelClass klass) {
+        for (Column column : klass.getColumns()) {
+            if (column.isVariable()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

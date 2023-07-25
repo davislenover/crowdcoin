@@ -38,7 +38,7 @@ public class MainBoardController {
         SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
         SQLTable table2 = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
 
-        userModel userModel = new userModel(101,false,"test");
+        userModel userModel = new userModel(101,0,"test");
         ModelClass modelClassUser = new ModelClassFactory().build(userModel);
         SQLTable table3 = new SQLTable(SQLData.getSqlConnection(),"userData", modelClassUser.getColumns());
         Tab testWorkTab = new Tab(userModel,table3,"testWorkTab");

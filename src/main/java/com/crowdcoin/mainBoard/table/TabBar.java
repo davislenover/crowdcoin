@@ -92,6 +92,7 @@ public class TabBar implements Observer<ModifyEvent,String> {
                 }
                 this.openTab(javaFXTab.getId());
             } catch (Exception e) {
+                e.printStackTrace();
                 // TODO add exception handling
             }
         });
