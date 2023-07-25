@@ -192,13 +192,25 @@ public class ModelClassFactory {
 
         List<String> columnNames = table.getRawColumnNames();
 
-        for (Column column : klass.getColumns()) {
-            if (!columnNames.contains(column.getColumnName())) {
-                if (column.isVariable()) {
-                    return;
+        for (int index = 0; index < columnNames.size(); index++) {
+
+            boolean noMatch = true;
+            String sqlName = columnNames.get(index);
+
+            for(Column column : klass.getColumns()) {
+                if (column.getColumnName().equals(sqlName)) {
+                    noMatch = false;
+                    break;
+                    // Check for variable column name as well
+                } else if (column.isVariable() && sqlName.contains(column.getColumnName())) {
+                    noMatch = false;
+                    break;
                 }
+            }
+            if (noMatch) {
                 throw new IncompatibleModelClassMethodNamesException();
             }
+
         }
 
     }
