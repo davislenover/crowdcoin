@@ -52,10 +52,20 @@ public class DynamicModelClass extends ModelClass {
         return null;
     }
 
+    /**
+     * Gets the starting index for variable column numbers after the prefix
+     * @return the starting index as an Integer
+     */
     public static int getStartIndex() {
         return objectStartIndex;
     }
 
+    /**
+     * Gets all variable column names with the prefix and index number attached.
+     * @param klass the given ModelClass (DynamicModelClass) with the variable column
+     * @param column the given variable column
+     * @return a list of Strings corresponding to each column prefix and index
+     */
     public static List<String> getAllVariableNames(ModelClass klass, Column column) {
 
         List<String> nameList = new ArrayList<>();
@@ -72,6 +82,12 @@ public class DynamicModelClass extends ModelClass {
 
     }
 
+    /**
+     * Gets all variable column data. Takes a given Column object and invokes its method for all variable indices
+     * @param klass the given ModelClass (DynamicModelClass) with the variable column
+     * @param column the given variable column
+     * @return a list of Objects corresponding to each return from the method invoked within the Column object with an index
+     */
     public static List<Object> getAllVariableData(ModelClass klass, Column column) {
 
         List<Object> data = new ArrayList<>();
