@@ -1,10 +1,13 @@
 package com.crowdcoin.mainBoard.table;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class DynamicModelClass extends ModelClass {
+
+    private static int objectStartIndex = 1;
 
     /**
      * Create a ModelClass for TableColumn's to reference (i.e., TableColumns will invoke specified methods which get data within the ModelClass to display on screen).
@@ -47,6 +50,42 @@ public class DynamicModelClass extends ModelClass {
             return null;
         }
         return null;
+    }
+
+    public static int getStartIndex() {
+        return objectStartIndex;
+    }
+
+    public static List<String> getAllVariableNames(ModelClass klass, Column column) {
+
+        List<String> nameList = new ArrayList<>();
+        if (column.isVariable()) {
+            int addIndex = objectStartIndex;
+            do {
+                nameList.add(column.getColumnName() + addIndex);
+                addIndex++;
+            } while (klass.getData(column.getColumnName() + addIndex) != null);
+
+        }
+
+        return nameList;
+
+    }
+
+    public static List<Object> getAllVariableData(ModelClass klass, Column column) {
+
+        List<Object> data = new ArrayList<>();
+        if (column.isVariable()) {
+            int addIndex = objectStartIndex;
+            do {
+                data.add(klass.getData(column.getColumnName()+addIndex));
+                addIndex++;
+            } while (klass.getData(column.getColumnName()+addIndex) != null);
+
+        }
+
+        return data;
+
     }
 
 }

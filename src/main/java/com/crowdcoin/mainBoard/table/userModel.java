@@ -15,7 +15,7 @@ public class userModel {
         this.coinID = coinID;
         this.isGraded = isGraded;
 
-        int prefixIndex = 1;
+        int prefixIndex = DynamicModelClass.getStartIndex();
         for (String arg : mapArgs) {
             this.variableMap.put(prefixIndex,arg);
             prefixIndex++;

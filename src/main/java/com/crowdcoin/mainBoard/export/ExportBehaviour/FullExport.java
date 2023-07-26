@@ -35,11 +35,7 @@ public class FullExport implements ExportBehaviour {
             for (Column column : klass.getColumns()) {
                 if (column.checkPermissionValue(isReadablePerm)) {
                     if (column.isVariable()) {
-                        int addIndex = 1;
-                        do {
-                            columnNames.add(column.getColumnName() + addIndex);
-                            addIndex++;
-                        } while (klass.getData(column.getColumnName() + addIndex) != null);
+                        columnNames.addAll( DynamicModelClass.getAllVariableNames(klass,column));
                     } else {
                         columnNames.add(column.getColumnName());
                     }
@@ -78,11 +74,9 @@ public class FullExport implements ExportBehaviour {
                     for (Column column : row.getColumns()) {
                         if (column.checkPermissionValue(isReadablePerm)) {
                             if (column.isVariable()) {
-                                int addIndex = 1;
-                                do {
-                                    newEntry.add(row.getData(column.getColumnName()+addIndex).toString());
-                                    addIndex++;
-                                } while (row.getData(column.getColumnName()+addIndex) != null);
+                                for (Object data : DynamicModelClass.getAllVariableData(row,column)) {
+                                    newEntry.add(data.toString());
+                                }
                             } else {
                                 newEntry.add(row.getData(column.getColumnName()).toString());
                             }

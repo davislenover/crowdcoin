@@ -5,8 +5,10 @@ import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
 import com.crowdcoin.mainBoard.Interactive.input.validation.ComparatorValidator;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
+import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
 import com.crowdcoin.mainBoard.Interactive.input.validation.TypeValidator;
 import com.crowdcoin.mainBoard.table.Column;
+import com.crowdcoin.mainBoard.table.DynamicModelClass;
 import com.crowdcoin.mainBoard.table.ModelClass;
 import com.crowdcoin.mainBoard.table.ModelClassFactory;
 import com.crowdcoin.mainBoard.table.permissions.IsReadable;
@@ -34,13 +36,23 @@ public class RangeExport implements ExportBehaviour {
 
     @Override
     public List<String> getColumns() {
-        List<String> columnNames = new ArrayList<>();
-        for (Column column : tableReader.getModelClass().getColumns()) {
-            if (column.checkPermissionValue(isReadablePerm)) {
-                columnNames.add(column.getColumnName());
+        try {
+            List<String> columnNames = new ArrayList<>();
+            ModelClass klass = tableReader.getCurrentModelClassSet().get(0);
+            for (Column column : klass.getColumns()) {
+                if (column.checkPermissionValue(isReadablePerm)) {
+                    if (column.isVariable()) {
+                        columnNames.addAll(DynamicModelClass.getAllVariableNames(klass,column));
+                    } else {
+                        columnNames.add(column.getColumnName());
+                    }
+                }
             }
+            return columnNames;
+        } catch (Exception e) {
+            // TODO Error handling
         }
-        return columnNames;
+        return null;
     }
 
     /**
@@ -61,12 +73,16 @@ public class RangeExport implements ExportBehaviour {
             List<ModelClass> modelClasses = this.tableReader.getRows(startingIndex,numOfRows);
             // Loop through one row at a time, construct it into one entry list and add that to the entries list
             for (ModelClass row : modelClasses) {
-                // Build modelClass for the given row
-
                 List<String> newEntry = new ArrayList<>();
                 for (Column column : row.getColumns()) {
                     if (column.checkPermissionValue(isReadablePerm)) {
-                        newEntry.add(row.getData(column.getColumnName()).toString());
+                        if (column.isVariable()) {
+                            for (Object data : DynamicModelClass.getAllVariableData(row,column)) {
+                                newEntry.add(data.toString());
+                            }
+                        } else {
+                            newEntry.add(row.getData(column.getColumnName()).toString());
+                        }
                     }
                 }
 

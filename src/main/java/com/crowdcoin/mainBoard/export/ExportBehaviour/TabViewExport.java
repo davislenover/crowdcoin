@@ -2,6 +2,7 @@ package com.crowdcoin.mainBoard.export.ExportBehaviour;
 
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.table.Column;
+import com.crowdcoin.mainBoard.table.DynamicModelClass;
 import com.crowdcoin.mainBoard.table.ModelClass;
 import com.crowdcoin.mainBoard.table.ModelClassFactory;
 import com.crowdcoin.mainBoard.table.permissions.IsReadable;
@@ -28,13 +29,23 @@ public class TabViewExport implements ExportBehaviour {
 
     @Override
     public List<String> getColumns() {
-        List<String> columnNames = new ArrayList<>();
-        for (Column column : tableReader.getModelClass().getColumns()) {
-            if (column.checkPermissionValue(isReadablePerm)) {
-                columnNames.add(column.getColumnName());
+        try {
+            List<String> columnNames = new ArrayList<>();
+            ModelClass klass = tableReader.getCurrentModelClassSet().get(0);
+            for (Column column : klass.getColumns()) {
+                if (column.checkPermissionValue(isReadablePerm)) {
+                    if (column.isVariable()) {
+                        columnNames.addAll(DynamicModelClass.getAllVariableNames(klass,column));
+                    } else {
+                        columnNames.add(column.getColumnName());
+                    }
+                }
             }
+            return columnNames;
+        } catch (Exception e) {
+            // TODO Error handling
         }
-        return columnNames;
+        return null;
     }
 
     /**
@@ -56,7 +67,13 @@ public class TabViewExport implements ExportBehaviour {
                 List<String> newEntry = new ArrayList<>();
                 for (Column column : row.getColumns()) {
                     if (column.checkPermissionValue(isReadablePerm)) {
-                        newEntry.add(row.getData(column.getColumnName()).toString());
+                        if (column.isVariable()) {
+                            for (Object data : DynamicModelClass.getAllVariableData(row,column)) {
+                                newEntry.add(data.toString());
+                            }
+                        } else {
+                            newEntry.add(row.getData(column.getColumnName()).toString());
+                        }
                     }
                 }
 
