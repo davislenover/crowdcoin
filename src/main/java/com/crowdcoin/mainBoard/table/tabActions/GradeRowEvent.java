@@ -6,6 +6,8 @@ import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
 import com.crowdcoin.mainBoard.Interactive.input.validation.MatchValidator;
+import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
+import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.WindowManager;
 import com.crowdcoin.mainBoard.grade.Grade;
 import com.crowdcoin.mainBoard.table.ColumnContainer;
@@ -49,7 +51,7 @@ public class GradeRowEvent implements TabActionEvent {
             if (!selectedRow.isEmpty()) {
                 // Get all data for the given coinID selected for grading (via the coin table)
                 List<Object> coinData = this.mainCoinTable.getSpecificRows(0,selectedRow.get(0).toString(),1,0,this.mainCoinTable.getNumberOfColumns()-1).get(0);
-                pane.clearAllInputFields();
+                pane.clearAllFields();
 
                 int columnIndex = 0;
                 for (String columnName : this.mainCoinTable.getColumnNames()) {
@@ -63,7 +65,15 @@ public class GradeRowEvent implements TabActionEvent {
                     columnIndex++;
                 }
 
-                InteractiveChoiceBox gradeChoice = new InteractiveChoiceBox("Grade","Select your grading assessment here",(event, field, pane1) -> {return;});
+                InteractiveChoiceBox gradeChoice = new InteractiveChoiceBox("Grade","Select your grading assessment here",(event, field, pane1) -> {
+
+                    if (pane1.getSubmitFieldsSize() == 0) {
+                        SubmitField submitButton = new InteractiveButton("Submit Assessment",(event1, button, pane2) -> {return;});
+                        pane1.addSubmitField(submitButton);
+                        pane1.notifyObservers(new ModifyEvent(ModifyEventType.PANE_UPDATE));
+                    }
+
+                });
                 gradeChoice.addAllValues(grades);
                 gradeChoice.addValidator(new LengthValidator(1));
                 gradeChoice.setOrder(columnIndex);
