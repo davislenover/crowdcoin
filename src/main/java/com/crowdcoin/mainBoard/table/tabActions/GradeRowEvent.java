@@ -19,11 +19,18 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class GradeRowEvent implements TabActionEvent {
     private SQLTable mainCoinTable;
+
+    private List<String> grades = new ArrayList<>() {{
+        for (Grade grade : Grade.values()) {
+            add(grade.toString());
+        }
+    }};
 
     public GradeRowEvent(SQLTable coinTable) {
         this.mainCoinTable = coinTable;
@@ -42,7 +49,6 @@ public class GradeRowEvent implements TabActionEvent {
             if (!selectedRow.isEmpty()) {
                 // Get all data for the given coinID selected for grading (via the coin table)
                 List<Object> coinData = this.mainCoinTable.getSpecificRows(0,selectedRow.get(0).toString(),1,0,this.mainCoinTable.getNumberOfColumns()-1).get(0);
-
                 pane.clearAllInputFields();
 
                 int columnIndex = 0;
@@ -58,7 +64,7 @@ public class GradeRowEvent implements TabActionEvent {
                 }
 
                 InteractiveChoiceBox gradeChoice = new InteractiveChoiceBox("Grade","Select your grading assessment here",(event, field, pane1) -> {return;});
-                gradeChoice.addAllValues(List.of(Arrays.toString(Grade.values())));
+                gradeChoice.addAllValues(grades);
                 gradeChoice.addValidator(new LengthValidator(1));
                 gradeChoice.setOrder(columnIndex);
                 pane.addInputField(gradeChoice);
