@@ -2,10 +2,11 @@ package com.crowdcoin.mainBoard;
 
 import com.crowdcoin.FXTools.StageManager;
 import com.crowdcoin.mainBoard.table.*;
+import com.crowdcoin.mainBoard.table.tabActions.GradeRowEvent;
+import com.crowdcoin.mainBoard.table.tabActions.ViewTableRowEvent;
 import com.crowdcoin.mainBoard.toolBar.MenuGroup;
 import com.crowdcoin.mainBoard.toolBar.MenuGroupContainer;
 import com.crowdcoin.mainBoard.toolBar.MenuOption;
-import com.crowdcoin.mainBoard.window.ExportTabPopWindow;
 import com.crowdcoin.mainBoard.window.NewEntryPopWindow;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.SQLData;
@@ -42,6 +43,7 @@ public class MainBoardController {
         ModelClass modelClassUser = new ModelClassFactory().build(userModel);
         SQLTable table3 = new SQLTable(SQLData.getSqlConnection(),"userData", modelClassUser.getColumns());
         Tab testWorkTab = new Tab(userModel,table3,"testWorkTab");
+        testWorkTab.setTabTableAction(new GradeRowEvent(new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns())));
 
         // Test Tab 1
         Tab testTab = new Tab(model,table,"testTab");

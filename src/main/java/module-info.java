@@ -18,4 +18,6 @@ module com.crowdcoin.main {
     opens com.crowdcoin.security to javafx.fxml;
     exports com.crowdcoin.mainBoard;
     opens com.crowdcoin.mainBoard to javafx.fxml;
+    exports com.crowdcoin.mainBoard.grade;
+    opens com.crowdcoin.mainBoard.grade to javafx.fxml;
 }

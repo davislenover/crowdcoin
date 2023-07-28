@@ -1,4 +1,4 @@
-package com.crowdcoin.mainBoard.table;
+package com.crowdcoin.mainBoard.table.tabActions;
 
 import com.crowdcoin.FXTools.StageManager;
 import com.crowdcoin.exceptions.validation.ValidationException;
@@ -10,8 +10,11 @@ import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
 import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.WindowManager;
+import com.crowdcoin.mainBoard.table.ColumnContainer;
+import com.crowdcoin.mainBoard.table.ModelClass;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEventType;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
+import com.crowdcoin.mainBoard.table.TabActionEvent;
 import com.crowdcoin.mainBoard.window.InfoPopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.collections.ObservableList;

@@ -203,7 +203,7 @@ public class ColumnContainer implements Iterable<TableColumn<ModelClass,Object>>
     }
 
     /**
-     * Sets the selected row for storage. Gets SelectionModel from TableView and gets the current selected index
+     * Sets the selected row for storage. Gets SelectionModel from TableView and gets the current selected index. This is purely for storage to retrieve the value later. It has no effect on get row methods.
      */
     public void setSelectedRow() {
         this.currentSelectedRelativeIndex = this.columnData.get(0).getTableView().getSelectionModel().getSelectedIndex();
