@@ -78,6 +78,12 @@ public class PopWindow extends Application implements Observer<ModifyEvent,Strin
         this.stage = stage;
         this.root.getChildren().addAll(this.fieldPane,this.buttonPane);
 
+        // OnCloseRequest fires when a user selects the close button on a given Window
+        this.stage.setOnCloseRequest(event -> {
+            // Close the window properly (as if closeWindow was invoked)
+            this.closeWindow();
+        });
+
         // Set space between GridPanes
         this.root.setSpacing(10);
 

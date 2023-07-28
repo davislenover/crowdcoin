@@ -1,5 +1,6 @@
 package com.crowdcoin.mainBoard.table.tabActions;
 
+import com.crowdcoin.FXTools.StageManager;
 import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
@@ -15,6 +16,8 @@ import com.crowdcoin.mainBoard.table.ModelClass;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEventType;
 import com.crowdcoin.mainBoard.table.TabActionEvent;
+import com.crowdcoin.mainBoard.window.InfoPopWindow;
+import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
@@ -68,12 +71,30 @@ public class GradeRowEvent implements TabActionEvent {
                 InteractiveChoiceBox gradeChoice = new InteractiveChoiceBox("Grade","Select your grading assessment here",(event, field, pane1) -> {
 
                     if (pane1.getSubmitFieldsSize() == 0) {
-                        SubmitField submitButton = new InteractiveButton("Submit Assessment",(event1, button, pane2) -> {return;});
+                        SubmitField submitButton = new InteractiveButton("Submit Assessment",(event1, button, pane2) -> {
+                            InfoPopWindow confirmWindow = new InfoPopWindow("Confirm Grade",manager);
+                            confirmWindow.setInfoMessage("Submit Grade of " + pane2.getInputField(pane2.getFieldsSize()-1).getInput() + " for coinID " + pane2.getInputField(0).getInput() + "?");
+                            confirmWindow.setOkButtonMessage("Yes");
+
+                            SubmitField cancelConfirmation = new InteractiveButton("No",((event2, button1, pane3) -> {
+                                confirmWindow.closeWindow();
+                            }));
+                            cancelConfirmation.setOrder(1);
+                            confirmWindow.getWindowPane().addSubmitField(cancelConfirmation);
+
+                            try {
+                                confirmWindow.start(StageManager.getStage(confirmWindow));
+                            } catch (Exception e) {
+                                // TODO Error handling
+                            }
+                        });
+
                         pane1.addSubmitField(submitButton);
                         pane1.notifyObservers(new ModifyEvent(ModifyEventType.PANE_UPDATE));
                     }
 
                 });
+
                 gradeChoice.addAllValues(grades);
                 gradeChoice.addValidator(new LengthValidator(1));
                 gradeChoice.setOrder(columnIndex);
