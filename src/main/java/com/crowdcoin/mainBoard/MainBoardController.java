@@ -11,6 +11,7 @@ import com.crowdcoin.mainBoard.window.NewEntryPopWindow;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.SQLData;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
+import com.crowdcoin.networking.sqlcom.data.constraints.NameConstraint;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -39,9 +40,10 @@ public class MainBoardController {
         SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
         SQLTable table2 = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
 
-        userModel userModel = new userModel(101,0,"test");
+        UserModel userModel = new UserModel(101,0,"test");
         ModelClass modelClassUser = new ModelClassFactory().build(userModel);
         SQLTable table3 = new SQLTable(SQLData.getSqlConnection(),"userData", modelClassUser.getColumns());
+        table3.getConstraints().add(new NameConstraint("USERID",SQLData.credentials.getUsername()));
         Tab testWorkTab = new Tab(userModel,table3,"testWorkTab");
         testWorkTab.setTabTableAction(new GradeRowEvent(new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns())));
 

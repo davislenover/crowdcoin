@@ -3,13 +3,13 @@ package com.crowdcoin.mainBoard.table;
 import java.util.HashMap;
 import java.util.Map;
 
-public class userModel {
+public class UserModel {
 
     private int coinID;
     private Integer isGraded;
     private Map<Integer,String> variableMap;
 
-    public userModel(Integer coinID, Integer isGraded, String ... mapArgs) {
+    public UserModel(Integer coinID, Integer isGraded, String ... mapArgs) {
         this.variableMap = new HashMap<>();
 
         this.coinID = coinID;

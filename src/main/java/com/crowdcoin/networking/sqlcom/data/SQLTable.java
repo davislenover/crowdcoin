@@ -11,6 +11,8 @@ import com.crowdcoin.mainBoard.table.permissions.IsSystemWriteable;
 import com.crowdcoin.mainBoard.table.permissions.IsWriteable;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
+import com.crowdcoin.networking.sqlcom.data.constraints.ConstraintContainer;
+import com.crowdcoin.networking.sqlcom.data.constraints.SQLColumnConstraint;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterManager;
 
 import java.sql.ResultSet;
@@ -19,6 +21,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Handles communication between a program and an SQL table within an SQL Database.
+ * Note this class takes into account permissions and constraints, where a method in question has "raw" in it, both permissions and constraints are ignored. All methods which check permissions also check constraints
+ */
 public class SQLTable implements Observable<ModifyEvent,String> {
 
     private List<Observer<ModifyEvent,String>> subscriptionList;
@@ -33,6 +39,8 @@ public class SQLTable implements Observable<ModifyEvent,String> {
     private String isReadablePerm = IsReadable.class.getSimpleName();
     private String isWriteablePerm = IsWriteable.class.getSimpleName();
     private String isSystemWriteablePerm = IsSystemWriteable.class.getSimpleName();
+
+    private ConstraintContainer constraints;
 
     /**
      * An object to get information from an SQL database
@@ -58,6 +66,7 @@ public class SQLTable implements Observable<ModifyEvent,String> {
         sortColumnObjectList();
 
         this.subscriptionList = new ArrayList<>();
+        this.constraints = new ConstraintContainer();
 
     }
 
@@ -151,6 +160,14 @@ public class SQLTable implements Observable<ModifyEvent,String> {
     }
 
     /**
+     * Gets the column constraints container for the given SQLTable instance
+     * @return a ColumnConstraints object
+     */
+    public ConstraintContainer getConstraints() {
+        return this.constraints;
+    }
+
+    /**
      * Get a list of data between two columns corresponding to a given row in the SQL table (NOT Table object). Results are returned in ordinal position of columns as specified in database
      * @param rowIndex the corresponding row within the SQL table to get data from
      * @param startColumn the starting column in the row to begin reading data from (inclusive) where the column string is the same as that found within the table. Note the ordering of the columns is via ordinal position
@@ -174,9 +191,12 @@ public class SQLTable implements Observable<ModifyEvent,String> {
 
         // Loop through range and add data of the specified columns to the return list
         for (String columnName : columnRange) {
-            // Check permissions of column before adding to results
-            if (this.getColumnObject(columnName).checkPermissionValue(isReadablePerm)) {
-                returnRow.add(result.getObject(columnName));
+            // Check if the column name is valid under the current constraints
+            if (this.constraints.isValid(columnName)) {
+                // Check permissions of column before adding to results
+                if (this.getColumnObject(columnName).checkPermissionValue(isReadablePerm)) {
+                    returnRow.add(result.getObject(columnName));
+                }
             }
         }
 
@@ -210,10 +230,12 @@ public class SQLTable implements Observable<ModifyEvent,String> {
         // The result set is not guaranteed to have returned a query in any particular column position
         // Thus, given the ordinal position is known, we will return the result list in said position
         for (int index = startColumnIndex; index <= endColumnIndex; index++) {
-            // Since columnPermList index matches, check permissions before adding to result
-            if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
-                // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
-                returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
+            if (this.constraints.isValid(this.tableColumns.get(index)[0])) {
+                // Since columnPermList index matches, check permissions before adding to result
+                if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
+                    // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
+                    returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
+                }
             }
         }
 
@@ -251,9 +273,11 @@ public class SQLTable implements Observable<ModifyEvent,String> {
             List<Object> returnRow = new ArrayList<>();
             // Loop through range and add data of the specified columns to the return list
             for (String columnName : columnRange) {
-                // Check permissions of column before adding to results
-                if (this.getColumnObject(columnName).checkPermissionValue(isReadablePerm)) {
-                    returnRow.add(result.getObject(columnName));
+                if (this.constraints.isValid(columnName)) {
+                    // Check permissions of column before adding to results
+                    if (this.getColumnObject(columnName).checkPermissionValue(isReadablePerm)) {
+                        returnRow.add(result.getObject(columnName));
+                    }
                 }
             }
 
@@ -295,10 +319,12 @@ public class SQLTable implements Observable<ModifyEvent,String> {
 
             // Loop through start to end and add the corresponding column data to return list
             for (int index = startColumnIndex; index <= endColumnIndex; index++) {
-                // Since columnPermList index matches, check permissions before adding to result
-                if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
-                    // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
-                    returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
+                if (this.constraints.isValid(this.tableColumns.get(index)[0])) {
+                    // Since columnPermList index matches, check permissions before adding to result
+                    if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
+                        // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
+                        returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
+                    }
                 }
             }
             // Add row to return list
@@ -388,10 +414,12 @@ public class SQLTable implements Observable<ModifyEvent,String> {
 
             // Loop through start to end and add the corresponding column data to return list
             for (int index = startColumnIndex; index <= endColumnIndex; index++) {
-                // Since columnPermList index matches, check permissions before adding to result
-                if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
-                    // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
-                    returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
+                if (this.constraints.isValid(this.tableColumns.get(index)[0])) {
+                    // Since columnPermList index matches, check permissions before adding to result
+                    if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
+                        // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
+                        returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
+                    }
                 }
             }
             // Add row to return list
@@ -602,12 +630,16 @@ public class SQLTable implements Observable<ModifyEvent,String> {
             for (Column columnObject : this.columnsPermList) {
                 // Take into account columns can house variable methods (thus only need to partially match the column name, for prefix)
                 if (columnObject.isVariable() && column[0].contains(columnObject.getColumnName())) {
-                    if (columnObject.checkPermissionValue(isReadablePerm)) {
-                        columnNames.add(column[0]);
+                    if (this.constraints.isValid(column[0])) {
+                        if (columnObject.checkPermissionValue(isReadablePerm)) {
+                            columnNames.add(column[0]);
+                        }
                     }
                 } else if (column[0].equals(columnObject.getColumnName())) {
-                    if (columnObject.checkPermissionValue(isReadablePerm)) {
-                        columnNames.add(column[0]);
+                    if (this.constraints.isValid(column[0])) {
+                        if (columnObject.checkPermissionValue(isReadablePerm)) {
+                            columnNames.add(column[0]);
+                        }
                     }
                 }
             }
@@ -627,15 +659,19 @@ public class SQLTable implements Observable<ModifyEvent,String> {
         for(String[] column : this.tableColumns) {
             for (Column columnObject : this.columnsPermList) {
                 if (columnObject.isVariable() && column[0].contains(columnObject.getColumnName())) {
-                    if (columnObject.checkPermissionValue(isReadablePerm)) {
-                        if (columnObject.checkPermissionValue(permission)) {
-                            columnNames.add(column[0]);
+                    if (this.constraints.isValid(column[0])) {
+                        if (columnObject.checkPermissionValue(isReadablePerm)) {
+                            if (columnObject.checkPermissionValue(permission)) {
+                                columnNames.add(column[0]);
+                            }
                         }
                     }
                 } else if (column[0].equals(columnObject.getColumnName())) {
-                    if (columnObject.checkPermissionValue(isReadablePerm)) {
-                        if (columnObject.checkPermissionValue(permission)) {
-                            columnNames.add(column[0]);
+                    if (this.constraints.isValid(column[0])) {
+                        if (columnObject.checkPermissionValue(isReadablePerm)) {
+                            if (columnObject.checkPermissionValue(permission)) {
+                                columnNames.add(column[0]);
+                            }
                         }
                     }
                 }
@@ -672,9 +708,11 @@ public class SQLTable implements Observable<ModifyEvent,String> {
         List<String> columnTypes = new ArrayList<>();
 
         for (int index = 0; index < this.tableColumns.size(); index++) {
-            // Check perms before adding
-            if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
-                columnTypes.add(this.tableColumns.get(index)[1]);
+            if (this.constraints.isValid(this.tableColumns.get(index)[0])) {
+                // Check perms before adding
+                if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
+                    columnTypes.add(this.tableColumns.get(index)[1]);
+                }
             }
         }
 
