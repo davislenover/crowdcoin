@@ -18,6 +18,8 @@ import com.crowdcoin.mainBoard.table.Observe.ModifyEventType;
 import com.crowdcoin.mainBoard.table.TabActionEvent;
 import com.crowdcoin.mainBoard.window.InfoPopWindow;
 import com.crowdcoin.mainBoard.window.PopWindow;
+import com.crowdcoin.networking.sqlcom.SQLConnection;
+import com.crowdcoin.networking.sqlcom.SQLData;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
@@ -75,6 +77,30 @@ public class GradeRowEvent implements TabActionEvent {
                             InfoPopWindow confirmWindow = new InfoPopWindow("Confirm Grade",manager);
                             confirmWindow.setInfoMessage("Submit Grade of " + pane2.getInputField(pane2.getFieldsSize()-1).getInput() + " for coinID " + pane2.getInputField(0).getInput() + "?");
                             confirmWindow.setOkButtonMessage("Yes");
+
+                            confirmWindow.setOkButtonAction((event2, button1, pane3) -> {
+
+                                // Find the column pertaining to the current user (to write the grade to)
+                                int columnWriteIndex = 0;
+                                for (String columnName : table.getColumnNames()) {
+                                    if (columnName.contains(SQLData.credentials.getUsername())) {
+                                        break;
+                                    }
+                                    columnWriteIndex++;
+                                }
+
+                                try {
+                                    // Get the grade the user chose
+                                    Grade grade = Grade.valueOf(pane2.getInputField(pane2.getFieldsSize()-1).getInput());
+                                    // Write the grade to the database
+                                    table.writeToRow(columnWriteIndex,String.valueOf(grade.getGradeCode()),0,pane2.getInputField(0).getInput());
+                                    confirmWindow.closeWindow();
+                                } catch (Exception e) {
+                                    // TODO Error handling
+                                    e.printStackTrace();
+                                }
+
+                            });
 
                             SubmitField cancelConfirmation = new InteractiveButton("No",((event2, button1, pane3) -> {
                                 confirmWindow.closeWindow();
