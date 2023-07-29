@@ -418,25 +418,26 @@ public class SQLTable implements Observable<ModifyEvent,String> {
         boolean isLast = false;
         List<List<Object>> returnRows = new ArrayList<>();
 
+        // If some rows are omitted from constraint groups, then keep adding rows to returnRows until it's size reaches numberOfRows
+        // Excluding if the last set of rows as retrieved
         while(returnRows.size() < numberOfRows && !isLast) {
 
             boolean isRowValid = true;
             ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllWithFilterAndLimit(this.tableName,this.filterManager.getCombinedQuery(),rowIndex,numberOfRows));
-
-            if (result.getFetchSize() < numberOfRows) {
-                isLast = true;
-            }
+            int size = 0;
 
             while (result.next()) {
+                // ResultSets don't have traditional iterators so count the number of rows processed
+                size++;
                 isRowValid = true;
                 List<Object> returnRow = new ArrayList<>();
 
                 // Loop through start to end and add the corresponding column data to return list
                 for (int index = startColumnIndex; index <= endColumnIndex; index++) {
+                    // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
                     String columnName = this.tableColumns.get(index)[0];
                     Object resultObject = result.getObject(columnName);
                     if (this.constraints.isValidGroup(columnName,resultObject.toString())) {
-                        // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
                         returnRow.add(resultObject);
                     } else {
                         isRowValid = false;
@@ -451,7 +452,12 @@ public class SQLTable implements Observable<ModifyEvent,String> {
 
             }
 
-            rowIndex+=result.getFetchSize();
+            if (size < numberOfRows) {
+                isLast = true;
+            }
+
+            // Increase rowIndex by the size calculated (in-case another loop needs to happen given the last rows were not retrieved and returnRows size is not that of numberOfRows)
+            rowIndex+=size;
             result.close();
         }
         return returnRows;
