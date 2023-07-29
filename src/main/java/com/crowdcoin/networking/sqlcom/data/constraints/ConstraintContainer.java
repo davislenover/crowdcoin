@@ -1,7 +1,6 @@
 package com.crowdcoin.networking.sqlcom.data.constraints;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,9 +10,11 @@ import java.util.List;
 public class ConstraintContainer implements Iterable<SQLColumnConstraint> {
 
     private List<SQLColumnConstraint> constraints;
+    private List<SQLConstraintGroup> constraintGroups;
 
     public ConstraintContainer() {
         this.constraints = new ArrayList<>();
+        this.constraintGroups = new ArrayList<>();
     }
 
     /**
@@ -25,6 +26,13 @@ public class ConstraintContainer implements Iterable<SQLColumnConstraint> {
 
         if (!this.constraints.contains(constraint)) {
             return this.constraints.add(constraint);
+        }
+        return false;
+    }
+
+    public boolean addGroup(SQLConstraintGroup group) {
+        if (!this.constraintGroups.contains(group)) {
+            return this.constraintGroups.add(group);
         }
         return false;
     }
@@ -54,6 +62,21 @@ public class ConstraintContainer implements Iterable<SQLColumnConstraint> {
         return true;
     }
 
+    public boolean removeGroup(SQLConstraintGroup group) {
+        if (!this.constraintGroups.contains(group)) {
+            return this.constraintGroups.remove(group);
+        }
+        return false;
+    }
+
+    public boolean removeGroup(int index) {
+        if (index > this.constraintGroups.size() - 1) {
+            throw new IndexOutOfBoundsException("Index " + index + " out of range for size " + this.constraintGroups.size());
+        }
+        this.constraintGroups.remove(index);
+        return true;
+    }
+
     public SQLColumnConstraint get(int index) {
         if (index > this.constraints.size() - 1) {
             throw new IndexOutOfBoundsException("Index " + index + " out of range for size " + this.constraints.size());
@@ -61,11 +84,19 @@ public class ConstraintContainer implements Iterable<SQLColumnConstraint> {
         return this.constraints.get(index);
     }
 
+    public SQLConstraintGroup getGroup(int index) {
+        if (index > this.constraintGroups.size() - 1) {
+            throw new IndexOutOfBoundsException("Index " + index + " out of range for size " + this.constraintGroups.size());
+        }
+        return this.constraintGroups.get(index);
+    }
+
     /**
      * Clears all constraints from the collection
      */
     public void clear() {
         this.constraints.clear();
+        this.constraintGroups.clear();
     }
 
     /**
@@ -79,6 +110,23 @@ public class ConstraintContainer implements Iterable<SQLColumnConstraint> {
                 return false;
             }
         }
+        return true;
+    }
+
+    /**
+     * Checks cell data for a column name is valid for all groups. If the columnName specified within the group is contained within the given columnName, then the corresponding cell data is checked for validity
+     * @param columnName the given column name as a String
+     * @param cellData the given cell data as a String
+     * @return true if both the column name and cell data are valid for all groups, false otherwise
+     */
+    public boolean isValidGroup(String columnName, String cellData) {
+
+        for (SQLConstraintGroup group : this.constraintGroups) {
+            if (!group.isValid(columnName,cellData)) {
+                return false;
+            }
+        }
+
         return true;
     }
 

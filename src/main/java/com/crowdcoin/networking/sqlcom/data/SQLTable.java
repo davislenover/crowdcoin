@@ -195,7 +195,11 @@ public class SQLTable implements Observable<ModifyEvent,String> {
             if (this.constraints.isValid(columnName)) {
                 // Check permissions of column before adding to results
                 if (this.getColumnObject(columnName).checkPermissionValue(isReadablePerm)) {
-                    returnRow.add(result.getObject(columnName));
+                    // Check if the cell data (for any constraint groups in the container) is valid
+                    Object resultObject = result.getObject(columnName);
+                    if (this.constraints.isValidGroup(columnName,resultObject.toString())) {
+                        returnRow.add(resultObject);
+                    }
                 }
             }
         }
@@ -230,11 +234,15 @@ public class SQLTable implements Observable<ModifyEvent,String> {
         // The result set is not guaranteed to have returned a query in any particular column position
         // Thus, given the ordinal position is known, we will return the result list in said position
         for (int index = startColumnIndex; index <= endColumnIndex; index++) {
-            if (this.constraints.isValid(this.tableColumns.get(index)[0])) {
+            String columnName = this.tableColumns.get(index)[0];
+            if (this.constraints.isValid(columnName)) {
                 // Since columnPermList index matches, check permissions before adding to result
                 if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
-                    // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
-                    returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
+                    Object resultObject = result.getObject(columnName);
+                    if (this.constraints.isValidGroup(columnName,resultObject.toString())) {
+                        // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
+                        returnRow.add(resultObject);
+                    }
                 }
             }
         }
@@ -276,7 +284,10 @@ public class SQLTable implements Observable<ModifyEvent,String> {
                 if (this.constraints.isValid(columnName)) {
                     // Check permissions of column before adding to results
                     if (this.getColumnObject(columnName).checkPermissionValue(isReadablePerm)) {
-                        returnRow.add(result.getObject(columnName));
+                        Object resultObject = result.getObject(columnName);
+                        if (this.constraints.isValidGroup(columnName,resultObject.toString())) {
+                            returnRow.add(resultObject);
+                        }
                     }
                 }
             }
@@ -319,11 +330,15 @@ public class SQLTable implements Observable<ModifyEvent,String> {
 
             // Loop through start to end and add the corresponding column data to return list
             for (int index = startColumnIndex; index <= endColumnIndex; index++) {
-                if (this.constraints.isValid(this.tableColumns.get(index)[0])) {
+                String columnName = this.tableColumns.get(index)[0];
+                if (this.constraints.isValid(columnName)) {
                     // Since columnPermList index matches, check permissions before adding to result
                     if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
-                        // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
-                        returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
+                        Object resultObject = result.getObject(columnName);
+                        if (this.constraints.isValidGroup(columnName,resultObject.toString())) {
+                            // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
+                            returnRow.add(result.getObject(columnName));
+                        }
                     }
                 }
             }
@@ -382,6 +397,68 @@ public class SQLTable implements Observable<ModifyEvent,String> {
     }
 
     /**
+     * Get a list of data between two columns corresponding to given rows in the SQL table (NOT Table object). Unlike {@link SQLTable#getRows(int, int, int, int)}, method ignores ALL permissions but does NOT ignore constraint GROUPS and will return all columns specified. Method is affected by FilterManager, any filter is applied. Results are returned in ordinal position of columns as specified in database
+     * @param rowIndex the corresponding starting row within the SQL table to get data from
+     * @param numberOfRows how many rows (starting from row given in rowIndex) to get. e.g., specifying a rowIndex of 0 and numberOfRows as 3 will get the first 3 rows
+     * @param startColumnIndex the starting column in the row to begin reading data from (inclusive) where the integer corresponds to the position of the column as found within the table (upwards). Note the ordering of the columns is via ordinal position
+     * @param endColumnIndex the ending column in the row to end reading data from (inclusive) where the integer corresponds to the position of the column as found within the table (upwards). Note the ordering of the columns is via ordinal position
+     * @return a list of Object type containing the data found via the specified arguments. First list corresponds to each row whereas second list contains the data for the specified row.
+     * @throws InvalidRangeException if startColumn comes after endColumn (i.e., the range does not make sense)
+     * @throws UnknownColumnNameException if either startColumn or endColumn do not exist within the table
+     * @throws SQLException if a database access error occurred
+     * @throws FailedQueryException if query failed to execute
+     * @Note if numberOfRows exceeds that of what is physically available in the database, up to and including the last row possible will be returned. If a row is to be omitted because of a constraint group, method will try to get numberOfRows specified by getting as many rows as needed until the number of valid rows matches
+     */
+    public List<List<Object>> getGroupFilteredRows(int rowIndex, int numberOfRows, int startColumnIndex, int endColumnIndex) throws InvalidRangeException, FailedQueryException, SQLException {
+
+        if (startColumnIndex > endColumnIndex) {
+            throw new InvalidRangeException(String.valueOf(startColumnIndex),String.valueOf(endColumnIndex));
+        }
+
+        boolean isLast = false;
+        List<List<Object>> returnRows = new ArrayList<>();
+
+        while(returnRows.size() < numberOfRows && !isLast) {
+
+            boolean isRowValid = true;
+            ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllWithFilterAndLimit(this.tableName,this.filterManager.getCombinedQuery(),rowIndex,numberOfRows));
+
+            if (result.getFetchSize() < numberOfRows) {
+                isLast = true;
+            }
+
+            while (result.next()) {
+                isRowValid = true;
+                List<Object> returnRow = new ArrayList<>();
+
+                // Loop through start to end and add the corresponding column data to return list
+                for (int index = startColumnIndex; index <= endColumnIndex; index++) {
+                    String columnName = this.tableColumns.get(index)[0];
+                    Object resultObject = result.getObject(columnName);
+                    if (this.constraints.isValidGroup(columnName,resultObject.toString())) {
+                        // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
+                        returnRow.add(resultObject);
+                    } else {
+                        isRowValid = false;
+                        break;
+                    }
+                }
+
+                if (isRowValid && returnRows.size() < numberOfRows) {
+                    // Add row to return list
+                    returnRows.add(returnRow);
+                }
+
+            }
+
+            rowIndex+=result.getFetchSize();
+            result.close();
+        }
+        return returnRows;
+
+    }
+
+    /**
      * Get a list of data between two columns where the row contains specific data from a specific column in the SQL table (NOT Table object). Results are returned in ordinal position of columns as specified in database
      * @param columnWithDataIndex the specified index of the column to look for specificData (in ordinal position)
      * @param specificData the specified data as a String to look for in the given columnWithDataIndex (numeric values work as Strings as well in query)
@@ -414,11 +491,15 @@ public class SQLTable implements Observable<ModifyEvent,String> {
 
             // Loop through start to end and add the corresponding column data to return list
             for (int index = startColumnIndex; index <= endColumnIndex; index++) {
-                if (this.constraints.isValid(this.tableColumns.get(index)[0])) {
+                String columnName = this.tableColumns.get(index)[0];
+                if (this.constraints.isValid(columnName)) {
                     // Since columnPermList index matches, check permissions before adding to result
                     if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
-                        // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
-                        returnRow.add(result.getObject(this.tableColumns.get(index)[0]));
+                        Object resultObject = result.getObject(columnName);
+                        if (this.constraints.isValidGroup(columnName,resultObject.toString())) {
+                            // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
+                            returnRow.add(resultObject);
+                        }
                     }
                 }
             }

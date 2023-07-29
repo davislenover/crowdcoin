@@ -1,21 +1,21 @@
 package com.crowdcoin.networking.sqlcom.data.constraints;
 
-public class CellContainsConstraint implements SQLCellConstraint {
+public class CellEqualsConstraint implements SQLCellConstraint {
 
     private String validData;
     private int order = 0;
 
     /**
-     * Creates a CellContains Constraint. A cell must contain the given validData to be valid (true)
+     * Creates a CellEquals Constraint. A cell must equal the given validData to be valid (true)
      * @param validData the given validData
      */
-    public CellContainsConstraint(String validData) {
+    public CellEqualsConstraint(String validData) {
         this.validData = validData;
     }
 
     @Override
     public boolean isValid(String cellData) {
-        return cellData.contains(this.validData);
+        return cellData.equals(this.validData);
     }
 
     @Override
@@ -27,4 +27,5 @@ public class CellContainsConstraint implements SQLCellConstraint {
     public int getOrder() {
         return this.order;
     }
+
 }

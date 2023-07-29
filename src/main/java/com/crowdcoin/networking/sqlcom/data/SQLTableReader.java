@@ -63,12 +63,12 @@ public class SQLTableReader implements Iterator<List<List<Object>>>, Observable<
         this.previousRowSet.clear();
 
         // Get starting rows
-        List<List<Object>> rows = this.sqlTable.getRawRows(0,this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1);
+        List<List<Object>> rows = this.sqlTable.getGroupFilteredRows(0,this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1);
         this.currentRowSet.addAll(rows);
         this.currentRowCount+=rows.size();
 
         // Get next rows (to store in memory)
-        List<List<Object>> nextRows = this.sqlTable.getRawRows(this.currentRowCount,this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1);
+        List<List<Object>> nextRows = this.sqlTable.getGroupFilteredRows(this.currentRowCount,this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1);
         this.nextRowSet.addAll(nextRows);
 
         // Check if currentRow holds the last rows of data from the SQL Table
@@ -152,7 +152,7 @@ public class SQLTableReader implements Iterator<List<List<Object>>>, Observable<
 
         List<ModelClass> entries = new ArrayList<>();
         int numOfRows = endingIndex-startingIndex;
-        List<List<Object>> rows = this.sqlTable.getRawRows(startingIndex,numOfRows,0,this.sqlTable.getNumberOfColumns()-1);
+        List<List<Object>> rows = this.sqlTable.getGroupFilteredRows(startingIndex,numOfRows,0,this.sqlTable.getNumberOfColumns()-1);
         for (List<Object> row : rows) {
             entries.add(this.factory.buildClone(this.modelClass,row.toArray()));
         }
@@ -181,7 +181,7 @@ public class SQLTableReader implements Iterator<List<List<Object>>>, Observable<
             // nextRowSet will get the next set of rows from the SQL Table in the database
             // Note that this may not return the full set
             this.nextRowSet.clear();
-            this.nextRowSet.addAll(this.sqlTable.getRawRows(this.currentRowCount,this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1));
+            this.nextRowSet.addAll(this.sqlTable.getGroupFilteredRows(this.currentRowCount,this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1));
 
             // Since the full set may have not been stored in nextRowSet, this indicates that either nextRowSet is storing the last set of rows (if it's not empty but has less than the maximum number of rows variable)
             // or currentRowSet is storing the last row set (if nextRowSet is empty)
@@ -221,7 +221,7 @@ public class SQLTableReader implements Iterator<List<List<Object>>>, Observable<
                 // If not 0, get previous rows
                 // This is because when getting rows from the database, currentRowCount points size as from the last item displayed thus, to get the new previous rows, we need to subtract currentRowCount-
                 // (by the size of the new currentRowSet (so now we "point" to the top of the new previous set) doubled (so now we "point" to the first element of the previous set))
-                this.previousRowSet.addAll(this.sqlTable.getRawRows(this.currentRowCount-(this.currentRowSet.size()*2),this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1));
+                this.previousRowSet.addAll(this.sqlTable.getGroupFilteredRows(this.currentRowCount-(this.currentRowSet.size()*2),this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1));
             }
 
             // Update booleans

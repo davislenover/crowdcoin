@@ -3,6 +3,7 @@ package com.crowdcoin.networking.sqlcom.data.constraints;
 public class NameConstraint implements SQLColumnConstraint {
     private String prefix;
     private String validName;
+    private int order = 0;
 
     /**
      * Creates a Name SQLColumnConstraint
@@ -24,5 +25,15 @@ public class NameConstraint implements SQLColumnConstraint {
         } else {
             return true;
         }
+    }
+
+    @Override
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    @Override
+    public int getOrder() {
+        return this.order;
     }
 }
