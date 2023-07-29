@@ -1,5 +1,8 @@
 package com.crowdcoin.networking.sqlcom.data.constraints;
 
+/**
+ * Used to omit rows from an SQL result query
+ */
 public interface SQLCellConstraint extends SQLConstraint {
 
     /**

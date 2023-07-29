@@ -277,7 +277,10 @@ public class SQLTable implements Observable<ModifyEvent,String> {
         // Get list of all column names in the desired column range to return data from
         List<String> columnRange = getColumnNameList(startColumn,endColumn);
 
+        boolean isValid = true;
+
         while (result.next()) {
+            isValid = true;
             List<Object> returnRow = new ArrayList<>();
             // Loop through range and add data of the specified columns to the return list
             for (String columnName : columnRange) {
@@ -285,15 +288,16 @@ public class SQLTable implements Observable<ModifyEvent,String> {
                     // Check permissions of column before adding to results
                     if (this.getColumnObject(columnName).checkPermissionValue(isReadablePerm)) {
                         Object resultObject = result.getObject(columnName);
-                        if (this.constraints.isValidGroup(columnName,resultObject.toString())) {
-                            returnRow.add(resultObject);
-                        }
+                        returnRow.add(resultObject);
+                        isValid = this.constraints.isValidGroup(columnName,resultObject.toString());
                     }
                 }
             }
 
-            // Add row to return list
-            returnRows.add(returnRow);
+            if (isValid) {
+                // Add row to return list
+                returnRows.add(returnRow);
+            }
 
         }
 
@@ -325,9 +329,11 @@ public class SQLTable implements Observable<ModifyEvent,String> {
         ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllWithFilterAndLimit(this.tableName,this.filterManager.getCombinedQuery(),rowIndex,numberOfRows));
         List<List<Object>> returnRows = new ArrayList<>();
 
-        while (result.next()) {
-            List<Object> returnRow = new ArrayList<>();
+        boolean isValid = true;
 
+        while (result.next()) {
+            isValid = true;
+            List<Object> returnRow = new ArrayList<>();
             // Loop through start to end and add the corresponding column data to return list
             for (int index = startColumnIndex; index <= endColumnIndex; index++) {
                 String columnName = this.tableColumns.get(index)[0];
@@ -335,15 +341,16 @@ public class SQLTable implements Observable<ModifyEvent,String> {
                     // Since columnPermList index matches, check permissions before adding to result
                     if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
                         Object resultObject = result.getObject(columnName);
-                        if (this.constraints.isValidGroup(columnName,resultObject.toString())) {
-                            // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
-                            returnRow.add(result.getObject(columnName));
-                        }
+                        returnRow.add(resultObject);
+                        isValid = this.constraints.isValidGroup(columnName,resultObject.toString());
                     }
                 }
             }
-            // Add row to return list
-            returnRows.add(returnRow);
+
+            if (isValid) {
+                // Add row to return list
+                returnRows.add(returnRow);
+            }
 
         }
 
@@ -491,10 +498,11 @@ public class SQLTable implements Observable<ModifyEvent,String> {
         ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllSpecific(this.tableName,this.tableColumns.get(columnWithDataIndex)[0],specificData,numberOfRows));
 
         List<List<Object>> returnRows = new ArrayList<>();
+        boolean isValid = true;
 
         while (result.next()) {
+            isValid = true;
             List<Object> returnRow = new ArrayList<>();
-
             // Loop through start to end and add the corresponding column data to return list
             for (int index = startColumnIndex; index <= endColumnIndex; index++) {
                 String columnName = this.tableColumns.get(index)[0];
@@ -502,15 +510,17 @@ public class SQLTable implements Observable<ModifyEvent,String> {
                     // Since columnPermList index matches, check permissions before adding to result
                     if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
                         Object resultObject = result.getObject(columnName);
-                        if (this.constraints.isValidGroup(columnName,resultObject.toString())) {
-                            // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
-                            returnRow.add(resultObject);
-                        }
+                        returnRow.add(resultObject);
+                        isValid = this.constraints.isValidGroup(columnName,resultObject.toString());
                     }
                 }
             }
-            // Add row to return list
-            returnRows.add(returnRow);
+
+
+            if (isValid) {
+                // Add row to return list
+                returnRows.add(returnRow);
+            }
 
         }
         result.close();

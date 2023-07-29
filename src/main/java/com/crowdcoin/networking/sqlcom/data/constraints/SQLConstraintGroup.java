@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Holds a group of {@link SQLCellConstraint}s along with a column name sequence. If a given column name is found to contain the sequence, then all cell constraints are tested against the given cell data
+ * Holds a group of {@link SQLCellConstraint}s along with a column name sequence. Used to omit rows from a SQL result query. If a given column name is found to contain the sequence, then all cell constraints are tested against the given cell data
  */
 public class SQLConstraintGroup implements Iterable<SQLConstraint> {
 

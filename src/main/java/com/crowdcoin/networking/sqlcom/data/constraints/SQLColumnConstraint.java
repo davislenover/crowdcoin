@@ -1,5 +1,8 @@
 package com.crowdcoin.networking.sqlcom.data.constraints;
 
+/**
+ * Used to omit columns from a SQL result query
+ */
 public interface SQLColumnConstraint extends SQLConstraint {
 
     /**
