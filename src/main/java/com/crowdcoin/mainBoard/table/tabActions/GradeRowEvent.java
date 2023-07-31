@@ -11,6 +11,7 @@ import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.WindowManager;
 import com.crowdcoin.mainBoard.grade.Grade;
+import com.crowdcoin.mainBoard.grade.GradeTools;
 import com.crowdcoin.mainBoard.table.ColumnContainer;
 import com.crowdcoin.mainBoard.table.ModelClass;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
@@ -54,8 +55,9 @@ public class GradeRowEvent implements TabActionEvent {
             List<Object> selectedRow = columnContainer.getSelectedRow();
             // Check to make sure a row was selected
             if (!selectedRow.isEmpty()) {
+                String coinID = selectedRow.get(0).toString();
                 // Get all data for the given coinID selected for grading (via the coin table)
-                List<Object> coinData = this.mainCoinTable.getSpecificRows(0,selectedRow.get(0).toString(),1,0,this.mainCoinTable.getNumberOfColumns()-1).get(0);
+                List<Object> coinData = this.mainCoinTable.getSpecificRows(0,coinID,1,0,this.mainCoinTable.getNumberOfColumns()-1).get(0);
                 pane.clearAllFields();
 
                 int columnIndex = 0;
@@ -93,7 +95,17 @@ public class GradeRowEvent implements TabActionEvent {
                                     // Get the grade the user chose
                                     Grade grade = Grade.valueOf(pane2.getInputField(pane2.getFieldsSize()-1).getInput());
                                     // Write the grade to the database
-                                    table.writeToRow(columnWriteIndex,String.valueOf(grade.getGradeCode()),0,pane2.getInputField(0).getInput());
+                                    table.writeToRow(columnWriteIndex,String.valueOf(grade.getGradeCode()),0,coinID);
+
+                                    // Check if coin can be given a full grade
+                                    GradeTools gradeChecker = new GradeTools(coinID,table);
+                                    if (gradeChecker.hasEveryoneGradedID()) {
+                                        // Write average grade to the corresponding average grade column
+                                        table.writeToRow(1,String.valueOf(gradeChecker.getGradeAverage()),0,coinID);
+                                        // Write word grade to main coin table
+                                        mainCoinTable.writeToRow(3,gradeChecker.getGrade().toString(),0,coinID);
+                                    }
+
                                     confirmWindow.closeWindow();
                                 } catch (Exception e) {
                                     // TODO Error handling

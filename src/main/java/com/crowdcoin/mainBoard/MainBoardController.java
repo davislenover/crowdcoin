@@ -40,7 +40,7 @@ public class MainBoardController {
         SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
         SQLTable table2 = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
 
-        UserModel userModel = new UserModel(101,0,"test");
+        UserModel userModel = new UserModel(101,0.00,"test");
         ModelClass modelClassUser = new ModelClassFactory().build(userModel);
         SQLTable table3 = new SQLTable(SQLData.getSqlConnection(),"userData", modelClassUser.getColumns());
 

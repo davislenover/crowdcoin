@@ -27,7 +27,7 @@ public class GradeTools {
      * @return the grade average as a Double value
      */
     public double getGradeAverage() {
-        int sum = 0;
+        double sum = 0;
         for (Integer grade : this.gradeList) {
             sum+=grade;
         }
@@ -66,13 +66,14 @@ public class GradeTools {
     // Gets the grade list as a list of Integers
     private List<Integer> getGradeList(String coinID, SQLTable sqlTable) {
         try {
-            List<Object> row = sqlTable.getRawSpecificRows(0,coinID,1,0,sqlTable.getNumberOfColumns()).get(0);
+            List<Object> row = sqlTable.getRawSpecificRows(0,coinID,1,0,sqlTable.getNumberOfColumns()-1).get(0);
             List<Integer> gradeList = new ArrayList<>();
             for (int index = gradeColumnStartIndex; index < row.size(); index++) {
                 gradeList.add(Integer.valueOf(row.get(index).toString()));
             }
             return gradeList;
         } catch (Exception e) {
+            e.printStackTrace();
             // TODO Error handling
         }
         return null;

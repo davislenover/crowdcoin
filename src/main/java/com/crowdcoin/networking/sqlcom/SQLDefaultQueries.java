@@ -43,6 +43,7 @@ public class SQLDefaultQueries {
         put("SMALLINT", Short.class);
         put("TEXT", String.class);
         put("VARCHAR", String.class);
+        put("DOUBLE", Double.class);
     }};
 
     public static String getGetColumnDataQuery(String tableName) {

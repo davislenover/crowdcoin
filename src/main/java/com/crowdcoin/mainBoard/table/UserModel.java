@@ -6,10 +6,10 @@ import java.util.Map;
 public class UserModel {
 
     private int coinID;
-    private Integer isGraded;
+    private Double isGraded;
     private Map<Integer,String> variableMap;
 
-    public UserModel(Integer coinID, Integer isGraded, String ... mapArgs) {
+    public UserModel(Integer coinID, Double isGraded, String ... mapArgs) {
         this.variableMap = new HashMap<>();
 
         this.coinID = coinID;
@@ -29,7 +29,7 @@ public class UserModel {
     }
 
     @TableReadable(order = 1, columnName = "IsGraded")
-    public Integer isGraded() {
+    public Double isGraded() {
         return this.isGraded;
     }
 
