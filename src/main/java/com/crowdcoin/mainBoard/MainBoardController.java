@@ -45,11 +45,13 @@ public class MainBoardController {
         SQLTable table3 = new SQLTable(SQLData.getSqlConnection(),"userData", modelClassUser.getColumns());
 
         SQLColumnConstraint nameConstraint = new NameConstraint("USERID",SQLData.credentials.getUsername());
+        SQLColumnConstraint nameConstraintIsGraded = new NameConstraint("IsGraded","null");
         SQLCellConstraint cellValueConstraint = new CellEqualsConstraint("0");
         SQLConstraintGroup group = new SQLConstraintGroup(SQLData.credentials.getUsername());
         group.add(cellValueConstraint);
         table3.getConstraints().addGroup(group);
         table3.getConstraints().add(nameConstraint);
+        table3.getConstraints().add(nameConstraintIsGraded);
 
         Tab testWorkTab = new Tab(userModel,table3,"testWorkTab");
         testWorkTab.setTabTableAction(new GradeRowEvent(new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns())));
