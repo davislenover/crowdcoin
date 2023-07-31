@@ -530,6 +530,52 @@ public class SQLTable implements Observable<ModifyEvent,String> {
     }
 
     /**
+     * Get a list of data between two columns where the row contains specific data from a specific column in the SQL table (NOT Table object). Results are returned in ordinal position of columns as specified in database. This method does NOT check for constraints or permissions
+     * @param columnWithDataIndex the specified index of the column to look for specificData (in ordinal position)
+     * @param specificData the specified data as a String to look for in the given columnWithDataIndex (numeric values work as Strings as well in query)
+     * @param numberOfRows how many rows to return at max (in case there is more than one row containing the same specified data)
+     * @param startColumnIndex the starting column in the row to begin reading data from (inclusive) where the integer corresponds to the position of the column as found within the table (upwards). Note the ordering of the columns is via ordinal position
+     * @param endColumnIndex the ending column in the row to end reading data from (inclusive) where the integer corresponds to the position of the column as found within the table (upwards). Note the ordering of the columns is via ordinal position
+     * @return a list of Object type containing the data found via the specified arguments. First list corresponds to each row whereas second list contains the data for the specified row.
+     * @throws InvalidRangeException if startColumn comes after endColumn (i.e., the range does not make sense)
+     * @throws UnknownColumnNameException if either startColumn or endColumn do not exist within the table
+     * @throws SQLException if a database access error occurred
+     * @throws FailedQueryException if query failed to execute
+     * @Note if numberOfRows exceeds that of what is physically available in the database, up to and including the last row possible will be returned. Column indices are ordered in RELATIVE ordinal position. Ordinal positions start at 1. This means index 0 would correspond to an ordinal position of 1
+     */
+    public List<List<Object>> getRawSpecificRows(int columnWithDataIndex, String specificData, int numberOfRows, int startColumnIndex, int endColumnIndex) throws InvalidRangeException, FailedQueryException, SQLException {
+
+        if (columnWithDataIndex > this.tableColumns.size()-1) {
+            throw new IndexOutOfBoundsException("The specified column with data does not exist within the table (" + columnWithDataIndex + " where max is " + (this.tableColumns.size()-1) + ")");
+        }
+
+        if (startColumnIndex > endColumnIndex) {
+            throw new InvalidRangeException(String.valueOf(startColumnIndex),String.valueOf(endColumnIndex));
+        }
+
+        ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllSpecific(this.tableName,this.tableColumns.get(columnWithDataIndex)[0],specificData,numberOfRows));
+
+        List<List<Object>> returnRows = new ArrayList<>();
+
+        while (result.next()) {
+            List<Object> returnRow = new ArrayList<>();
+            // Loop through start to end and add the corresponding column data to return list
+            for (int index = startColumnIndex; index <= endColumnIndex; index++) {
+                String columnName = this.tableColumns.get(index)[0];
+                Object resultObject = result.getObject(columnName);
+                returnRow.add(resultObject);
+            }
+
+            // Add row to return list
+            returnRows.add(returnRow);
+        }
+        result.close();
+
+        return returnRows;
+
+    }
+
+    /**
      * Write data to an existing row in the SQL table
      * @param columnWriteIndex the column to write the data to
      * @param dataToWrite the data to write to the given columnWriteIndex
