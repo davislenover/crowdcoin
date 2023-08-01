@@ -84,7 +84,7 @@ public class GradeRowEvent implements TabActionEvent {
 
                                 // Find the column pertaining to the current user (to write the grade to)
                                 int columnWriteIndex = 0;
-                                for (String columnName : table.getColumnNames()) {
+                                for (String columnName : table.getRawColumnNames()) {
                                     if (columnName.contains(SQLData.credentials.getUsername())) {
                                         break;
                                     }

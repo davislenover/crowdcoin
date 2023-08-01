@@ -58,10 +58,10 @@ public class MainBoardController {
 
         // Test Tab 1
         Tab testTab = new Tab(model,table,"testTab");
-        testTab.setTabTableAction(new ViewTableRowEvent());
+        testTab.setTabTableAction(new ViewTableRowEvent(table3));
         // Test Tab 2
         Tab testTab2 = new Tab(model,table2,"testTab2");
-        testTab2.setTabTableAction(new ViewTableRowEvent());
+        testTab2.setTabTableAction(new ViewTableRowEvent(table3));
 
         TabBar testBar = new TabBar(tabBar,mainTable,rightDisplay,buttonGrid,prevTableViewButton,nextTableViewButton,filters,exportTabButton);
         testBar.addTab(testTab);
@@ -77,7 +77,9 @@ public class MainBoardController {
         test1.addOption(new MenuOption("New Tab Test", p -> testBar.addTab(testTab)));
         test1.addOption(new MenuOption("New Entry",p-> {
             try {
-                PopWindow newEntry = new NewEntryPopWindow("New Entry",table);
+                SQLTable tableNewEntry = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
+                tableNewEntry.getConstraints().add(new NameConstraint("grade","null"));
+                PopWindow newEntry = new NewEntryPopWindow("New Entry",tableNewEntry,table3);
                 newEntry.start(StageManager.getStage(newEntry));
             } catch (Exception e) {
                 throw new RuntimeException(e);

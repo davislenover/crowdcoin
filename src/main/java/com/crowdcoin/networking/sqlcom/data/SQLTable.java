@@ -826,7 +826,7 @@ public class SQLTable implements Observable<ModifyEvent,String> {
     }
 
     /**
-     * Get all column names found within the table Unlike {@link SQLTable#getColumnTypes()}, this method does NOT check for {@link com.crowdcoin.mainBoard.table.permissions.IsReadable} permissions.
+     * Get all column names found within the table Unlike {@link SQLTable#getColumnTypes()}, this method does NOT check for {@link com.crowdcoin.mainBoard.table.permissions.IsReadable} permissions nor {@link com.crowdcoin.networking.sqlcom.data.constraints.SQLConstraint}.
      * Only use this method with classes that are not user visible
      * @return the column names in a list of Strings
      */

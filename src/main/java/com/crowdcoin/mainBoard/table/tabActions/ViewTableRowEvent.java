@@ -27,6 +27,12 @@ import java.util.List;
 
 public class ViewTableRowEvent implements TabActionEvent {
 
+    SQLTable gradingTable;
+
+    public ViewTableRowEvent(SQLTable gradingTable) {
+        this.gradingTable = gradingTable;
+    }
+
     @Override
     public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane, SQLTable table, WindowManager manager) {
 
@@ -171,7 +177,10 @@ public class ViewTableRowEvent implements TabActionEvent {
                             try {
                                 // Since entry was removed, the row index is no longer valid
                                 columnContainer.resetSelectedRowIndex();
-                                table.deleteRow(0,tableView.getItems().get(selectedRowIndex).getData(0).toString());
+                                String coinID = tableView.getItems().get(selectedRowIndex).getData(0).toString();
+                                table.deleteRow(0,coinID);
+                                // Delete row in grading table too
+                                gradingTable.deleteRow(0,coinID);
                             } catch (Exception e) {
                                 // TODO Exception handling
                             }

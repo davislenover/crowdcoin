@@ -22,17 +22,20 @@ import com.crowdcoin.networking.sqlcom.Generation.IDGenerator;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NewEntryPopWindow extends PopWindow {
 
     private SQLTable columnData;
+    private SQLTable gradingData;
     private String idColumnName = "coinID";
     private static String isWriteablePermission = IsWriteable.class.getSimpleName();
 
-    public NewEntryPopWindow(String windowName, SQLTable columnData) {
+    public NewEntryPopWindow(String windowName, SQLTable columnData, SQLTable gradingData) {
         super(windowName);
         this.columnData = columnData;
+        this.gradingData = gradingData;
     }
 
     @Override
@@ -70,6 +73,15 @@ public class NewEntryPopWindow extends PopWindow {
                 // Since fields on-screen were placed in the same order as columnNames, use both list to write new row to SQL Table
                 try {
                     columnData.systemWriteNewRow(columnNames,fieldInput);
+
+                    // Write a new row to grading table too
+                    List<String> gradingColumnNames = new ArrayList<>() {{
+                        add("coinID");
+                    }};
+                    List<String> gradingColumnData = new ArrayList<>() {{
+                        add(coinID);
+                    }};
+                    gradingData.systemWriteNewRow(gradingColumnNames,gradingColumnData);
 
                     // Create window showing id to user
                     InfoPopWindow idWindow = new InfoPopWindow("Entry Submitted");
