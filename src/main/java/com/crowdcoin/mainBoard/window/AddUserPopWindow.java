@@ -1,5 +1,6 @@
 package com.crowdcoin.mainBoard.window;
 
+import com.crowdcoin.FXTools.StageManager;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
@@ -7,17 +8,24 @@ import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
 import com.crowdcoin.mainBoard.Interactive.input.validation.DoesNotContainValidator;
 import com.crowdcoin.mainBoard.Interactive.input.validation.InputValidator;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
+import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
 import com.crowdcoin.mainBoard.Interactive.output.OutputField;
 import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
+import com.crowdcoin.networking.sqlcom.SQLDatabase;
+import com.crowdcoin.networking.sqlcom.permissions.SQLPermission;
 import javafx.stage.Stage;
+
+import java.util.List;
 
 public class AddUserPopWindow extends PopWindow {
 
     private static String[] invalidUsernameSequences = {"USERID_","USERID",","};
+    private SQLDatabase database;
 
-    public AddUserPopWindow(String windowName) {
+    public AddUserPopWindow(String windowName, SQLDatabase database) {
         super(windowName);
+        this.database = database;
     }
 
     @Override
@@ -40,7 +48,34 @@ public class AddUserPopWindow extends PopWindow {
         pane.addInputField(password);
         pane.addInputField(isAdmin);
 
-        SubmitField addUserBtn = new InteractiveButton("Add User",(event, button, pane1) -> {return;});
+        SubmitField addUserBtn = new InteractiveButton("Add User",(event, button, pane1) -> {
+
+            if (PaneValidator.isInputValid(pane1)) {
+                try {
+                    InfoPopWindow confirmationWindow = new InfoPopWindow("Add user confirmation");
+                    confirmationWindow.setInfoMessage("Add user " + pane1.getInputField(0).getInput() + "?");
+                    SubmitField cancelBtn = new InteractiveButton("No",(event1, button1, pane2) -> {confirmationWindow.closeWindow();});
+                    cancelBtn.setOrder(1);
+                    confirmationWindow.getWindowPane().addSubmitField(cancelBtn);
+                    confirmationWindow.setOkButtonAction((event1, button1, pane2) -> {
+                        List<String> paneInput = pane1.getAllInput();
+                        this.database.addNewUser(paneInput.get(0),paneInput.get(1));
+                        this.database.grantUserPermissions(paneInput.get(0), SQLPermission.values());
+
+
+
+                        confirmationWindow.closeWindow();
+                    });
+                    confirmationWindow.start(StageManager.getStage(confirmationWindow));
+                } catch (Exception e) {
+                    // TODO Error handling
+                }
+
+            }
+
+
+
+            });
         SubmitField cancelBtn = new InteractiveButton("Cancel",(event, button, pane1) -> {return;});
         cancelBtn.setOrder(1);
 
