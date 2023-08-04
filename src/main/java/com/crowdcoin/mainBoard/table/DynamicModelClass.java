@@ -34,7 +34,7 @@ public class DynamicModelClass extends ModelClass {
                 if (column.isVariable()) {
                     if (columnName.contains(column.getColumnName())) {
                         try{
-                            int posToGet = Integer.valueOf(columnName.substring(column.getColumnName().length(),column.getColumnName().length()+1));
+                            int posToGet = Integer.valueOf(columnName.substring(column.getColumnName().length(),column.getColumnName().length()+getVariableColumnPositionFromID(columnName,column.getColumnName())));
                             return column.getColumnDataMethod().invoke(super.getInstance(),posToGet);
                         } catch (Exception e) {
                             return null;
@@ -50,6 +50,24 @@ public class DynamicModelClass extends ModelClass {
             return null;
         }
         return null;
+    }
+
+    // Method checks how many numbers are present right after the variable column prefix
+    private int getVariableColumnPositionFromID(String columnNameRequested,String storedPrefix) {
+
+        int numberLength = 0;
+        char[] charVals = columnNameRequested.toCharArray();
+
+        // Keep iterating through the column name and attempt to parse to a number. If error, then no more numbers exist right after the prefix
+        for (int index = storedPrefix.length(); index < columnNameRequested.length(); index++) {
+            try {
+                Integer testInt = Integer.valueOf(String.valueOf(charVals[index]));
+                numberLength++;
+            } catch (Exception e) {
+                break;
+            }
+        }
+        return numberLength;
     }
 
     /**

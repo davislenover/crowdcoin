@@ -4,12 +4,13 @@ import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
+import com.crowdcoin.mainBoard.Interactive.input.validation.DoesNotContainValidator;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
 import javafx.stage.Stage;
 
 public class AddUserPopWindow extends PopWindow {
 
-
+    private static String[] invalidUsernameSequences = {"USERID_","USERID",","};
 
     public AddUserPopWindow(String windowName) {
         super(windowName);
@@ -25,6 +26,7 @@ public class AddUserPopWindow extends PopWindow {
         InputField isAdmin = new InteractiveChoiceBox("Is an Admin?","Grants the user elevated privileges",(event, field, pane1) -> {return;},"Yes","No");
 
         username.addValidator(new LengthValidator(1));
+        username.addValidator(new DoesNotContainValidator(invalidUsernameSequences));
 
 
     }
