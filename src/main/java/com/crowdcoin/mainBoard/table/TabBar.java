@@ -268,6 +268,29 @@ public class TabBar implements Observer<ModifyEvent,String> {
             } catch (Exception e) {
                 // TODO add exception handling
             }
+        } else if (passThroughObject.getEventType() == ModifyEventType.NEW_COLUMN) {
+            try {
+
+                // If the event is a new Filter, then the tabID is located in index 0
+                String tabID = passThroughObject.getEventData().get(0);
+
+                Tab tab = this.tabIDMap.get(tabID);
+                tab.refreshAll();
+
+                // Check if the Tab is currently selected
+                if (this.controlBar.getSelectionModel().getSelectedItem().getId().equals(tabID)) {
+                    // Force call openTab() (as onSelectionChanged event would not be triggered
+                    this.openTab(tabID);
+                } else {
+                    // If not selected, select it
+                    // This will trigger the onSelectionChanged event and thus, call openTab()
+                    this.controlBar.getSelectionModel().select(this.getJavaFXTab(tabID));
+                }
+
+            } catch (Exception e) {
+                // TODO add exception handling
+            }
+
         }
 
     }

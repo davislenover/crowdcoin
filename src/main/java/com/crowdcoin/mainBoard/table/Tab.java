@@ -280,6 +280,15 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
         }
     }
 
+    public void refreshAll() {
+        try {
+            this.sqlTable.refresh();
+            this.refreshTableView();
+        } catch (Exception e) {
+            // TODO Error handling
+        }
+    }
+
     @Override
     public boolean addObserver(Observer<ModifyEvent,String> observer) {
         if (!this.subscriptionList.contains(observer)) {

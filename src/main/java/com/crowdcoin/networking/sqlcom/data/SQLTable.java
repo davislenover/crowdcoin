@@ -5,14 +5,12 @@ import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.exceptions.table.UnknownColumnNameException;
 import com.crowdcoin.mainBoard.table.Column;
 import com.crowdcoin.mainBoard.table.Observe.*;
-import com.crowdcoin.mainBoard.table.TableReadable;
 import com.crowdcoin.mainBoard.table.permissions.IsReadable;
 import com.crowdcoin.mainBoard.table.permissions.IsSystemWriteable;
 import com.crowdcoin.mainBoard.table.permissions.IsWriteable;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.data.constraints.ConstraintContainer;
-import com.crowdcoin.networking.sqlcom.data.constraints.SQLColumnConstraint;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterManager;
 
 import java.sql.ResultSet;
@@ -25,7 +23,9 @@ import java.util.List;
  * Handles communication between a program and an SQL table within an SQL Database.
  * Note this class takes into account permissions and constraints, where a method in question has "raw" in it, both permissions and constraints are ignored. All methods which check permissions also check constraints
  */
-public class SQLTable implements Observable<ModifyEvent,String> {
+public class SQLTable implements Observable<ModifyEvent,String>, Observer<ModifyEvent,String> {
+
+    private static SQLDatabase database = null;
 
     private List<Observer<ModifyEvent,String>> subscriptionList;
 
@@ -67,7 +67,22 @@ public class SQLTable implements Observable<ModifyEvent,String> {
 
         this.subscriptionList = new ArrayList<>();
         this.constraints = new ConstraintContainer();
+        if (database == null) {
+            database = new SQLDatabase(this.connection);
+        }
+        database.addObserver(this);
+    }
 
+    /**
+     * Refreshes the SQLTable in the case that there are new columns in a SQL Table that the given SQLTable object needs to be aware of
+     * @throws FailedQueryException
+     * @throws SQLException
+     * @throws UnknownColumnNameException
+     */
+    public void refresh() throws FailedQueryException, SQLException, UnknownColumnNameException {
+        getTableData();
+        checkColumnNames();
+        sortColumnObjectList();
     }
 
     // Method gets table information and set's up tableColumn list
@@ -950,6 +965,14 @@ public class SQLTable implements Observable<ModifyEvent,String> {
         return this.tableName;
     }
 
+    /**
+     * Gets the SQLDatabase object for higher level queries
+     * @return an SQLDatabase object. All SQLTable classes share the same SQLDatabase object (as they all connect to the same database)
+     */
+    public SQLDatabase getDatabase() {
+        return database;
+    }
+
 
     @Override
     public boolean addObserver(Observer<ModifyEvent,String> observer) {
@@ -975,5 +998,15 @@ public class SQLTable implements Observable<ModifyEvent,String> {
     @Override
     public void clearObservers() {
         this.subscriptionList.clear();
+    }
+
+    @Override
+    public void removeObserving() {
+        database.removeObserver(this);
+    }
+
+    @Override
+    public void update(ModifyEvent event) {
+        this.notifyObservers(event);
     }
 }

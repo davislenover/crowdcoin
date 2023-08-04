@@ -9,10 +9,9 @@ import com.crowdcoin.mainBoard.Interactive.input.validation.DoesNotContainValida
 import com.crowdcoin.mainBoard.Interactive.input.validation.InputValidator;
 import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
 import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
-import com.crowdcoin.mainBoard.Interactive.output.OutputField;
 import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
-import com.crowdcoin.networking.sqlcom.SQLDatabase;
+import com.crowdcoin.networking.sqlcom.data.SQLDatabase;
 import com.crowdcoin.networking.sqlcom.permissions.SQLPermission;
 import javafx.stage.Stage;
 
@@ -62,7 +61,7 @@ public class AddUserPopWindow extends PopWindow {
                         this.database.addNewUser(paneInput.get(0),paneInput.get(1));
                         this.database.grantUserPermissions(paneInput.get(0), SQLPermission.values());
 
-
+                        // TODO Refresh Work Tab. SQLTable now reacts to events from SQLDatabase, need to fire NEW_COLUMN. TabBar has logic (untested) for NEW_COLUMN. Need to get SQLDatabase to create new columns
 
                         confirmationWindow.closeWindow();
                     });
