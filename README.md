@@ -26,4 +26,5 @@ Status: Pending (P), Started (S), Blocked (B), Done (D)
 | F11 | New Entry for Tabs                                  | Davis Lenover      | 2023-07-03 | 2023-07-10 | D                                                                   |
 | F12 | Edit/Delete Entries in main Tab area                | Davis Lenover      | 2023-07-10 | 2023-07-15 | D                                                                   |
 | F13 | Export Tabs to csv                                  | Davis Lenover      | 2023-07-15 | 2023-07-18 | D                                                                   |
-| F14 | Work Tabs                                           | Davis Lenover      | 2023-07-18 |  | S                                                                   |
+| F14 | Work Tabs                                           | Davis Lenover      | 2023-07-18 |  | B (Implenting Adding/Removing Users to test F14)                    |
+| F15 | Add/Remove Users (Admin)                            | Davis Lenover      | 2023-08-04 |  | B (Implenting Adding/Removing Users to test F14)                    |
