@@ -1,5 +1,7 @@
 package com.crowdcoin.networking.sqlcom;
 
+import com.crowdcoin.networking.sqlcom.permissions.SQLPermission;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -127,6 +129,23 @@ public class SQLDefaultQueries {
     public static String deleteRow(String tableName, String whereColumn, String whereDataInColumn) {
         String returnString = "DELETE FROM " + tableName + " WHERE " + whereColumn + "=" + "'" + whereDataInColumn +"'";
         return returnString;
+    }
+
+    public static String addUser(String username, String password) {
+        return "CREATE USER " + "'" + username + "'" + "@" +"'%' IDENTIFIED BY '" + password + "'";
+    }
+
+    public static String grantPermissions(String username, String ... permissions) {
+        String query = "GRANT";
+        for (int index = 0; index < permissions.length; index++) {
+            if (index != permissions.length - 1) {
+                query+=" " + permissions[index] + ",";
+            } else {
+                query+=" " + permissions[index] + " ";
+            }
+        }
+        query+="on *.* TO " + "'" + username + "'" + "@" + "'%'";
+        return query;
     }
 
 }
