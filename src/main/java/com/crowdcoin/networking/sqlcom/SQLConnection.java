@@ -4,13 +4,16 @@ package com.crowdcoin.networking.sqlcom;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.format.Defaults;
 import java.sql.*;
+import java.util.EmptyStackException;
+import java.util.Stack;
 
 public class SQLConnection {
     // Declare connection and credential info
-    Connection connection;
-    String address;
-    String databaseUsername;
-    String databasePassword;
+    private Connection connection;
+    private String address;
+    private String databaseUsername;
+    private String databasePassword;
+    private String schemaName;
 
     // Constructor to get MySQL Connection
     // This class can throw exceptions
@@ -55,6 +58,31 @@ public class SQLConnection {
 
         }
 
+        String schemaBackwards = "";
+        char[] addressCharArray = this.address.toCharArray();
+        Stack<Character> schemaNameStack = new Stack<>();
+        // Go backwards through address and copy all char's up to the last '/'. This gives the schema name
+        for (int index = addressCharArray.length-1; index >= 0; index--) {
+            char curChar = addressCharArray[index];
+            if (curChar != '/') {
+                schemaNameStack.push(addressCharArray[index]);
+            } else {
+                break;
+            }
+        }
+        // The schema comes out backwards so reverse it
+        this.schemaName = "";
+        while (!schemaNameStack.isEmpty()) {
+            this.schemaName+=schemaNameStack.pop();
+        }
+    }
+
+    /**
+     * Gets the schema name currently connected to
+     * @return the schema name as a String
+     */
+    public String getSchemaName() {
+        return this.schemaName;
     }
 
     /**

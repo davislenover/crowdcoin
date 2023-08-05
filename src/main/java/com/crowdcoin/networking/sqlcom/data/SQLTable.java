@@ -175,6 +175,14 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
     }
 
     /**
+     * Gets the SQLConnection object the SQLTable is using
+     * @return the given SQLConnection object
+     */
+    public SQLConnection getConnection() {
+        return this.connection;
+    }
+
+    /**
      * Gets the column constraints container for the given SQLTable instance
      * @return a ColumnConstraints object
      */

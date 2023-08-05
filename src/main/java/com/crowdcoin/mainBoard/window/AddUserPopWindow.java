@@ -54,7 +54,6 @@ public class AddUserPopWindow extends PopWindow {
         pane.addInputField(isAdmin);
 
         SubmitField addUserBtn = new InteractiveButton("Add User",(event, button, pane1) -> {
-
             if (PaneValidator.isInputValid(pane1)) {
                 try {
                     InfoPopWindow confirmationWindow = new InfoPopWindow("Add user confirmation");
@@ -68,10 +67,11 @@ public class AddUserPopWindow extends PopWindow {
                         SQLDatabase database = this.table.getDatabase();
                         String userName = paneInput.get(0);
                         database.addNewUser(paneInput.get(0),paneInput.get(1));
-                        database.grantUserPermissions(paneInput.get(0), "coinbase",SQLPermission.values());
+                        database.grantUserPermissions(paneInput.get(0),this.table.getConnection().getSchemaName(),SQLPermission.values());
                         database.addColumn(this.table.getTableName(),DynamicModelClass.getVariableColumnPrefix(this.gradingTableModelClass)+DynamicModelClass.getNextVariableColumnInteger(this.gradingTableModelClass)+"_"+userName+"Value", SQLColumnType.VARCHAR_45,"0");
 
                         confirmationWindow.closeWindow();
+                        super.closeWindow();
                     });
                     confirmationWindow.start(StageManager.getStage(confirmationWindow));
                 } catch (Exception e) {
