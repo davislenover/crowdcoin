@@ -135,7 +135,7 @@ public class SQLDefaultQueries {
         return "CREATE USER " + "'" + username + "'" + "@" +"'%' IDENTIFIED BY '" + password + "'";
     }
 
-    public static String grantPermissions(String username, String ... permissions) {
+    public static String grantPermissions(String username, String schemaName, String ... permissions) {
         String query = "GRANT";
         for (int index = 0; index < permissions.length; index++) {
             if (index != permissions.length - 1) {
@@ -144,8 +144,12 @@ public class SQLDefaultQueries {
                 query+=" " + permissions[index] + " ";
             }
         }
-        query+="on *.* TO " + "'" + username + "'" + "@" + "'%'";
+        query+="on " + schemaName +".* TO " + "'" + username + "'" + "@" + "'%'";
         return query;
+    }
+
+    public static String addColumn(String tableName, String columnName, String type, String defaultValue) {
+        return "ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " " + type + " NOT NULL DEFAULT " + defaultValue;
     }
 
 }

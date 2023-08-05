@@ -11,7 +11,11 @@ import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
 import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
 import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
+import com.crowdcoin.mainBoard.table.DynamicModelClass;
+import com.crowdcoin.mainBoard.table.ModelClass;
+import com.crowdcoin.networking.sqlcom.SQLColumnType;
 import com.crowdcoin.networking.sqlcom.data.SQLDatabase;
+import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.permissions.SQLPermission;
 import javafx.stage.Stage;
 
@@ -20,11 +24,13 @@ import java.util.List;
 public class AddUserPopWindow extends PopWindow {
 
     private static String[] invalidUsernameSequences = {"USERID_","USERID",","};
-    private SQLDatabase database;
+    private SQLTable table;
+    private ModelClass gradingTableModelClass;
 
-    public AddUserPopWindow(String windowName, SQLDatabase database) {
+    public AddUserPopWindow(String windowName, SQLTable table, ModelClass klass) {
         super(windowName);
-        this.database = database;
+        this.table = table;
+        this.gradingTableModelClass = klass;
     }
 
     @Override
@@ -58,15 +64,18 @@ public class AddUserPopWindow extends PopWindow {
                     confirmationWindow.getWindowPane().addSubmitField(cancelBtn);
                     confirmationWindow.setOkButtonAction((event1, button1, pane2) -> {
                         List<String> paneInput = pane1.getAllInput();
-                        this.database.addNewUser(paneInput.get(0),paneInput.get(1));
-                        this.database.grantUserPermissions(paneInput.get(0), SQLPermission.values());
 
-                        // TODO Refresh Work Tab. SQLTable now reacts to events from SQLDatabase, need to fire NEW_COLUMN. TabBar has logic (untested) for NEW_COLUMN. Need to get SQLDatabase to create new columns
+                        SQLDatabase database = this.table.getDatabase();
+                        String userName = paneInput.get(0);
+                        database.addNewUser(paneInput.get(0),paneInput.get(1));
+                        database.grantUserPermissions(paneInput.get(0), "coinbase",SQLPermission.values());
+                        database.addColumn(this.table.getTableName(),DynamicModelClass.getVariableColumnPrefix(this.gradingTableModelClass)+DynamicModelClass.getNextVariableColumnInteger(this.gradingTableModelClass)+"_"+userName+"Value", SQLColumnType.VARCHAR_45,"0");
 
                         confirmationWindow.closeWindow();
                     });
                     confirmationWindow.start(StageManager.getStage(confirmationWindow));
                 } catch (Exception e) {
+                    e.printStackTrace();
                     // TODO Error handling
                 }
 
@@ -80,6 +89,8 @@ public class AddUserPopWindow extends PopWindow {
 
         pane.addSubmitField(addUserBtn);
         pane.addSubmitField(cancelBtn);
+
+        super.start(stage);
 
 
     }

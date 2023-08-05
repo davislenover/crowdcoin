@@ -1,9 +1,11 @@
 package com.crowdcoin.networking.sqlcom.data;
 
+import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
 import com.crowdcoin.mainBoard.table.Observe.ModifyEventType;
 import com.crowdcoin.mainBoard.table.Observe.Observable;
 import com.crowdcoin.mainBoard.table.Observe.Observer;
+import com.crowdcoin.networking.sqlcom.SQLColumnType;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.permissions.SQLPermission;
@@ -25,20 +27,29 @@ public class SQLDatabase implements Observable<ModifyEvent,String> {
     public void addNewUser(String username, String password) {
         try {
             this.connection.executeQuery(SQLDefaultQueries.addUser(username,password));
-        } catch (Exception e) {
-            // TODO Error handling
+        } catch (FailedQueryException e) {
+            e.rootException.printStackTrace();
         }
 
     }
 
-    public void grantUserPermissions(String username, SQLPermission ... permissions) {
+    public void grantUserPermissions(String username, String schemaName, SQLPermission ... permissions) {
 
         try {
-            this.connection.executeQuery(SQLDefaultQueries.grantPermissions(username,Arrays.stream(permissions).map(Enum::name).toArray(String[]::new)));
+            this.connection.executeQuery(SQLDefaultQueries.grantPermissions(username,schemaName,Arrays.stream(permissions).map(Enum::name).toArray(String[]::new)));
+        } catch (FailedQueryException e) {
+            e.rootException.printStackTrace();
+        }
+
+    }
+
+    public void addColumn(String tableName, String columnName, SQLColumnType type, String defaultValue) {
+        try {
+            this.connection.executeQuery(SQLDefaultQueries.addColumn(tableName,columnName,type.getQueryString(),defaultValue));
+            this.notifyObservers(new ModifyEvent(ModifyEventType.NEW_COLUMN));
         } catch (Exception e) {
             // TODO Error handling
         }
-
     }
 
     @Override

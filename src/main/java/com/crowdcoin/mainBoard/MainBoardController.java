@@ -7,6 +7,7 @@ import com.crowdcoin.mainBoard.table.tabActions.ViewTableRowEvent;
 import com.crowdcoin.mainBoard.toolBar.MenuGroup;
 import com.crowdcoin.mainBoard.toolBar.MenuGroupContainer;
 import com.crowdcoin.mainBoard.toolBar.MenuOption;
+import com.crowdcoin.mainBoard.window.AddUserPopWindow;
 import com.crowdcoin.mainBoard.window.NewEntryPopWindow;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.SQLData;
@@ -40,7 +41,7 @@ public class MainBoardController {
         SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
         SQLTable table2 = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
 
-        UserModel userModel = new UserModel(101,0.00,"test");
+        UserModel userModel = new UserModel(101,0.00,"test","test2");
         ModelClass modelClassUser = new ModelClassFactory().build(userModel);
         SQLTable table3 = new SQLTable(SQLData.getSqlConnection(),"userData", modelClassUser.getColumns());
 
@@ -86,6 +87,14 @@ public class MainBoardController {
             }
         }));
         MenuGroup test2 = new MenuGroup("Test2");
+        test2.addOption(new MenuOption("Add new user",option -> {
+            try {
+                PopWindow newUser = new AddUserPopWindow("Add User",table3,modelClassUser);
+                newUser.start(StageManager.getStage(newUser));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }));
 
         // Note that options are cloned thus updates need to be made before adding to container (this might change in the future)
         test1.removeOption(new MenuOption("Hello",p -> System.out.println("Test!")));

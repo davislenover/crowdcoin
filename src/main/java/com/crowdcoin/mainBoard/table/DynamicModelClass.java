@@ -122,4 +122,29 @@ public class DynamicModelClass extends ModelClass {
 
     }
 
+    /**
+     * Gets a variable column name prefix
+     * @param klass given ModelClass (DynamicModelClass) with a variable column
+     * @return the given variable column prefix. Blank string if no variable column was found
+     */
+    public static String getVariableColumnPrefix(ModelClass klass) {
+        List<Column> columns = klass.getColumns();
+        Column varCol = klass.getColumns().get(columns.size()-1);
+        if (varCol.isVariable()) {
+            return varCol.getColumnName();
+        }
+        return "";
+    }
+
+    /**
+     * Returns the size of variable column data
+     * @param klass the given ModelClass housing the variable column
+     * @return the size as an Integer. Size of 0 if either there is no data within the variable column or the variable column does not exist
+     */
+    public static int getNextVariableColumnInteger(ModelClass klass) {
+        List<Column> columns = klass.getColumns();
+        Column varCol = klass.getColumns().get(columns.size()-1);
+        return getAllVariableData(klass,varCol).size();
+    }
+
 }
