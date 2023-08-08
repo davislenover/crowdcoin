@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SQLDefaultQueries {
+public class SQLTypes {
     public static Map<String,Class<?>> SQLToJavaType = new HashMap<>()
     {{
         put("BLOB", Byte[].class);

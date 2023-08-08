@@ -9,7 +9,6 @@ import com.crowdcoin.mainBoard.table.permissions.IsReadable;
 import com.crowdcoin.mainBoard.table.permissions.IsSystemWriteable;
 import com.crowdcoin.mainBoard.table.permissions.IsWriteable;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
-import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.data.constraints.ConstraintContainer;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterManager;
 import com.crowdcoin.networking.sqlcom.query.*;

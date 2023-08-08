@@ -7,7 +7,6 @@ import com.crowdcoin.mainBoard.table.Observe.Observable;
 import com.crowdcoin.mainBoard.table.Observe.Observer;
 import com.crowdcoin.networking.sqlcom.SQLColumnType;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
-import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.permissions.SQLPermission;
 import com.crowdcoin.networking.sqlcom.query.AddColumnQuery;
 import com.crowdcoin.networking.sqlcom.query.AddUserQuery;

@@ -10,7 +10,7 @@ import com.crowdcoin.exceptions.tab.ModelClassConstructorTypeException;
 import com.crowdcoin.mainBoard.table.permissions.IsReadable;
 import com.crowdcoin.mainBoard.table.permissions.IsSystemWriteable;
 import com.crowdcoin.mainBoard.table.permissions.IsWriteable;
-import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
+import com.crowdcoin.networking.sqlcom.SQLTypes;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 
 import java.lang.reflect.Array;
@@ -190,7 +190,7 @@ public class ModelClassFactory {
                 // Check if both the columnType class and the corresponding constructor parameter match
                 // Check isArray() function last because if isArray boolean is true (not function), that is the last constructor type, thus, checking for an index higher will result in an IndexOutOfBoundsException
                 if (!isArray && !modelClassConstructorTypes[constructorTypeIndex].isArray()) {
-                    if (!SQLDefaultQueries.SQLToJavaType.get(columnType.toUpperCase()).getName().toUpperCase().contains(modelClassConstructorTypes[constructorTypeIndex].getName().toUpperCase())) {
+                    if (!SQLTypes.SQLToJavaType.get(columnType.toUpperCase()).getName().toUpperCase().contains(modelClassConstructorTypes[constructorTypeIndex].getName().toUpperCase())) {
                         doesntHaveIssue = false;
                         break;
                     }
@@ -203,7 +203,7 @@ public class ModelClassFactory {
 
                 if (isArray) {
                     // Use getComponentType() instead of just getName as we have to parse array first
-                    if (!SQLDefaultQueries.SQLToJavaType.get(columnType.toUpperCase()).getName().toUpperCase().contains(modelClassConstructorTypes[holdIndex].getComponentType().getName().toUpperCase())) {
+                    if (!SQLTypes.SQLToJavaType.get(columnType.toUpperCase()).getName().toUpperCase().contains(modelClassConstructorTypes[holdIndex].getComponentType().getName().toUpperCase())) {
                         doesntHaveIssue = false;
                         break;
                     }
