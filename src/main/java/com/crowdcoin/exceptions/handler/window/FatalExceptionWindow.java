@@ -54,12 +54,11 @@ public class FatalExceptionWindow extends PopWindow {
     }
 
     private String stackTraceToString(Throwable throwable) {
-        StringBuilder traceBuilder = new StringBuilder();
+        String stackTrace = "";
         for (StackTraceElement element : throwable.getStackTrace()) {
-            traceBuilder.append(element.toString());
-            traceBuilder.append("\n");
+            stackTrace+=element.toString();
         }
-        return traceBuilder.toString();
+        return stackTrace;
     }
 
 

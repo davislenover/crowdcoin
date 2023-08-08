@@ -1,5 +1,6 @@
 package com.crowdcoin.loginBoard;
 
+import com.crowdcoin.exceptions.handler.ExceptionGuardian;
 import com.crowdcoin.mainBoard.MainBoard;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -16,6 +17,7 @@ import java.io.IOException;
 public class LoginBoard extends Application {
     @Override
     public void start(Stage stage) throws IOException {
+        ExceptionGuardian.setRootStage(stage);
         FXMLLoader fxmlLoader = new FXMLLoader(LoginBoard.class.getResource("loginBoard.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 600, 400);
         stage.setTitle("CrowdCoin - Login");
@@ -57,7 +59,11 @@ public class LoginBoard extends Application {
     }
 
     public static void main(String[] args) {
-        launch();
+        try {
+            launch();
+        } catch (Exception e) {
+            ExceptionGuardian.handleGeneralException(e);
+        }
     }
 
 }

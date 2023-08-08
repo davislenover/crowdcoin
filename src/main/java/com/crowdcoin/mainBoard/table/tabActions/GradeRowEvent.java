@@ -1,6 +1,7 @@
 package com.crowdcoin.mainBoard.table.tabActions;
 
 import com.crowdcoin.FXTools.StageManager;
+import com.crowdcoin.exceptions.handler.ExceptionGuardian;
 import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
@@ -109,7 +110,7 @@ public class GradeRowEvent implements TabActionEvent {
                                     confirmWindow.closeWindow();
                                 } catch (Exception e) {
                                     // TODO Error handling
-                                    e.printStackTrace();
+                                    ExceptionGuardian.handleGeneralException(e);
                                 }
 
                             });
@@ -124,6 +125,7 @@ public class GradeRowEvent implements TabActionEvent {
                                 confirmWindow.start(StageManager.getStage(confirmWindow));
                             } catch (Exception e) {
                                 // TODO Error handling
+                                ExceptionGuardian.handleGeneralException(e);
                             }
                         });
 
@@ -147,7 +149,7 @@ public class GradeRowEvent implements TabActionEvent {
             tableView.getSelectionModel().select(columnContainer.getCurrentSelectedRelativeIndex());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            ExceptionGuardian.handleGeneralException(e);
             // TODO Error handling
         }
 
