@@ -12,6 +12,7 @@ import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.data.constraints.ConstraintContainer;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterManager;
+import com.crowdcoin.networking.sqlcom.query.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -91,19 +92,19 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
         this.tableColumns = new ArrayList<>();
 
         // Use information schema to get all table information for the specified table name
-        ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getGetColumnDataQuery(this.tableName));
+        ResultSet result = this.connection.sendQuery(new GetColumnDataQuery(this.tableName));
 
         // Loop over each row
         while (result.next()) {
 
             String[] newColumn = new String[3];
             // Get corresponding column name
-            newColumn[0] = result.getString(SQLDefaultQueries.informationSchemaColumnName);
+            newColumn[0] = result.getString(QueryPrefix.informationSchemaColumnName.getPrefix());
             // Get columns data type
-            newColumn[1] = result.getString(SQLDefaultQueries.informationSchemaDataType);
+            newColumn[1] = result.getString(QueryPrefix.informationSchemaDataType.getPrefix());
             // Get it's ordinal position
             // All results will be returned in ordinal position for query consistency
-            newColumn[2] = result.getString(SQLDefaultQueries.informationSchemaOrdinalPosition);
+            newColumn[2] = result.getString(QueryPrefix.informationSchemaOrdinalPosition.getPrefix());
 
             this.tableColumns.add(newColumn);
 
@@ -206,7 +207,7 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
 
         // Get query result
         // Specifies to get a specific row of all data from table
-        ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllWithLimit(this.tableName,rowIndex,1));
+        ResultSet result = this.connection.sendQuery(new GetColumnDataWithLimitQuery(this.tableName,rowIndex,1));
 
         List<Object> returnRow = new ArrayList<>();
         // Get list of all column names in the desired column range to return data from
@@ -250,7 +251,7 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
             throw new InvalidRangeException(String.valueOf(startColumnIndex),String.valueOf(endColumnIndex));
         }
 
-        ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllWithLimit(this.tableName,rowIndex,1));
+        ResultSet result = this.connection.sendQuery(new GetColumnDataWithLimitQuery(this.tableName,rowIndex,1));
         List<Object> returnRow = new ArrayList<>();
 
         // Loop through start to end and add the corresponding column data to return list
@@ -294,7 +295,7 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
         // Get query result
         // Specifies to get a specific row of all data from table
         // Get combined query string to add filters
-        ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllWithFilterAndLimit(this.tableName,this.filterManager.getCombinedQuery(),rowIndex,numberOfRows));
+        ResultSet result = this.connection.sendQuery(new GetColumnDataWithLimitAndFilterQuery(this.tableName,this.filterManager.getCombinedQuery(),rowIndex,numberOfRows));
         List<List<Object>> returnRows = new ArrayList<>();
 
         // Get list of all column names in the desired column range to return data from
@@ -349,7 +350,7 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
             throw new InvalidRangeException(String.valueOf(startColumnIndex),String.valueOf(endColumnIndex));
         }
 
-        ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllWithFilterAndLimit(this.tableName,this.filterManager.getCombinedQuery(),rowIndex,numberOfRows));
+        ResultSet result = this.connection.sendQuery(new GetColumnDataWithLimitAndFilterQuery(this.tableName,this.filterManager.getCombinedQuery(),rowIndex,numberOfRows));
         List<List<Object>> returnRows = new ArrayList<>();
 
         boolean isValid = true;
@@ -403,7 +404,7 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
             throw new InvalidRangeException(String.valueOf(startColumnIndex),String.valueOf(endColumnIndex));
         }
 
-        ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllWithFilterAndLimit(this.tableName,this.filterManager.getCombinedQuery(),rowIndex,numberOfRows));
+        ResultSet result = this.connection.sendQuery(new GetColumnDataWithLimitAndFilterQuery(this.tableName,this.filterManager.getCombinedQuery(),rowIndex,numberOfRows));
         List<List<Object>> returnRows = new ArrayList<>();
 
         while (result.next()) {
@@ -453,7 +454,7 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
         while(returnRows.size() < numberOfRows && !isLast) {
 
             boolean isRowValid = true;
-            ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllWithFilterAndLimit(this.tableName,this.filterManager.getCombinedQuery(),rowIndex,numberOfRows));
+            ResultSet result = this.connection.sendQuery(new GetColumnDataWithLimitAndFilterQuery(this.tableName,this.filterManager.getCombinedQuery(),rowIndex,numberOfRows));
             int size = 0;
 
             while (result.next()) {
@@ -518,7 +519,7 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
             throw new InvalidRangeException(String.valueOf(startColumnIndex),String.valueOf(endColumnIndex));
         }
 
-        ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllSpecific(this.tableName,this.tableColumns.get(columnWithDataIndex)[0],specificData,numberOfRows));
+        ResultSet result = this.connection.sendQuery(new GetColumnDataSpecificQuery(this.tableName,this.tableColumns.get(columnWithDataIndex)[0],specificData,numberOfRows));
 
         List<List<Object>> returnRows = new ArrayList<>();
         boolean isValid = true;
@@ -576,7 +577,7 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
             throw new InvalidRangeException(String.valueOf(startColumnIndex),String.valueOf(endColumnIndex));
         }
 
-        ResultSet result = this.connection.sendQuery(SQLDefaultQueries.getAllSpecific(this.tableName,this.tableColumns.get(columnWithDataIndex)[0],specificData,numberOfRows));
+        ResultSet result = this.connection.sendQuery(new GetColumnDataSpecificQuery(this.tableName,this.tableColumns.get(columnWithDataIndex)[0],specificData,numberOfRows));
 
         List<List<Object>> returnRows = new ArrayList<>();
 
@@ -623,7 +624,7 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
         }
 
         // Invoke query
-        this.connection.executeQuery(SQLDefaultQueries.insertValueIntoExistingRow(this.tableName,this.tableColumns.get(columnWriteIndex)[0],dataToWrite,this.tableColumns.get(columnWhereIndex)[0],dataWhereRead));
+        this.connection.executeQuery(new InsertSingleValueIntoRowQuery(this.tableName,this.tableColumns.get(columnWriteIndex)[0],dataToWrite,this.tableColumns.get(columnWhereIndex)[0],dataWhereRead));
 
         ModifyEvent event = new ModifyEvent(ModifyEventType.ROW_MODIFIED,this.getTableName());
         this.notifyObservers(event);
@@ -671,7 +672,7 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
         }
 
         // Invoke query
-        this.connection.executeQuery(SQLDefaultQueries.insertValuesIntoExistingRow(this.tableName,columnsToInsertData,correspondingDataToInsert,this.tableColumns.get(columnWhereIndex)[0],dataWhereRead));
+        this.connection.executeQuery(new InsertIntoRowQuery(this.tableName,columnsToInsertData,correspondingDataToInsert,this.tableColumns.get(columnWhereIndex)[0],dataWhereRead));
 
         ModifyEvent event = new ModifyEvent(ModifyEventType.ROW_MODIFIED,this.getTableName());
         this.notifyObservers(event);
@@ -711,7 +712,7 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
         }
 
         // Invoke query
-        this.connection.executeQuery(SQLDefaultQueries.insertValueIntoNewRow(this.tableName,columnsToInsertData,correspondingDataToInsert));
+        this.connection.executeQuery(new NewRowQuery(this.tableName,columnsToInsertData,correspondingDataToInsert));
 
         // Because this is a new row being added, tabs will need to refresh to see changes, thus notify all tabs watching the table
         ModifyEvent event = new ModifyEvent(ModifyEventType.NEW_ROW,this.getTableName());
@@ -752,7 +753,7 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
         }
 
         // Invoke query
-        this.connection.executeQuery(SQLDefaultQueries.insertValueIntoNewRow(this.tableName,columnsToInsertData,correspondingDataToInsert));
+        this.connection.executeQuery(new NewRowQuery(this.tableName,columnsToInsertData,correspondingDataToInsert));
 
         // Because this is a new row being added, tabs will need to refresh to see changes, thus notify all tabs watching the table
         ModifyEvent event = new ModifyEvent(ModifyEventType.NEW_ROW,this.getTableName());
@@ -771,7 +772,7 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
             throw new IndexOutOfBoundsException("The specified column does not exist within the table (" + columnWhereIndex + " where max is " + (this.tableColumns.size()-1) + ")");
         }
 
-        this.connection.executeQuery(SQLDefaultQueries.deleteRow(this.tableName,this.tableColumns.get(columnWhereIndex)[0],dataWhereRead));
+        this.connection.executeQuery(new DeleteRowQuery(this.tableName,this.tableColumns.get(columnWhereIndex)[0],dataWhereRead));
         ModifyEvent event = new ModifyEvent(ModifyEventType.ROW_REMOVED,this.getTableName());
         this.notifyObservers(event);
 

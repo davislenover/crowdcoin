@@ -9,6 +9,9 @@ import com.crowdcoin.networking.sqlcom.SQLColumnType;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.SQLDefaultQueries;
 import com.crowdcoin.networking.sqlcom.permissions.SQLPermission;
+import com.crowdcoin.networking.sqlcom.query.AddColumnQuery;
+import com.crowdcoin.networking.sqlcom.query.AddUserQuery;
+import com.crowdcoin.networking.sqlcom.query.GrantPermissionsQuery;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +29,7 @@ public class SQLDatabase implements Observable<ModifyEvent,String> {
 
     public void addNewUser(String username, String password) {
         try {
-            this.connection.executeQuery(SQLDefaultQueries.addUser(username,password));
+            this.connection.executeQuery(new AddUserQuery(username,password));
         } catch (FailedQueryException e) {
             e.rootException.printStackTrace();
         }
@@ -36,7 +39,7 @@ public class SQLDatabase implements Observable<ModifyEvent,String> {
     public void grantUserPermissions(String username, String schemaName, SQLPermission ... permissions) {
 
         try {
-            this.connection.executeQuery(SQLDefaultQueries.grantPermissions(username,schemaName,Arrays.stream(permissions).map(Enum::name).toArray(String[]::new)));
+            this.connection.executeQuery(new GrantPermissionsQuery(username,schemaName,Arrays.stream(permissions).map(Enum::name).toArray(String[]::new)));
         } catch (FailedQueryException e) {
             e.rootException.printStackTrace();
         }
@@ -45,7 +48,7 @@ public class SQLDatabase implements Observable<ModifyEvent,String> {
 
     public void addColumn(String tableName, String columnName, SQLColumnType type, String defaultValue) {
         try {
-            this.connection.executeQuery(SQLDefaultQueries.addColumn(tableName,columnName,type.getQueryString(),defaultValue));
+            this.connection.executeQuery(new AddColumnQuery(tableName,columnName,type.getQueryString(),defaultValue));
             this.notifyObservers(new ModifyEvent(ModifyEventType.NEW_COLUMN));
         } catch (Exception e) {
             // TODO Error handling

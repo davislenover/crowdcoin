@@ -3,6 +3,8 @@ package com.crowdcoin.networking.sqlcom;
 
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.format.Defaults;
+import com.crowdcoin.networking.sqlcom.query.QueryBuilder;
+
 import java.sql.*;
 import java.util.EmptyStackException;
 import java.util.Stack;
@@ -91,7 +93,7 @@ public class SQLConnection {
      * @return a ResultSet object containing the result of the query execution (data)
      * @throws FailedQueryException if the query fails to execute. This could be for a multitude of reasons and is recommended to get rootException within this exception for exact cause
      */
-    public ResultSet sendQuery(String query) throws FailedQueryException {
+    public ResultSet sendQuery(QueryBuilder query) throws FailedQueryException {
 
         Statement statement = null;
         ResultSet result = null;
@@ -100,7 +102,7 @@ public class SQLConnection {
             // Attempt to create the statements and execution of said statement
             statement = this.connection.createStatement();
             // Get result of statement
-            result = statement.executeQuery(query);
+            result = statement.executeQuery(query.getQuery());
 
             return result;
 
@@ -113,7 +115,7 @@ public class SQLConnection {
             } catch (Exception ignore) {
             }
             // If an exception occurs, throw custom failed query exception
-            throw new FailedQueryException(query, exception);
+            throw new FailedQueryException(query.getQuery(), exception);
         } finally {
 
             statement = null;
@@ -128,7 +130,7 @@ public class SQLConnection {
      * @return true if the first result is a ResultSet object; false if it is an update count or there are no result
      * @throws FailedQueryException if the query fails to execute. This could be for a multitude of reasons and is recommended to get rootException within this exception for exact cause
      */
-    public boolean executeQuery(String query) throws FailedQueryException {
+    public boolean executeQuery(QueryBuilder query) throws FailedQueryException {
 
         Statement statement = null;
         boolean result = false;
@@ -137,7 +139,7 @@ public class SQLConnection {
             // Attempt to create the statements and execution of said statement
             statement = this.connection.createStatement();
             // Get result of statement
-            result = statement.execute(query);
+            result = statement.execute(query.getQuery());
 
             return result;
 
@@ -149,7 +151,7 @@ public class SQLConnection {
             } catch (Exception ignore) {
             }
             // If an exception occurs, throw custom failed query exception
-            throw new FailedQueryException(query, exception);
+            throw new FailedQueryException(query.getQuery(), exception);
         } finally {
             statement = null;
         }
