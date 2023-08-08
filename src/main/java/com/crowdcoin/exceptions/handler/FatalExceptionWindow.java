@@ -8,7 +8,7 @@ import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import javafx.stage.Stage;
 
-public class ExceptionWindow extends PopWindow {
+public class FatalExceptionWindow extends PopWindow {
 
     private String generalMsg = "An unexpected error has occurred";
     private String excMsgPrefix = "Exception Message: ";
@@ -16,7 +16,7 @@ public class ExceptionWindow extends PopWindow {
     private String action = "Please report this error to an administrator and restart the program";
     private Throwable exception;
 
-    public ExceptionWindow(String windowName, Throwable exception) {
+    public FatalExceptionWindow(String windowName, Throwable exception) {
         super(windowName);
         this.exception = exception;
     }
