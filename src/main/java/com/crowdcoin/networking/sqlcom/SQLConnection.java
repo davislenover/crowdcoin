@@ -163,7 +163,7 @@ public class SQLConnection {
      * @return a ResultSetMetaData object containing the metaData of the query execution (data)
      * @throws FailedQueryException if the query fails to execute. This could be for a multitude of reasons and is recommended to get rootException within this exception for exact cause
      */
-    public ResultSetMetaData sendQueryGetMetaData(String query) throws FailedQueryException {
+    public ResultSetMetaData sendQueryGetMetaData(QueryBuilder query) throws FailedQueryException {
 
         Statement statement = null;
         ResultSet result = null;
@@ -172,7 +172,7 @@ public class SQLConnection {
             // Attempt to create the statements and execution of said statement
             statement = this.connection.createStatement();
             // Get result of statement
-            result = statement.executeQuery(query);
+            result = statement.executeQuery(query.getQuery());
             // Get metadata
             ResultSetMetaData metaData = result.getMetaData();
             // Close streams
@@ -189,7 +189,7 @@ public class SQLConnection {
             } catch (Exception ignore) {
             }
             // If an exception occurs, throw custom failed query exception
-            throw new FailedQueryException(query, exception);
+            throw new FailedQueryException(query.getQuery(), exception);
         } finally {
 
             statement = null;
