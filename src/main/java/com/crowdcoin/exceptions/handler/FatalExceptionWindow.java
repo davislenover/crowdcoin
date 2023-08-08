@@ -6,6 +6,7 @@ import com.crowdcoin.mainBoard.Interactive.output.OutputPrintField;
 import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.window.PopWindow;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 public class FatalExceptionWindow extends PopWindow {
@@ -42,7 +43,10 @@ public class FatalExceptionWindow extends PopWindow {
         pane.addOutputField(stkTrace);
         pane.addOutputField(actionOut);
 
-        SubmitField okBtn = new InteractiveButton("Ok",(event, button, pane1) -> {super.closeWindow();});
+        SubmitField okBtn = new InteractiveButton("Ok",(event, button, pane1) -> {
+            super.closeWindow();
+            Platform.exit();
+        });
         pane.addSubmitField(okBtn);
 
         super.start(stage);
