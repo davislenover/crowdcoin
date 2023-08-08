@@ -1,4 +1,4 @@
-package com.crowdcoin.exceptions.handler;
+package com.crowdcoin.exceptions.handler.window;
 
 import com.crowdcoin.mainBoard.Interactive.InteractiveWindowPane;
 import com.crowdcoin.mainBoard.Interactive.output.OutputField;
