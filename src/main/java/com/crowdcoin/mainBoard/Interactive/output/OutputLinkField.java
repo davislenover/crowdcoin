@@ -70,6 +70,11 @@ public class OutputLinkField implements OutputField {
         this.messageText.setText(value);
     }
 
+    @Override
+    public void setValueWrappingWidth(double width) {
+        this.messageText.setMaxWidth(width);
+    }
+
     /**
      * Sets the action to invoke when clicking the given text
      * @param eventToInvoke the given InteractiveFieldActionEvent

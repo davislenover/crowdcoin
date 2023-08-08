@@ -26,4 +26,10 @@ public interface OutputField extends Field {
      */
     void setValue(String value);
 
+    /**
+     * Sets the wrapping width of the main text within the OutputField
+     * @param width the given width as a double
+     */
+    void setValueWrappingWidth(double width);
+
 }

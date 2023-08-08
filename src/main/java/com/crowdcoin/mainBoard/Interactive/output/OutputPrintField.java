@@ -70,4 +70,9 @@ public class OutputPrintField implements OutputField {
     public void setValue(String value) {
         this.messageText.setText(value);
     }
+
+    @Override
+    public void setValueWrappingWidth(double width) {
+        this.messageText.setWrappingWidth(width);
+    }
 }

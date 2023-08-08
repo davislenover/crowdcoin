@@ -84,6 +84,14 @@ public class InfoPopWindow extends PopWindow {
         this.okButtonAction = okButtonAction;
     }
 
+    /**
+     * Sets the info text wrapping width
+     * @param width the width as a double
+     */
+    public void setInfoWrappingWidth(double width) {
+        this.messageField.setValueWrappingWidth(width);
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
 
