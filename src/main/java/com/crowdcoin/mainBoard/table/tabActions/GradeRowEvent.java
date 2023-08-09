@@ -3,6 +3,8 @@ package com.crowdcoin.mainBoard.table.tabActions;
 import com.crowdcoin.FXTools.StageManager;
 import com.crowdcoin.exceptions.handler.ExceptionGuardian;
 import com.crowdcoin.exceptions.handler.GeneralExceptionHandler;
+import com.crowdcoin.exceptions.handler.SQLExceptionHandler;
+import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
@@ -29,6 +31,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -151,10 +154,18 @@ public class GradeRowEvent implements TabActionEvent {
             // notify method will re-apply tab to screen, thus unselecting the row, thus reselect row
             tableView.getSelectionModel().select(columnContainer.getCurrentSelectedRelativeIndex());
 
+        } catch (InvalidRangeException e) {
+            ExceptionGuardian<SQLException> guardian = new ExceptionGuardian<>(new SQLExceptionHandler());
+            SQLException exception = new SQLException("Empty Query Result","01000",5000);
+            guardian.handleException(exception);
+            // TODO Error handling
+        } catch (IndexOutOfBoundsException e) {
+            ExceptionGuardian<SQLException> guardian = new ExceptionGuardian<>(new SQLExceptionHandler());
+            SQLException exception = new SQLException("Empty Query Result","01000",5000);
+            guardian.handleException(exception);
         } catch (Exception e) {
             ExceptionGuardian<Exception> guardian = new ExceptionGuardian<>(new GeneralExceptionHandler());
             guardian.handleException(e);
-            // TODO Error handling
         }
 
     }

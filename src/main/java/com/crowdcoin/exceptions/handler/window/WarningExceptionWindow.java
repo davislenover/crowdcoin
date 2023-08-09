@@ -27,6 +27,7 @@ public class WarningExceptionWindow extends PopWindow {
         SubmitField okBtn = new InteractiveButton("Ok",(event, button, pane1) -> super.closeWindow());
         pane.addSubmitField(okBtn);
 
+        super.setWindowWidth(300);
         super.start(stage);
 
     }
