@@ -2,6 +2,7 @@ package com.crowdcoin.mainBoard.table.tabActions;
 
 import com.crowdcoin.FXTools.StageManager;
 import com.crowdcoin.exceptions.handler.ExceptionGuardian;
+import com.crowdcoin.exceptions.handler.GeneralExceptionHandler;
 import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
@@ -110,7 +111,8 @@ public class GradeRowEvent implements TabActionEvent {
                                     confirmWindow.closeWindow();
                                 } catch (Exception e) {
                                     // TODO Error handling
-                                    ExceptionGuardian.handleGeneralException(e);
+                                    ExceptionGuardian<Exception> guardian = new ExceptionGuardian<>(new GeneralExceptionHandler());
+                                    guardian.handleException(e);
                                 }
 
                             });
@@ -125,7 +127,8 @@ public class GradeRowEvent implements TabActionEvent {
                                 confirmWindow.start(StageManager.getStage(confirmWindow));
                             } catch (Exception e) {
                                 // TODO Error handling
-                                ExceptionGuardian.handleGeneralException(e);
+                                ExceptionGuardian<Exception> guardian = new ExceptionGuardian<>(new GeneralExceptionHandler());
+                                guardian.handleException(e);
                             }
                         });
 
@@ -149,7 +152,8 @@ public class GradeRowEvent implements TabActionEvent {
             tableView.getSelectionModel().select(columnContainer.getCurrentSelectedRelativeIndex());
 
         } catch (Exception e) {
-            ExceptionGuardian.handleGeneralException(e);
+            ExceptionGuardian<Exception> guardian = new ExceptionGuardian<>(new GeneralExceptionHandler());
+            guardian.handleException(e);
             // TODO Error handling
         }
 

@@ -1,6 +1,7 @@
 package com.crowdcoin.loginBoard;
 
 import com.crowdcoin.exceptions.handler.ExceptionGuardian;
+import com.crowdcoin.exceptions.handler.GeneralExceptionHandler;
 import com.crowdcoin.mainBoard.MainBoard;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -62,7 +63,8 @@ public class LoginBoard extends Application {
         try {
             launch();
         } catch (Exception e) {
-            ExceptionGuardian.handleGeneralException(e);
+            ExceptionGuardian<Exception> guardian = new ExceptionGuardian<>(new GeneralExceptionHandler());
+            guardian.handleException(e);
         }
     }
 

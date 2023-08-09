@@ -1,6 +1,7 @@
 package com.crowdcoin.mainBoard.table;
 
 import com.crowdcoin.exceptions.handler.ExceptionGuardian;
+import com.crowdcoin.exceptions.handler.GeneralExceptionHandler;
 import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterCount;
 import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterTypeException;
 import com.crowdcoin.exceptions.modelClass.MultipleVariableMethodsException;
@@ -93,7 +94,8 @@ public class TabBar implements Observer<ModifyEvent,String> {
                 }
                 this.openTab(javaFXTab.getId());
             } catch (Exception e) {
-                ExceptionGuardian.handleGeneralException(e);
+                ExceptionGuardian<Exception> guardian = new ExceptionGuardian<>(new GeneralExceptionHandler());
+                guardian.handleException(e);
                 // TODO add exception handling
             }
         });
@@ -242,7 +244,8 @@ public class TabBar implements Observer<ModifyEvent,String> {
                         this.controlBar.getSelectionModel().select(this.getJavaFXTab(invokedTabID));
 
                     } catch (Exception e) {
-                        ExceptionGuardian.handleGeneralException(e);
+                        ExceptionGuardian<Exception> guardian = new ExceptionGuardian<>(new GeneralExceptionHandler());
+                        guardian.handleException(e);
                         // TODO add exception handling
                     }
 
@@ -268,7 +271,8 @@ public class TabBar implements Observer<ModifyEvent,String> {
                 }
 
             } catch (Exception e) {
-                ExceptionGuardian.handleGeneralException(e);
+                ExceptionGuardian<Exception> guardian = new ExceptionGuardian<>(new GeneralExceptionHandler());
+                guardian.handleException(e);
                 // TODO add exception handling
             }
         } else if (passThroughObject.getEventType() == ModifyEventType.NEW_COLUMN) {
@@ -291,7 +295,8 @@ public class TabBar implements Observer<ModifyEvent,String> {
                 }
 
             } catch (Exception e) {
-                ExceptionGuardian.handleGeneralException(e);
+                ExceptionGuardian<Exception> guardian = new ExceptionGuardian<>(new GeneralExceptionHandler());
+                guardian.handleException(e);
                 // TODO add exception handling
             }
 
