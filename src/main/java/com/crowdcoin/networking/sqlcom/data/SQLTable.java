@@ -8,6 +8,7 @@ import com.crowdcoin.mainBoard.table.Observe.*;
 import com.crowdcoin.mainBoard.table.permissions.IsReadable;
 import com.crowdcoin.mainBoard.table.permissions.IsSystemWriteable;
 import com.crowdcoin.mainBoard.table.permissions.IsWriteable;
+import com.crowdcoin.mainBoard.table.permissions.PermissionNames;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.data.constraints.ConstraintContainer;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterManager;
@@ -36,9 +37,9 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
     private SQLConnection connection;
     private FilterManager filterManager;
     private List<Column> columnsPermList;
-    private String isReadablePerm = IsReadable.class.getSimpleName();
-    private String isWriteablePerm = IsWriteable.class.getSimpleName();
-    private String isSystemWriteablePerm = IsSystemWriteable.class.getSimpleName();
+    private String isReadablePerm = PermissionNames.ISREADABLE.getName();
+    private String isWriteablePerm = PermissionNames.ISWRITEABLE.getName();
+    private String isSystemWriteablePerm = PermissionNames.ISSYSTEMWRITEABLE.getName();
 
     private ConstraintContainer constraints;
 
@@ -188,6 +189,26 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
      */
     public ConstraintContainer getConstraints() {
         return this.constraints;
+    }
+
+    /**
+     * Checks a given permission for a given columnIndex
+     * @param columnIndex the given columnIndex to check
+     * @param permission the given permission name
+     * @return true if the permission is allowed, false otherwise (even if the permission name does not exist)
+     */
+    public boolean checkPermissions(int columnIndex, String permission) {
+        return this.columnsPermList.get(columnIndex).checkPermissionValue(permission);
+    }
+
+    /**
+     * Checks a given permission for a given columnName
+     * @param columnName the given columnName to check
+     * @param permission the given permission name
+     * @return true if the permission is allowed, false otherwise (even if the permission name does not exist)
+     */
+    public boolean checkPermissions(String columnName, String permission) {
+        return this.getColumnObject(columnName).checkPermissionValue(permission);
     }
 
     /**

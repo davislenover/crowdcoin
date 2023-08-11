@@ -165,7 +165,7 @@ public class SQLConnection {
     }
 
     /**
-     * Execute manipulatives (DML statements) on database (i.e., write to table, any command where a result is not required). This method call is transactional meaning a savepoint is set before the query group is executed.
+     * Execute manipulative's (DML statements) on database (i.e., write to table, any command where a result is not required). This method call is transactional meaning a savepoint is set before the query group is executed.
      * An attempt will be made to commit the queries right after all have been executed. If an exception occurs, one must call {@link SQLConnection#rollBack()} to rollback the failed query(s). One can also call {@link SQLConnection#rollBack()} if the queries were determined to not be of use
      * @param queries a group of queries to execute
      * @throws SQLException if any query fails to execute
