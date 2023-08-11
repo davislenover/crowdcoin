@@ -8,6 +8,7 @@ import com.crowdcoin.networking.sqlcom.query.QueryBuilder;
 
 import java.sql.*;
 import java.util.EmptyStackException;
+import java.util.List;
 import java.util.Stack;
 
 public class SQLConnection {
@@ -170,7 +171,7 @@ public class SQLConnection {
      * @param queries a group of queries to execute
      * @throws SQLException if any query fails to execute
      */
-    public void executeGroupQuery(QueryBuilder ... queries) throws SQLException {
+    public void executeGroupQuery(List<QueryBuilder> queries) throws SQLException {
 
         Statement statement = null;
         int result = 0;
@@ -190,7 +191,7 @@ public class SQLConnection {
                 statement.close();
             } catch (SQLException exception2) {
             }
-            throw new SQLException();
+            throw exception;
         } finally {
             statement = null;
         }
