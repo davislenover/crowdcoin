@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SQLTableGroup extends SQLTable {
+public class SQLTableGroup extends SQLTable implements SQLQueryGroup {
 
     private List<QueryBuilder> queries;
     private List<ModifyEvent> events;
@@ -205,6 +205,7 @@ public class SQLTableGroup extends SQLTable {
      * Execute all queries in group. Afterward, all queries in group are cleared.
      * @throws SQLException if any one of the queries fails. {@link SQLConnection#rollBack()} is automatically called and all successful queries (if any) are rollback. Regardless of exception, all queries in group will be cleared
      */
+    @Override
     public void executeQueries() throws SQLException {
         SQLConnection connection = super.getConnection();
         try {
@@ -225,11 +226,21 @@ public class SQLTableGroup extends SQLTable {
         this.events.clear();
     }
 
+    @Override
     public void clearQueries() {
         this.queries.clear();
         this.events.clear();
     }
 
+    @Override
+    public List<QueryBuilder> getQueries() {
+        return List.copyOf(this.queries);
+    }
+
+    @Override
+    public List<ModifyEvent> getEvents() {
+        return List.copyOf(this.events);
+    }
 
 
 }

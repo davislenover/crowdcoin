@@ -26,6 +26,10 @@ public class SQLDatabase implements Observable<ModifyEvent,String> {
         this.subscriptionList = new ArrayList<>();
     }
 
+    public SQLConnection getConnection() {
+        return this.connection;
+    }
+
     public void addNewUser(String username, String password) {
         try {
             this.connection.executeQuery(new AddUserQuery(username,password));
