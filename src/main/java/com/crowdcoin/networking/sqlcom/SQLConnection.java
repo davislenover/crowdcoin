@@ -15,10 +15,7 @@ public class SQLConnection {
     // Declare connection and credential info
     private Connection connection;
     private String address;
-    private String databaseUsername;
-    private String databasePassword;
     private String schemaName;
-    private Savepoint savePoint;
     private Statement groupStatement = null;
 
     // Constructor to get MySQL Connection
@@ -34,8 +31,6 @@ public class SQLConnection {
             try {
                 this.connection = DriverManager.getConnection(address, databaseUsername, databasePassword);
                 this.address = address;
-                this.databaseUsername = databaseUsername;
-                this.databasePassword = databasePassword;
                 break;
 
                 // Catch timeout
@@ -143,11 +138,11 @@ public class SQLConnection {
         int result = 0;
 
         try {
-            this.savePoint = this.connection.setSavepoint();
             // Attempt to create the statements and execution of said statement
             statement = this.connection.createStatement();
             // Get result of statement
             result = statement.executeUpdate(query.getQuery());
+            // If no exception, commit the transaction
             this.connection.commit();
 
             return result;
@@ -178,7 +173,6 @@ public class SQLConnection {
         int result = 0;
 
         try {
-            this.savePoint = this.connection.setSavepoint();
             statement = this.connection.createStatement();
 
             for (QueryBuilder query : queries) {
@@ -210,7 +204,6 @@ public class SQLConnection {
         int result = 0;
 
         try {
-            this.savePoint = this.connection.setSavepoint();
             this.groupStatement = this.connection.createStatement();
 
             for (QueryBuilder query : queries) {
@@ -236,7 +229,7 @@ public class SQLConnection {
      * @throws SQLException if a database access error occurs
      */
     public void rollBack() throws SQLException {
-        this.connection.rollback(this.savePoint);
+        this.connection.rollback();
         if (this.groupStatement != null) {
             this.groupStatement.close();
             this.groupStatement = null;

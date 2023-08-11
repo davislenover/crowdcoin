@@ -15,10 +15,12 @@ import com.crowdcoin.mainBoard.table.DynamicModelClass;
 import com.crowdcoin.mainBoard.table.ModelClass;
 import com.crowdcoin.networking.sqlcom.SQLColumnType;
 import com.crowdcoin.networking.sqlcom.data.SQLDatabase;
+import com.crowdcoin.networking.sqlcom.data.SQLDatabaseGroup;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.permissions.SQLPermission;
 import javafx.stage.Stage;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class AddUserPopWindow extends PopWindow {
@@ -64,18 +66,24 @@ public class AddUserPopWindow extends PopWindow {
                     confirmationWindow.setOkButtonAction((event1, button1, pane2) -> {
                         List<String> paneInput = pane1.getAllInput();
 
-                        SQLDatabase database = this.table.getDatabase();
-                        String userName = paneInput.get(0);
-                        database.addNewUser(paneInput.get(0),paneInput.get(1));
-                        database.grantUserPermissions(paneInput.get(0),this.table.getConnection().getSchemaName(),SQLPermission.values());
-                        database.addColumn(this.table.getTableName(),DynamicModelClass.getVariableColumnPrefix(this.gradingTableModelClass)+DynamicModelClass.getNextVariableColumnInteger(this.gradingTableModelClass)+"_"+userName+"Value", SQLColumnType.VARCHAR_45,"0");
-
+                        try {
+                            SQLDatabaseGroup database = this.table.getDatabase().getQueryGroup();
+                            String userName = paneInput.get(0);
+                            database.addNewUser(paneInput.get(0),paneInput.get(1));
+                            database.grantUserPermissions(paneInput.get(0),this.table.getConnection().getSchemaName(),SQLPermission.values());
+                            database.addColumn(this.table.getTableName(),DynamicModelClass.getVariableColumnPrefix(this.gradingTableModelClass)+DynamicModelClass.getNextVariableColumnInteger(this.gradingTableModelClass)+"_"+userName+"Value", SQLColumnType.VARCHAR_45,"0");
+                            database.executeQueries();
+                        } catch (SQLException exception) {
+                            exception.printStackTrace();
+                        }
                         confirmationWindow.closeWindow();
                         super.closeWindow();
                     });
                     confirmationWindow.start(StageManager.getStage(confirmationWindow));
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (SQLException exception) {
+                    exception.printStackTrace();
+                    // TODO Error handling
+                } catch (Exception exception) {
                     // TODO Error handling
                 }
 
