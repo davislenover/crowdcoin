@@ -3,6 +3,7 @@ package com.crowdcoin.networking.sqlcom;
 
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.format.Defaults;
+import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
 import com.crowdcoin.networking.sqlcom.query.QueryBuilder;
 
 import java.sql.*;
@@ -16,6 +17,7 @@ public class SQLConnection {
     private String databaseUsername;
     private String databasePassword;
     private String schemaName;
+    private Savepoint savePoint;
 
     // Constructor to get MySQL Connection
     // This class can throw exceptions
@@ -77,6 +79,8 @@ public class SQLConnection {
         while (!schemaNameStack.isEmpty()) {
             this.schemaName+=schemaNameStack.pop();
         }
+        // Set AutoCommit to false, enable rollbacks
+        this.connection.setAutoCommit(false);
     }
 
     /**
@@ -88,8 +92,8 @@ public class SQLConnection {
     }
 
     /**
-     * Execute query on database
-     * @param query a string containing the query to execute
+     * Execute query on database that returns some result (e.g., using SELECT). This method call is not transactional
+     * @param query a QueryBuilder containing the query to execute
      * @return a ResultSet object containing the result of the query execution (data)
      * @throws FailedQueryException if the query fails to execute. This could be for a multitude of reasons and is recommended to get rootException within this exception for exact cause
      */
@@ -125,21 +129,24 @@ public class SQLConnection {
     }
 
     /**
-     * Execute manipulative on database (i.e., write to table, any command where a result is not required)
-     * @param query a string containing the query to execute
-     * @return true if the first result is a ResultSet object; false if it is an update count or there are no result
-     * @throws FailedQueryException if the query fails to execute. This could be for a multitude of reasons and is recommended to get rootException within this exception for exact cause
+     * Execute manipulative (DML statement) on database (i.e., write to table, any command where a result is not required). This method call is transactional meaning a savepoint is set before the query is executed.
+     * An attempt will be made to commit the query right after execution. If an execution occurs, one must call {@link SQLConnection#rollBack()} to rollback the failed query. One can also call {@link SQLConnection#rollBack()} if the query was determined to not be of use
+     * @param query a QueryBuilder containing the query to execute
+     * @return a number greater than 0 if the first result is a row count for the DML statement; 0 for statements that return nothing
+     * @throws FailedQueryException if the query fails to execute. This could be for a multitude of reasons and is recommended to get rootException within this exception for exact cause.
      */
-    public boolean executeQuery(QueryBuilder query) throws FailedQueryException {
+    public int executeQuery(QueryBuilder query) throws FailedQueryException {
 
         Statement statement = null;
-        boolean result = false;
+        int result = 0;
 
         try {
+            this.savePoint = this.connection.setSavepoint();
             // Attempt to create the statements and execution of said statement
             statement = this.connection.createStatement();
             // Get result of statement
-            result = statement.execute(query.getQuery());
+            result = statement.executeUpdate(query.getQuery());
+            this.connection.commit();
 
             return result;
 
@@ -158,44 +165,47 @@ public class SQLConnection {
     }
 
     /**
-     * Execute query on database
-     * @param query a string containing the query to execute
-     * @return a ResultSetMetaData object containing the metaData of the query execution (data)
-     * @throws FailedQueryException if the query fails to execute. This could be for a multitude of reasons and is recommended to get rootException within this exception for exact cause
+     * Execute manipulatives (DML statements) on database (i.e., write to table, any command where a result is not required). This method call is transactional meaning a savepoint is set before the query group is executed.
+     * An attempt will be made to commit the queries right after all have been executed. If an exception occurs, one must call {@link SQLConnection#rollBack()} to rollback the failed query(s). One can also call {@link SQLConnection#rollBack()} if the queries were determined to not be of use
+     * @param queries a group of queries to execute
+     * @throws SQLException if any query fails to execute
      */
-    public ResultSetMetaData sendQueryGetMetaData(QueryBuilder query) throws FailedQueryException {
+    public void executeGroupQuery(QueryBuilder ... queries) throws SQLException {
 
         Statement statement = null;
-        ResultSet result = null;
+        int result = 0;
 
         try {
-            // Attempt to create the statements and execution of said statement
+            this.savePoint = this.connection.setSavepoint();
             statement = this.connection.createStatement();
-            // Get result of statement
-            result = statement.executeQuery(query.getQuery());
-            // Get metadata
-            ResultSetMetaData metaData = result.getMetaData();
-            // Close streams
-            statement.close();
-            result.close();
-            return metaData;
 
-        } catch (Exception exception) {
-            try {
-                // Attempt to close connections if failed
-                statement.close();
-                result.close();
-                // Ignore any exceptions
-            } catch (Exception ignore) {
+            for (QueryBuilder query : queries) {
+                statement.executeUpdate(query.getQuery());
             }
-            // If an exception occurs, throw custom failed query exception
-            throw new FailedQueryException(query.getQuery(), exception);
+
+            this.connection.commit();
+
+        } catch (SQLException exception) {
+            try {
+                statement.close();
+            } catch (SQLException exception2) {
+            }
+            throw new SQLException();
         } finally {
-
             statement = null;
-            result = null;
-
         }
+
+
     }
+
+    /**
+     * Rollback the database to the last set savepoint
+     * @throws SQLException if a database access error occurs
+     */
+    public void rollBack() throws SQLException {
+        this.connection.rollback(this.savePoint);
+    }
+
+
 
 }
