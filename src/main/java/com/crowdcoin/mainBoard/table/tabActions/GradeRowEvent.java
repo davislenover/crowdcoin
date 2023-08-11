@@ -25,7 +25,10 @@ import com.crowdcoin.mainBoard.window.InfoPopWindow;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.SQLData;
+import com.crowdcoin.networking.sqlcom.data.SQLDatabaseGroup;
+import com.crowdcoin.networking.sqlcom.data.SQLQueryGroup;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
+import com.crowdcoin.networking.sqlcom.data.SQLTableGroup;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
@@ -104,11 +107,19 @@ public class GradeRowEvent implements TabActionEvent {
 
                                     // Check if coin can be given a full grade
                                     GradeTools gradeChecker = new GradeTools(coinID,table);
+
                                     if (gradeChecker.hasEveryoneGradedID()) {
+
+                                        SQLTableGroup gradeGroup = table.getQueryGroup();
+                                        SQLTableGroup mainCoinTableGroup = mainCoinTable.getQueryGroup();
+
                                         // Write average grade to the corresponding average grade column
-                                        table.writeToRow(1,String.valueOf(gradeChecker.getGradeAverage()),0,coinID);
+                                        gradeGroup.writeToRow(1,String.valueOf(gradeChecker.getGradeAverage()),0,coinID);
                                         // Write word grade to main coin table
-                                        mainCoinTable.writeToRow(3,gradeChecker.getGrade().toString(),0,coinID);
+                                        mainCoinTableGroup.writeToRow(3,gradeChecker.getGrade().toString(),0,coinID);
+
+                                        gradeGroup.executeAllQueries(gradeGroup,mainCoinTableGroup);
+
                                     }
 
                                     confirmWindow.closeWindow();

@@ -24,7 +24,7 @@ import java.util.List;
  * Handles communication between a program and an SQL table within an SQL Database.
  * Note this class takes into account permissions and constraints, where a method in question has "raw" in it, both permissions and constraints are ignored. All methods which check permissions also check constraints
  */
-public class SQLTable implements Observable<ModifyEvent,String>, Observer<ModifyEvent,String> {
+public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<ModifyEvent,String>, Observer<ModifyEvent,String> {
 
     private static SQLDatabase database = null;
 
@@ -1037,5 +1037,14 @@ public class SQLTable implements Observable<ModifyEvent,String>, Observer<Modify
     @Override
     public void update(ModifyEvent event) {
         this.notifyObservers(event);
+    }
+
+    @Override
+    public SQLTableGroup getQueryGroup() {
+        try {
+            return new SQLTableGroup(this.connection,this.tableName,this.columnsPermList);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

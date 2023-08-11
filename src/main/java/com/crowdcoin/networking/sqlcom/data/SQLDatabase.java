@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SQLDatabase implements Observable<ModifyEvent,String> {
+public class SQLDatabase implements QueryGroupable<SQLDatabaseGroup>,Observable<ModifyEvent,String> {
 
     private SQLConnection connection;
     private List<Observer<ModifyEvent,String>> subscriptionList;
@@ -81,5 +81,10 @@ public class SQLDatabase implements Observable<ModifyEvent,String> {
     @Override
     public void clearObservers() {
         this.subscriptionList.clear();
+    }
+
+    @Override
+    public SQLDatabaseGroup getQueryGroup() {
+        return new SQLDatabaseGroup(this.connection);
     }
 }

@@ -46,40 +46,69 @@ public interface SQLQueryGroup extends Observable<ModifyEvent,String> {
     SQLConnection getConnection();
 
     /**
-     * Combine one or more query groups and execute all queries as one batch. Any events that need to be fired will still be fired from the original class that called for the query to be added.
+     * Combine one or more query groups and execute all queries as one batch, even if connection tables are different. Any events that need to be fired will still be fired from the original class that called for the query to be added.
      * @param groups all SQLQueryGroup objects containing grouped queries
      * @throws SQLException if any queries fail. This will automatically trigger a rollback thus all queries (executed or not) with all groups provided will be rolled back
      */
     default void executeAllQueries(SQLQueryGroup ... groups) throws SQLException {
 
-        List<QueryBuilder> combinedQueries = new ArrayList<>();
+        List<SQLConnection> connections = new ArrayList<>();
+        List<List<QueryBuilder>> combinedQueries = new ArrayList<>();
         List<List<ModifyEvent>> combinedEvents = new ArrayList<>();
 
+        // Add each group as an internal list
         for (SQLQueryGroup group : groups) {
+            // Add connection
+            connections.add(group.getConnection());
             // Add all queries
-            combinedQueries.addAll(group.getQueries());
+            combinedQueries.add(group.getQueries());
             // Add all events
             combinedEvents.add(group.getEvents());
 
             group.clearQueries();
         }
 
-        SQLConnection connection = groups[0].getConnection();
-        try {
-            // Execute queries
-            connection.executeGroupQuery(combinedQueries);
-            // Fire all events
-            // Go through each internal list representing a group class
-            for (int index = 0; index < combinedEvents.size(); index++) {
-                // Have each corresponding group class fire their events
-                for (ModifyEvent event : combinedEvents.get(index)) {
-                    groups[index].notifyObservers(event);
+        List<SQLConnection> completedConnections = new ArrayList<>();
+        boolean queriesPassed = true;
+        SQLException sqlException = null;
+
+        // Loop through each group
+        for (int groupIndex = 0; groupIndex < connections.size(); groupIndex++) {
+            // Get the connection specific to the current group
+            SQLConnection connection = connections.get(groupIndex);
+            try {
+                // Try to execute all queries pertaining to the group (don't commit just yet)
+                connection.executeGroupQueryNoCommit(combinedQueries.get(groupIndex));
+            } catch (SQLException exception) {
+                // If an SQLException occurs, rollback the current group execution as well as all other groups that had been previously executed
+                connection.rollBack();
+                for (SQLConnection completed : completedConnections) {
+                    completed.rollBack();
+                }
+                queriesPassed = false;
+                sqlException = exception;
+                break;
+            }
+            // If no exceptions occur, add connection to completed connections
+            completedConnections.add(connection);
+        }
+
+        // If asserted, then all group queries can be committed and their events fired
+        if (queriesPassed) {
+
+            for (SQLConnection completed : completedConnections) {
+                completed.commitGroupQuery();
+            }
+
+            for (int groupIndex = 0; groupIndex < combinedEvents.size(); groupIndex++) {
+                for (ModifyEvent event : combinedEvents.get(groupIndex)) {
+                    groups[groupIndex].notifyObservers(event);
                 }
             }
 
-        } catch (SQLException exception) {
-            connection.rollBack();
-            throw exception;
+            // If not, throw the exception that caused the rollbacks
+        } else {
+            throw sqlException;
         }
 
     }

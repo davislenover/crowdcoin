@@ -19,6 +19,7 @@ public class SQLConnection {
     private String databasePassword;
     private String schemaName;
     private Savepoint savePoint;
+    private Statement groupStatement = null;
 
     // Constructor to get MySQL Connection
     // This class can throw exceptions
@@ -196,7 +197,38 @@ public class SQLConnection {
             statement = null;
         }
 
+    }
 
+    /**
+     * Execute manipulative's (DML statements) on database (i.e., write to table, any command where a result is not required). This method call is transactional meaning a savepoint is set before the query group is executed.
+     * NO attempt will be made to commit the queries right after all have been executed. If no exception occurs, one must call {@link SQLConnection#commitGroupQuery()}. If an exception occurs, one must call {@link SQLConnection#rollBack()} to rollback the failed query(s). One can also call {@link SQLConnection#rollBack()} if the queries were determined to not be of use
+     * @param queries a group of queries to execute
+     * @throws SQLException if any query fails to execute
+     */
+    public void executeGroupQueryNoCommit(List<QueryBuilder> queries) throws SQLException {
+
+        int result = 0;
+
+        try {
+            this.savePoint = this.connection.setSavepoint();
+            this.groupStatement = this.connection.createStatement();
+
+            for (QueryBuilder query : queries) {
+                this.groupStatement.executeUpdate(query.getQuery());
+            }
+
+        } catch (SQLException exception) {
+            throw exception;
+        }
+
+    }
+
+    public void commitGroupQuery() throws SQLException {
+        if (this.groupStatement != null) {
+            this.connection.commit();
+            this.groupStatement.close();
+            this.groupStatement = null;
+        }
     }
 
     /**
@@ -205,6 +237,10 @@ public class SQLConnection {
      */
     public void rollBack() throws SQLException {
         this.connection.rollback(this.savePoint);
+        if (this.groupStatement != null) {
+            this.groupStatement.close();
+            this.groupStatement = null;
+        }
     }
 
 

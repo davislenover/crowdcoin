@@ -12,6 +12,7 @@ import com.crowdcoin.mainBoard.window.NewEntryPopWindow;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.SQLData;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
+import com.crowdcoin.networking.sqlcom.data.SQLTableGroup;
 import com.crowdcoin.networking.sqlcom.data.constraints.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
