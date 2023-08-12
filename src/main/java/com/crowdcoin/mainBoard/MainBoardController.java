@@ -90,7 +90,9 @@ public class MainBoardController {
         MenuGroup test2 = new MenuGroup("Test2");
         test2.addOption(new MenuOption("Add new user",option -> {
             try {
-                PopWindow newUser = new AddUserPopWindow("Add User",table3,modelClassUser);
+                ModelClass modelClassUserNames = new ModelClassFactory().build(new permsModel("test"));
+                SQLTable userNameTable = new SQLTable(SQLData.getSqlConnection(),"userGrantsData",modelClassUserNames.getColumns());
+                PopWindow newUser = new AddUserPopWindow("Add User",table3,userNameTable,modelClassUser);
                 newUser.start(StageManager.getStage(newUser));
             } catch (Exception e) {
                 e.printStackTrace();

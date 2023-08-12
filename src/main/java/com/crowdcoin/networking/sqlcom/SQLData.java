@@ -14,6 +14,7 @@ public class SQLData {
     // Get current connection
     public static SQLConnection getSqlConnection() throws Exception {
         if (sqlConnection != null) {
+
             return sqlConnection;
         } else {
             throw new NullConnectionException();

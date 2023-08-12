@@ -195,16 +195,17 @@ public class SQLConnection {
 
     /**
      * Execute manipulative's (DML statements) on database (i.e., write to table, any command where a result is not required). This method call is transactional meaning a savepoint is set before the query group is executed.
-     * NO attempt will be made to commit the queries right after all have been executed. If no exception occurs, one must call {@link SQLConnection#commitGroupQuery()}. If an exception occurs, one must call {@link SQLConnection#rollBack()} to rollback the failed query(s). One can also call {@link SQLConnection#rollBack()} if the queries were determined to not be of use
+     * NO attempt will be made to commit the queries right after all have been executed thus one can call this method multiple times to perform queries under the same transaction. If no exception occurs, one must call {@link SQLConnection#commitGroupQuery()} to commit all changes. If an exception occurs, one must call {@link SQLConnection#rollBack()} to rollback the failed query(s). One can also call {@link SQLConnection#rollBack()} if the queries were determined to not be of use (this MUST be done before committing)
      * @param queries a group of queries to execute
      * @throws SQLException if any query fails to execute
      */
     public void executeGroupQueryNoCommit(List<QueryBuilder> queries) throws SQLException {
 
-        int result = 0;
-
         try {
-            this.groupStatement = this.connection.createStatement();
+
+            if (this.groupStatement == null) {
+                this.groupStatement = this.connection.createStatement();
+            }
 
             for (QueryBuilder query : queries) {
                 this.groupStatement.executeUpdate(query.getQuery());

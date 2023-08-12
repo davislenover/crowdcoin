@@ -1,6 +1,8 @@
 package com.crowdcoin.mainBoard.window;
 
 import com.crowdcoin.FXTools.StageManager;
+import com.crowdcoin.exceptions.network.FailedQueryException;
+import com.crowdcoin.exceptions.table.UnknownColumnNameException;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
@@ -17,6 +19,7 @@ import com.crowdcoin.networking.sqlcom.SQLColumnType;
 import com.crowdcoin.networking.sqlcom.data.SQLDatabase;
 import com.crowdcoin.networking.sqlcom.data.SQLDatabaseGroup;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
+import com.crowdcoin.networking.sqlcom.data.SQLTableGroup;
 import com.crowdcoin.networking.sqlcom.permissions.SQLPermission;
 import javafx.stage.Stage;
 
@@ -27,13 +30,15 @@ public class AddUserPopWindow extends PopWindow {
 
     private static String[] invalidUsernameSequences = {"USERID_","USERID",","};
     private SQLTable table;
+    private SQLTable userGrantsTable;
     private ModelClass gradingTableModelClass;
 
     private String[] isAdminOptions = {"Yes","No"};
 
-    public AddUserPopWindow(String windowName, SQLTable table, ModelClass klass) {
+    public AddUserPopWindow(String windowName, SQLTable table, SQLTable userGrantsTable, ModelClass klass) {
         super(windowName);
         this.table = table;
+        this.userGrantsTable = userGrantsTable;
         this.gradingTableModelClass = klass;
     }
 
@@ -69,18 +74,22 @@ public class AddUserPopWindow extends PopWindow {
                         List<String> paneInput = pane1.getAllInput();
 
                         try {
+                            SQLTableGroup grantsGroup = this.userGrantsTable.getQueryGroup();
                             SQLDatabaseGroup database = this.table.getDatabase().getQueryGroup();
                             String userNameString = paneInput.get(0);
                             String passwordString = paneInput.get(1);
                             boolean isAdminBool = (paneInput.get(2).equals(this.isAdminOptions[0]));
+                            grantsGroup.writeNewRow(List.of(this.userGrantsTable.getColumnNames().get(0)),List.of(userNameString));
                             database.addNewUser(userNameString,passwordString);
                             database.grantUserPermissions(userNameString,this.table.getConnection().getSchemaName(),SQLPermission.ALTER,SQLPermission.INSERT,SQLPermission.DELETE,SQLPermission.SELECT,SQLPermission.UPDATE);
                             if (isAdminBool) {
                                 database.grantGlobalPermissions(userNameString,SQLPermission.GRANT_OPTION,SQLPermission.CREATE_USER,SQLPermission.SHOW_DATABASES);
                             }
                             database.addColumn(this.table.getTableName(),DynamicModelClass.getVariableColumnPrefix(this.gradingTableModelClass)+DynamicModelClass.getNextVariableColumnInteger(this.gradingTableModelClass)+"_"+userNameString+"Value", SQLColumnType.VARCHAR_45,"0");
-                            database.executeQueries();
+                            database.executeAllQueries(database,grantsGroup);
                         } catch (SQLException exception) {
+                            exception.printStackTrace();
+                        } catch (FailedQueryException | UnknownColumnNameException exception) {
                             exception.printStackTrace();
                         }
                         confirmationWindow.closeWindow();

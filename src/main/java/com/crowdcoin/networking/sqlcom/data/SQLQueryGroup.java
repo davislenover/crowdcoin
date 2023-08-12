@@ -82,6 +82,7 @@ public interface SQLQueryGroup extends Observable<ModifyEvent,String> {
             } catch (SQLException exception) {
                 // If an SQLException occurs, rollback the current group execution as well as all other groups that had been previously executed
                 connection.rollBack();
+                // TODO this may not be needed as all statements would be executed under the same transaction
                 for (SQLConnection completed : completedConnections) {
                     completed.rollBack();
                 }
