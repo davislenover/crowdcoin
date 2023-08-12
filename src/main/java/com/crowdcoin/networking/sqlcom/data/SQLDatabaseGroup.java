@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SQLDatabaseGroup extends SQLDatabase implements SQLQueryGroup {
 
@@ -32,7 +33,8 @@ public class SQLDatabaseGroup extends SQLDatabase implements SQLQueryGroup {
     }
 
     public void grantUserPermissions(String username, String schemaName, SQLPermission... permissions) {
-        this.queries.add(new GrantPermissionsQuery(username,schemaName, Arrays.stream(permissions).map(Enum::name).toArray(String[]::new)));
+        // map will take each element from permissions and apply getQueryString() to it (i.e. invoke it) to which the result will be added to a String array
+        this.queries.add(new GrantPermissionsQuery(username,schemaName, Arrays.stream(permissions).map(SQLPermission::getQueryString).toArray(String[]::new)));
     }
 
     public void addColumn(String tableName, String columnName, SQLColumnType type, String defaultValue) {
