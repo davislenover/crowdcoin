@@ -47,6 +47,11 @@ public class SQLDatabaseGroup extends SQLDatabase implements SQLQueryGroup {
         this.events.add(new ModifyEvent(ModifyEventType.NEW_COLUMN));
     }
 
+    public void removeColumn(String tableName, String columnName) {
+        this.queries.add(new RemoveColumnQuery(tableName,columnName));
+        this.events.add(new ModifyEvent(ModifyEventType.DATABASE_MODIFIED));
+    }
+
     /**
      * Execute all queries in group. Afterward, all queries in group are cleared.
      * @throws SQLException if any one of the queries fails. {@link SQLConnection#rollBack()} is automatically called and all successful queries (if any) are rollback. Regardless of exception, all queries in group will be cleared

@@ -72,6 +72,15 @@ public class SQLDatabase implements QueryGroupable<SQLDatabaseGroup>,Observable<
         }
     }
 
+    public void removeColumn(String tableName, String columnName) {
+        try {
+            this.connection.executeQuery(new RemoveColumnQuery(tableName,columnName));
+            this.notifyObservers(new ModifyEvent(ModifyEventType.DATABASE_MODIFIED));
+        } catch (Exception e) {
+            // TODO Error handling
+        }
+    }
+
     @Override
     public boolean addObserver(Observer<ModifyEvent,String> observer) {
         if (!this.subscriptionList.contains(observer)) {

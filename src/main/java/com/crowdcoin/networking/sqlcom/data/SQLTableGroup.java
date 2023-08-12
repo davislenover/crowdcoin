@@ -190,7 +190,7 @@ public class SQLTableGroup extends SQLTable implements SQLQueryGroup {
      * @param columnWhereIndex the corresponding column to look for data
      * @param dataWhereRead the data within the corresponding column. This identifies the row which will be removed
      */
-    public void deleteRow(int columnWhereIndex, String dataWhereRead) throws FailedQueryException {
+    public void deleteRow(int columnWhereIndex, String dataWhereRead) {
 
         if (columnWhereIndex > super.getRawColumnNames().size() - 1) {
             throw new IndexOutOfBoundsException("The specified column does not exist within the table (" + columnWhereIndex + " where max is " + (super.getRawColumnNames().size()-1) + ")");
