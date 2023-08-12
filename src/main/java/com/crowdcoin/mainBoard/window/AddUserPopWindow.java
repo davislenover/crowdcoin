@@ -66,6 +66,7 @@ public class AddUserPopWindow extends PopWindow {
             if (PaneValidator.isInputValid(pane1)) {
                 try {
                     InfoPopWindow confirmationWindow = new InfoPopWindow("Add user confirmation");
+                    confirmationWindow.setId("Add user confirmation");
                     confirmationWindow.setInfoMessage("Add user " + pane1.getInputField(0).getInput() + "?");
                     SubmitField cancelBtn = new InteractiveButton("No",(event1, button1, pane2) -> {confirmationWindow.closeWindow();});
                     cancelBtn.setOrder(1);

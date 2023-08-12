@@ -74,6 +74,7 @@ public class ViewTableRowEvent implements TabActionEvent {
                                     InfoPopWindow checkWindow = new InfoPopWindow("Edit Row",pane1,manager);
                                     checkWindow.setInfoMessage("Submit edits to this row?");
                                     checkWindow.setOkButtonMessage("Yes");
+                                    checkWindow.setId("Edit Row");
 
                                     SubmitField cancelConfirmation = new InteractiveButton("No",((event2, button1, pane3) -> {
                                         checkWindow.closeWindow();
@@ -165,6 +166,7 @@ public class ViewTableRowEvent implements TabActionEvent {
                         InfoPopWindow checkWindow = new InfoPopWindow("Remove Row",pane1,manager);
                         checkWindow.setInfoMessage("Remove the row? This action cannot be undone!");
                         checkWindow.setOkButtonMessage("Yes");
+                        checkWindow.setId("Remove Row");
 
                         SubmitField cancelConfirmation = new InteractiveButton("No",((event2, button1, pane3) -> {
                             checkWindow.closeWindow();

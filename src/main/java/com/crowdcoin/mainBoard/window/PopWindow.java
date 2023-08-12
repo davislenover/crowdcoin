@@ -30,6 +30,8 @@ public class PopWindow extends Application implements Observer<ModifyEvent,Strin
     private Scene scene;
     private VBox root;
 
+    private String windowId = "";
+
     private List<Observer<WindowEvent,String>> subscriptionList = new ArrayList<>();
 
     /**
@@ -66,6 +68,30 @@ public class PopWindow extends Application implements Observer<ModifyEvent,Strin
         this.root = new VBox();
         this.scene = new Scene(root,this.windowWidth,this.windowHeight);
 
+    }
+
+    /**
+     * Sets the id of the PopWindow instance. Used for hashcode and equality tests.
+     * @param windowId the given windowId
+     */
+    public void setId(String windowId) {
+        this.windowId = windowId;
+    }
+
+    /**
+     * Gets the id of the PopWindow instance
+     * @return
+     */
+    public String getId() {
+        return this.windowId;
+    }
+
+    /**
+     * Gets the window name (not to be confused with id)
+     * @return the name as a String
+     */
+    public String getWindowName() {
+        return this.windowName;
     }
 
     public InteractiveWindowPane getWindowPane() {
@@ -224,4 +250,30 @@ public class PopWindow extends Application implements Observer<ModifyEvent,Strin
     public void clearObservers() {
         this.subscriptionList.clear();
     }
+
+    /**
+     * Checks if the Object is a PopWindow, has the same {@link PopWindow#getId()} and {@link PopWindow#getWindowName()}
+     * @param obj the given object to compare
+     * @return true if equal objects, false otherwise
+     */
+    public boolean equals(Object obj) {
+        try {
+            PopWindow compare = (PopWindow) obj;
+            if (compare.getId().equals(this.getId()) && compare.getWindowName().equals(this.getWindowName())) {
+                return true;
+            }
+            return false;
+        } catch (Exception exception) {
+            return false;
+        }
+    }
+
+    /**
+     * The hashcode of a PopWindow object is represented by its id (i.e., from {@link PopWindow#getId()}) and window name (i.e., from {@link PopWindow#getWindowName()}) concatenated
+     * @return the hashcode of the PopWindow instance
+     */
+    public int hashCode() {
+        return (this.getId()+this.getWindowName()).hashCode();
+    }
+
 }

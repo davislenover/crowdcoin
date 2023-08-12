@@ -18,6 +18,7 @@ public class ExportTabEvent implements TabActionEvent {
     @Override
     public void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane, SQLTable table, WindowManager manager) {
         PopWindow exportWindow = new ExportTabPopWindow("Export to File",table,this.tableViewManager,manager);
+        exportWindow.setId("Export to File");
         try {
             exportWindow.start(StageManager.getStage(exportWindow));
         } catch (Exception e) {

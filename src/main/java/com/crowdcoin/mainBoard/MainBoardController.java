@@ -83,6 +83,7 @@ public class MainBoardController {
                 SQLTable tableNewEntry = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
                 tableNewEntry.getConstraints().add(new NameConstraint("grade","null"));
                 PopWindow newEntry = new NewEntryPopWindow("New Entry",tableNewEntry,table3);
+                newEntry.setId("New Entry");
                 newEntry.start(StageManager.getStage(newEntry));
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -96,6 +97,7 @@ public class MainBoardController {
         test2.addOption(new MenuOption("Add new user",option -> {
             try {
                 PopWindow newUser = new AddUserPopWindow("Add User",table3,userNameTable,modelClassUser);
+                newUser.setId("Add User");
                 newUser.start(StageManager.getStage(newUser));
             } catch (Exception e) {
                 e.printStackTrace();

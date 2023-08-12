@@ -158,6 +158,7 @@ public class EditFilterPopWindow extends PopWindow {
         SubmitField removeFilter = new InteractiveButton("Remove Filter",((event, button, pane) -> {
 
             InfoPopWindow newInfoWindow = new InfoPopWindow("Confirmation",windowManager);
+            newInfoWindow.setId("Confirmation");
             newInfoWindow.setInfoMessage("Are you sure you want to remove this filter?");
             newInfoWindow.setOkButtonAction(((event1, button1, pane1) -> {
                 // If ok button is pressed, remove the filter and notify controller for refresh to Tab

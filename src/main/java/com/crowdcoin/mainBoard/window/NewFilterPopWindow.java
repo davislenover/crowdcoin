@@ -130,6 +130,7 @@ public class NewFilterPopWindow extends PopWindow {
         SubmitField cancelField = new InteractiveButton("Cancel",((event, button, pane) -> {
             // Cancel will open confirmation window to close adding filter
             InfoPopWindow confirmationWindow = new InfoPopWindow("Confirmation",windowManager);
+            confirmationWindow.setId("Confirmation");
             confirmationWindow.setInfoMessage("Cancel adding a filter?");
             confirmationWindow.setOkButtonAction(((event1, button1, pane1) -> {
                 super.closeWindow();

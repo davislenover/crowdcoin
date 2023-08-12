@@ -136,6 +136,7 @@ public class GradeRowEvent implements TabActionEvent {
                             }));
                             cancelConfirmation.setOrder(1);
                             confirmWindow.getWindowPane().addSubmitField(cancelConfirmation);
+                            confirmWindow.setId("Confirm Grade");
 
                             try {
                                 confirmWindow.start(StageManager.getStage(confirmWindow));

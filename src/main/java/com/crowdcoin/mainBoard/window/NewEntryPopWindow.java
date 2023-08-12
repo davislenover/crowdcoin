@@ -85,6 +85,7 @@ public class NewEntryPopWindow extends PopWindow {
 
                     // Create window showing id to user
                     InfoPopWindow idWindow = new InfoPopWindow("Entry Submitted");
+                    idWindow.setId("Entry Submitted");
                     idWindow.setInfoMessage("Entry submitted. Assigned ID: " + coinID);
                     idWindow.setOkButtonAction((event1, button1, pane1) -> idWindow.closeWindow());
                     idWindow.start(StageManager.getStage(idWindow));
@@ -102,6 +103,7 @@ public class NewEntryPopWindow extends PopWindow {
             try {
                 // Yes Button
                 InfoPopWindow cancelConfirmation = new InfoPopWindow("Cancel Confirmation");
+                cancelConfirmation.setId("Cancel Confirmation");
                 cancelConfirmation.setInfoMessage("Cancel adding a new entry?");
                 cancelConfirmation.setOkButtonMessage("Yes");
                 cancelConfirmation.setOkButtonAction((event1, button1, pane1) -> {

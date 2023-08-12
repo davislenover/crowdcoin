@@ -43,6 +43,7 @@ public class FilterController implements Observable<ModifyEvent,String> {
             filterNode.setOnAction(event -> {
                 try {
                     PopWindow editFilterWindow = new EditFilterPopWindow(filterNodes.get(filterNode), filterManager,table,this,manager);
+                    editFilterWindow.setId("Edit Filter");
                     editFilterWindow.start(StageManager.getStage(editFilterWindow));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -59,6 +60,7 @@ public class FilterController implements Observable<ModifyEvent,String> {
             try {
                 // Create a new FilterPopWindow and display on screen (start)
                 PopWindow newFilterWindow = new NewFilterPopWindow(filterButton,filterManager,table,this,manager);
+                newFilterWindow.setId("New Filter");
                 newFilterWindow.start(StageManager.getStage(newFilterWindow));
             } catch (Exception e) {
                 throw new RuntimeException(e);
