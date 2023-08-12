@@ -29,6 +29,8 @@ public class AddUserPopWindow extends PopWindow {
     private SQLTable table;
     private ModelClass gradingTableModelClass;
 
+    private String[] isAdminOptions = {"Yes","No"};
+
     public AddUserPopWindow(String windowName, SQLTable table, ModelClass klass) {
         super(windowName);
         this.table = table;
@@ -42,7 +44,7 @@ public class AddUserPopWindow extends PopWindow {
 
         InputField username = new InteractiveTextField("Username","The given username for the new account",(event, field, pane1) -> {return;});
         InputField password = new InteractiveTextField("Password","The given starting password for the new account",(event, field, pane1) -> {return;});
-        InputField isAdmin = new InteractiveChoiceBox("Is an Admin?","Grants the user elevated privileges",(event, field, pane1) -> {return;},"Yes","No");
+        InputField isAdmin = new InteractiveChoiceBox("Is an Admin?","Grants the user elevated privileges",(event, field, pane1) -> {return;},this.isAdminOptions[0],this.isAdminOptions[1]);
 
         InputValidator length = new LengthValidator(1);
         username.addValidator(length);
@@ -68,10 +70,15 @@ public class AddUserPopWindow extends PopWindow {
 
                         try {
                             SQLDatabaseGroup database = this.table.getDatabase().getQueryGroup();
-                            String userName = paneInput.get(0);
-                            database.addNewUser(paneInput.get(0),paneInput.get(1));
-                            database.grantUserPermissions(paneInput.get(0),this.table.getConnection().getSchemaName(),SQLPermission.values());
-                            database.addColumn(this.table.getTableName(),DynamicModelClass.getVariableColumnPrefix(this.gradingTableModelClass)+DynamicModelClass.getNextVariableColumnInteger(this.gradingTableModelClass)+"_"+userName+"Value", SQLColumnType.VARCHAR_45,"0");
+                            String userNameString = paneInput.get(0);
+                            String passwordString = paneInput.get(1);
+                            boolean isAdminBool = (paneInput.get(2).equals(this.isAdminOptions[0]));
+                            database.addNewUser(userNameString,passwordString);
+                            database.grantUserPermissions(userNameString,this.table.getConnection().getSchemaName(),SQLPermission.ALTER,SQLPermission.INSERT,SQLPermission.DELETE,SQLPermission.SELECT,SQLPermission.UPDATE);
+                            if (isAdminBool) {
+                                database.grantGlobalPermissions(userNameString,SQLPermission.GRANT_OPTION,SQLPermission.CREATE_USER,SQLPermission.SHOW_DATABASES);
+                            }
+                            database.addColumn(this.table.getTableName(),DynamicModelClass.getVariableColumnPrefix(this.gradingTableModelClass)+DynamicModelClass.getNextVariableColumnInteger(this.gradingTableModelClass)+"_"+userNameString+"Value", SQLColumnType.VARCHAR_45,"0");
                             database.executeQueries();
                         } catch (SQLException exception) {
                             exception.printStackTrace();

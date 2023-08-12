@@ -10,6 +10,7 @@ import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.permissions.SQLPermission;
 import com.crowdcoin.networking.sqlcom.query.AddColumnQuery;
 import com.crowdcoin.networking.sqlcom.query.AddUserQuery;
+import com.crowdcoin.networking.sqlcom.query.GrantGlobalPermissionsQuery;
 import com.crowdcoin.networking.sqlcom.query.GrantPermissionsQuery;
 
 import java.util.ArrayList;
@@ -47,6 +48,14 @@ public class SQLDatabase implements QueryGroupable<SQLDatabaseGroup>,Observable<
             e.rootException.printStackTrace();
         }
 
+    }
+
+    public void grantGlobalPermissions(String username, SQLPermission ... permissions) {
+        try {
+            this.connection.executeQuery(new GrantGlobalPermissionsQuery(username,Arrays.stream(permissions).map(SQLPermission::getQueryString).toArray(String[]::new)));
+        } catch (FailedQueryException exception) {
+            exception.rootException.printStackTrace();
+        }
     }
 
     public void addColumn(String tableName, String columnName, SQLColumnType type, String defaultValue) {

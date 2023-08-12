@@ -6,10 +6,7 @@ import com.crowdcoin.mainBoard.table.Observe.ModifyEventType;
 import com.crowdcoin.networking.sqlcom.SQLColumnType;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.permissions.SQLPermission;
-import com.crowdcoin.networking.sqlcom.query.AddColumnQuery;
-import com.crowdcoin.networking.sqlcom.query.AddUserQuery;
-import com.crowdcoin.networking.sqlcom.query.GrantPermissionsQuery;
-import com.crowdcoin.networking.sqlcom.query.QueryBuilder;
+import com.crowdcoin.networking.sqlcom.query.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -35,6 +32,10 @@ public class SQLDatabaseGroup extends SQLDatabase implements SQLQueryGroup {
     public void grantUserPermissions(String username, String schemaName, SQLPermission... permissions) {
         // map will take each element from permissions and apply getQueryString() to it (i.e. invoke it) to which the result will be added to a String array
         this.queries.add(new GrantPermissionsQuery(username,schemaName, Arrays.stream(permissions).map(SQLPermission::getQueryString).toArray(String[]::new)));
+    }
+
+    public void grantGlobalPermissions(String username, SQLPermission ... permissions) {
+        this.queries.add(new GrantGlobalPermissionsQuery(username,Arrays.stream(permissions).map(SQLPermission::getQueryString).toArray(String[]::new)));
     }
 
     public void addColumn(String tableName, String columnName, SQLColumnType type, String defaultValue) {
