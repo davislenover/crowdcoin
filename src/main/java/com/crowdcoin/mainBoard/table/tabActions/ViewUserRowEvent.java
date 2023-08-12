@@ -32,11 +32,9 @@ import java.util.List;
 public class ViewUserRowEvent implements TabActionEvent {
 
     private SQLTable userDataTable;
-    private SQLTable userGrantsDataTable;
 
-    public ViewUserRowEvent(SQLTable userDataTable, SQLTable userGrantsDataTable) {
+    public ViewUserRowEvent(SQLTable userDataTable) {
         this.userDataTable = userDataTable;
-        this.userGrantsDataTable = userGrantsDataTable;
     }
 
     @Override
@@ -71,7 +69,7 @@ public class ViewUserRowEvent implements TabActionEvent {
                         confirmationWindow.setOkButtonAction((event1, button1, pane2) -> {
 
                             SQLDatabaseGroup databaseGroup = table.getDatabase().getQueryGroup();
-                            SQLTableGroup userGrantsDataGroup = this.userGrantsDataTable.getQueryGroup();
+                            SQLTableGroup userGrantsDataGroup = table.getQueryGroup();
 
                             databaseGroup.removeUser(userName);
                             databaseGroup.removeColumn(this.userDataTable.getTableName(),this.getUserDataFullColumnName(userName));

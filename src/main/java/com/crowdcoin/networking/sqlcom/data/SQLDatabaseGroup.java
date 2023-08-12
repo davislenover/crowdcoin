@@ -27,10 +27,12 @@ public class SQLDatabaseGroup extends SQLDatabase implements SQLQueryGroup {
 
     public void addNewUser(String username, String password) {
         this.queries.add(new AddUserQuery(username,password));
+        this.events.add(new ModifyEvent(ModifyEventType.ADDED_USER));
     }
 
     public void removeUser(String username) {
         this.queries.add(new RemoveUserQuery(username));
+        this.events.add(new ModifyEvent(ModifyEventType.REMOVED_USER));
     }
 
     public void grantUserPermissions(String username, String schemaName, SQLPermission... permissions) {
@@ -49,7 +51,7 @@ public class SQLDatabaseGroup extends SQLDatabase implements SQLQueryGroup {
 
     public void removeColumn(String tableName, String columnName) {
         this.queries.add(new RemoveColumnQuery(tableName,columnName));
-        this.events.add(new ModifyEvent(ModifyEventType.DATABASE_MODIFIED));
+        this.events.add(new ModifyEvent(ModifyEventType.REMOVED_COLUMN));
     }
 
     /**

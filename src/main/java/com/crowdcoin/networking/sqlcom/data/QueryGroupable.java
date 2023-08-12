@@ -7,7 +7,8 @@ package com.crowdcoin.networking.sqlcom.data;
 public interface QueryGroupable<T extends SQLQueryGroup> {
 
     /**
-     * Gets a {@link SQLQueryGroup} object from the given Groupable class. This will essentially clone the given class
+     * Gets a {@link SQLQueryGroup} object from the given Groupable class. Implementing classes should only ever create ONE instance and keep that instance for subsequent calls. It is strongly recommended that if the QueryGroupable class is of {@link com.crowdcoin.mainBoard.table.Observe.Observer}s,
+     * then the {@link SQLQueryGroup} object should be observing the class which implements the interface
      * @return an {@link SQLQueryGroup} object. Null if fails
      */
     T getQueryGroup();

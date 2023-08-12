@@ -103,7 +103,7 @@ public class MainBoardController {
         }));
 
         Tab testUserTab = new Tab(new permsModel("test"),userNameTable,"testUserTab");
-        testUserTab.setTabTableAction(new ViewUserRowEvent(tableUserData,userNameTable));
+        testUserTab.setTabTableAction(new ViewUserRowEvent(tableUserData));
 
         test2.addOption(new MenuOption("Open Users Tab", option -> {
             testBar.addTab(testUserTab);

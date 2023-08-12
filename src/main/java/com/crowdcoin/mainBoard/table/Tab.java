@@ -321,7 +321,6 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
     // Tab will watch for changes to observing objects (mainly for events like Filter/Database changes)
     @Override
     public void update(ModifyEvent passThroughObject) {
-
         // Erase InteractiveTabPane if new rows were added to table view (prevents editing/removing incorrect rows)
         if (passThroughObject.getEventType() == ModifyEventType.APPLIED_NEW_VIEW) {
             this.columnContainer.resetSelectedRowIndex();

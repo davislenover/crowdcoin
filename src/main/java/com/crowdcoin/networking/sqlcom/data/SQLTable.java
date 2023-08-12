@@ -26,7 +26,8 @@ import java.util.List;
  */
 public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<ModifyEvent,String>, Observer<ModifyEvent,String> {
 
-    private static SQLDatabase database = null;
+    private SQLDatabase database;
+    private SQLTableGroup tableGroup = null;
 
     private List<Observer<ModifyEvent,String>> subscriptionList;
 
@@ -68,10 +69,8 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
 
         this.subscriptionList = new ArrayList<>();
         this.constraints = new ConstraintContainer();
-        if (database == null) {
-            database = new SQLDatabase(this.connection);
-        }
-        database.addObserver(this);
+        this.database = new SQLDatabase(this.connection);
+        this.database.addObserver(this);
     }
 
     /**
@@ -996,10 +995,10 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
 
     /**
      * Gets the SQLDatabase object for higher level queries
-     * @return an SQLDatabase object. All SQLTable classes share the same SQLDatabase object (as they all connect to the same database)
+     * @return an SQLDatabase object.
      */
     public SQLDatabase getDatabase() {
-        return database;
+        return this.database;
     }
 
 
@@ -1031,7 +1030,10 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
 
     @Override
     public void removeObserving() {
-        database.removeObserver(this);
+        this.database.removeObserver(this);
+        if (this.tableGroup != null) {
+            this.tableGroup.removeObserver(this);
+        }
     }
 
     @Override
@@ -1042,8 +1044,13 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
     @Override
     public SQLTableGroup getQueryGroup() {
         try {
-            return new SQLTableGroup(this.connection,this.tableName,this.columnsPermList);
-        } catch (Exception e) {
+            if (this.tableGroup == null) {
+                this.tableGroup = new SQLTableGroup(this.connection,this.tableName,this.columnsPermList);
+                this.tableGroup.addObserver(this);
+            }
+
+            return this.tableGroup;
+        } catch (Exception exception) {
             return null;
         }
     }

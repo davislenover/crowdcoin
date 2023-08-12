@@ -14,9 +14,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SQLDatabase implements QueryGroupable<SQLDatabaseGroup>,Observable<ModifyEvent,String> {
+public class SQLDatabase implements QueryGroupable<SQLDatabaseGroup>,Observable<ModifyEvent,String>, Observer<ModifyEvent,String> {
 
     private SQLConnection connection;
+    private SQLDatabaseGroup databaseGroup = null;
     private List<Observer<ModifyEvent,String>> subscriptionList;
 
     public SQLDatabase(SQLConnection connection) {
@@ -31,6 +32,7 @@ public class SQLDatabase implements QueryGroupable<SQLDatabaseGroup>,Observable<
     public void addNewUser(String username, String password) {
         try {
             this.connection.executeQuery(new AddUserQuery(username,password));
+            this.notifyObservers(new ModifyEvent(ModifyEventType.ADDED_USER));
         } catch (FailedQueryException e) {
             e.rootException.printStackTrace();
         }
@@ -40,6 +42,7 @@ public class SQLDatabase implements QueryGroupable<SQLDatabaseGroup>,Observable<
     public void removeUser(String username) {
         try {
             this.connection.executeQuery(new RemoveUserQuery(username));
+            this.notifyObservers(new ModifyEvent(ModifyEventType.REMOVED_USER));
         } catch (FailedQueryException exception) {
             exception.rootException.printStackTrace();
         }
@@ -75,7 +78,7 @@ public class SQLDatabase implements QueryGroupable<SQLDatabaseGroup>,Observable<
     public void removeColumn(String tableName, String columnName) {
         try {
             this.connection.executeQuery(new RemoveColumnQuery(tableName,columnName));
-            this.notifyObservers(new ModifyEvent(ModifyEventType.DATABASE_MODIFIED));
+            this.notifyObservers(new ModifyEvent(ModifyEventType.REMOVED_COLUMN));
         } catch (Exception e) {
             // TODO Error handling
         }
@@ -108,6 +111,22 @@ public class SQLDatabase implements QueryGroupable<SQLDatabaseGroup>,Observable<
 
     @Override
     public SQLDatabaseGroup getQueryGroup() {
-        return new SQLDatabaseGroup(this.connection);
+        if (this.databaseGroup == null) {
+            this.databaseGroup = new SQLDatabaseGroup(this.connection);
+            databaseGroup.addObserver(this);
+        }
+        return this.databaseGroup;
+    }
+
+    @Override
+    public void removeObserving() {
+        if (this.databaseGroup != null) {
+            this.databaseGroup.removeObserver(this);
+        }
+    }
+
+    @Override
+    public void update(ModifyEvent event) {
+        this.notifyObservers(event);
     }
 }

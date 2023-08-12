@@ -275,10 +275,10 @@ public class TabBar implements Observer<ModifyEvent,String> {
                 guardian.handleException(e);
                 // TODO add exception handling
             }
-        } else if (passThroughObject.getEventType() == ModifyEventType.NEW_COLUMN) {
+        } else if (passThroughObject.getEventType() == ModifyEventType.NEW_COLUMN || passThroughObject.getEventType() == ModifyEventType.REMOVED_COLUMN) {
             try {
 
-                // If the event is a new Filter, then the tabID is located in index 0
+                // If the event is a colum change, tabID is located in index 0
                 String tabID = passThroughObject.getEventData().get(0);
 
                 Tab tab = this.tabIDMap.get(tabID);
