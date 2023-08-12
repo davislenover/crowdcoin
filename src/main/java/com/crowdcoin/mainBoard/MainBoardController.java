@@ -4,6 +4,7 @@ import com.crowdcoin.FXTools.StageManager;
 import com.crowdcoin.mainBoard.table.*;
 import com.crowdcoin.mainBoard.table.tabActions.GradeRowEvent;
 import com.crowdcoin.mainBoard.table.tabActions.ViewTableRowEvent;
+import com.crowdcoin.mainBoard.table.tabActions.ViewUserRowEvent;
 import com.crowdcoin.mainBoard.toolBar.MenuGroup;
 import com.crowdcoin.mainBoard.toolBar.MenuGroupContainer;
 import com.crowdcoin.mainBoard.toolBar.MenuOption;
@@ -87,16 +88,25 @@ public class MainBoardController {
                 throw new RuntimeException(e);
             }
         }));
+
+        ModelClass modelClassUserNames = new ModelClassFactory().build(new permsModel("test"));
+        SQLTable tableUserData = new SQLTable(SQLData.getSqlConnection(),"userData", modelClassUser.getColumns());
+        SQLTable userNameTable = new SQLTable(SQLData.getSqlConnection(),"userGrantsData",modelClassUserNames.getColumns());
         MenuGroup test2 = new MenuGroup("Test2");
         test2.addOption(new MenuOption("Add new user",option -> {
             try {
-                ModelClass modelClassUserNames = new ModelClassFactory().build(new permsModel("test"));
-                SQLTable userNameTable = new SQLTable(SQLData.getSqlConnection(),"userGrantsData",modelClassUserNames.getColumns());
                 PopWindow newUser = new AddUserPopWindow("Add User",table3,userNameTable,modelClassUser);
                 newUser.start(StageManager.getStage(newUser));
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }));
+
+        Tab testUserTab = new Tab(modelClassUserNames,userNameTable,"testUserTab");
+        testUserTab.setTabTableAction(new ViewUserRowEvent(tableUserData,userNameTable));
+
+        test2.addOption(new MenuOption("Open Users Tab", option -> {
+            testBar.addTab(testUserTab);
         }));
 
         // Note that options are cloned thus updates need to be made before adding to container (this might change in the future)

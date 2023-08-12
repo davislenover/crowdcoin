@@ -29,6 +29,10 @@ public class SQLDatabaseGroup extends SQLDatabase implements SQLQueryGroup {
         this.queries.add(new AddUserQuery(username,password));
     }
 
+    public void removeUser(String username) {
+        this.queries.add(new RemoveUserQuery(username));
+    }
+
     public void grantUserPermissions(String username, String schemaName, SQLPermission... permissions) {
         // map will take each element from permissions and apply getQueryString() to it (i.e. invoke it) to which the result will be added to a String array
         this.queries.add(new GrantPermissionsQuery(username,schemaName, Arrays.stream(permissions).map(SQLPermission::getQueryString).toArray(String[]::new)));

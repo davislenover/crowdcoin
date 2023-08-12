@@ -8,10 +8,7 @@ import com.crowdcoin.mainBoard.table.Observe.Observer;
 import com.crowdcoin.networking.sqlcom.SQLColumnType;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.permissions.SQLPermission;
-import com.crowdcoin.networking.sqlcom.query.AddColumnQuery;
-import com.crowdcoin.networking.sqlcom.query.AddUserQuery;
-import com.crowdcoin.networking.sqlcom.query.GrantGlobalPermissionsQuery;
-import com.crowdcoin.networking.sqlcom.query.GrantPermissionsQuery;
+import com.crowdcoin.networking.sqlcom.query.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +35,14 @@ public class SQLDatabase implements QueryGroupable<SQLDatabaseGroup>,Observable<
             e.rootException.printStackTrace();
         }
 
+    }
+
+    public void removeUser(String username) {
+        try {
+            this.connection.executeQuery(new RemoveUserQuery(username));
+        } catch (FailedQueryException exception) {
+            exception.rootException.printStackTrace();
+        }
     }
 
     public void grantUserPermissions(String username, String schemaName, SQLPermission ... permissions) {
