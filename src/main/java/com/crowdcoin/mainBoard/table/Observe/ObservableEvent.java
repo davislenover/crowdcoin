@@ -21,4 +21,16 @@ public interface ObservableEvent<T extends GeneralEventType,S> {
      */
     List<S> getEventData();
 
+    /**
+     * Gets if an {@link ObservableEvent} is a broadcast event. This means all observers should perform some additional logic in reaction to it (i.e., all Tabs should refresh, all SQLTables should update, etc)
+     * @return true if the event is a broadcast event, false otherwise
+     */
+    boolean isBroadcast();
+
+    /**
+     * Sets if an {@link ObservableEvent} is a broadcast event. This means all observers should perform some additional logic in reaction to it (i.e., all Tabs should refresh, all SQLTables should update, etc).
+     * By default, if this method is not invoked, then {@link ObservableEvent#isBroadcast()} should return false
+     */
+    void setBroadcast(boolean isBroadcast);
+
 }

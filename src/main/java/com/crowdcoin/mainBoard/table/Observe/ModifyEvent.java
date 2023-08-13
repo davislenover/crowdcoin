@@ -10,6 +10,7 @@ public class ModifyEvent implements ObservableEvent<ModifyEventType,String> {
 
     private ModifyEventType modifyEventType;
     private List<String> eventData;
+    private boolean broadcast = false;
 
     public ModifyEvent(ModifyEventType modifyEventType) {
         this.modifyEventType = modifyEventType;
@@ -34,5 +35,15 @@ public class ModifyEvent implements ObservableEvent<ModifyEventType,String> {
     @Override
     public List<String> getEventData() {
         return this.eventData;
+    }
+
+    @Override
+    public boolean isBroadcast() {
+        return this.broadcast;
+    }
+
+    @Override
+    public void setBroadcast(boolean isBroadcast) {
+        this.broadcast = isBroadcast;
     }
 }

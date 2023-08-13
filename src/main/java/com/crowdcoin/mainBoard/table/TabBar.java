@@ -222,7 +222,7 @@ public class TabBar implements Observer<ModifyEvent,String> {
 
                 // Look for Tabs that are representing the same table in the database
                 // These are the ones that need to be updated to account for the new row
-                if (currentTab.getSQLTableName().equals(tableName)) {
+                if (currentTab.getSQLTableName().equals(tableName) || passThroughObject.isBroadcast()) {
 
                     try {
 
