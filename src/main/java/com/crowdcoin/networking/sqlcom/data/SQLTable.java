@@ -5,9 +5,6 @@ import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.exceptions.table.UnknownColumnNameException;
 import com.crowdcoin.mainBoard.table.Column;
 import com.crowdcoin.mainBoard.table.Observe.*;
-import com.crowdcoin.mainBoard.table.permissions.IsReadable;
-import com.crowdcoin.mainBoard.table.permissions.IsSystemWriteable;
-import com.crowdcoin.mainBoard.table.permissions.IsWriteable;
 import com.crowdcoin.mainBoard.table.permissions.PermissionNames;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.data.constraints.ConstraintContainer;
@@ -43,6 +40,9 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
     private String isSystemWriteablePerm = PermissionNames.ISSYSTEMWRITEABLE.getName();
 
     private ConstraintContainer constraints;
+
+    // Used when calling getGroupFilteredRows to store how many rows in total were retrieved (as some are excluded)
+    private int lastRowAddedIndex = 0;
 
     /**
      * An object to get information from an SQL database
@@ -465,6 +465,12 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
             throw new InvalidRangeException(String.valueOf(startColumnIndex),String.valueOf(endColumnIndex));
         }
 
+        this.lastRowAddedIndex = rowIndex;
+        // Get original rowIndex as rowIndex is incremented on subsequent queries (if needed to attempt to fill up to numberOfRows)
+        int originalRowIndex = rowIndex;
+        // Keep track of how many rows are considered
+        int rowsCount = 0;
+
         boolean isLast = false;
         List<List<Object>> returnRows = new ArrayList<>();
 
@@ -479,6 +485,8 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
             while (result.next()) {
                 // ResultSets don't have traditional iterators so count the number of rows processed
                 size++;
+                // Account for total size of rows considered
+                rowsCount++;
                 isRowValid = true;
                 List<Object> returnRow = new ArrayList<>();
 
@@ -498,6 +506,8 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
                 if (isRowValid && returnRows.size() < numberOfRows) {
                     // Add row to return list
                     returnRows.add(returnRow);
+                    // Set lastRowAddedIndex, rowsCount counts all rows considered and then added to the original row index of the method call...this effectively sets lastRowAddedIndex to the index of the row that was just added
+                    this.lastRowAddedIndex =originalRowIndex+rowsCount;
                 }
 
             }
@@ -512,6 +522,14 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
         }
         return returnRows;
 
+    }
+
+    /**
+     * Retrieves the index of the last row retrieved and added after calling {@link SQLTable#getGroupFilteredRows(int, int, int, int)} as that method returns only valid rows and will attempt to retrieved desired number of rows.
+     * @return the index of the last row considered and added to return as an Integer. Must be called right after (or rather before another call) {@link SQLTable#getGroupFilteredRows(int, int, int, int)} for an accurate Integer.
+     */
+    public int getLastAddedRowIndex() {
+        return this.lastRowAddedIndex;
     }
 
     /**
