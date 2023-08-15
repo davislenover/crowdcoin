@@ -9,19 +9,20 @@ import javafx.stage.Stage;
 
 public class MainBoard {
 
+    private static Stage mainStage = new Stage();
+
     // Subroutine to start main window after login
     public static void start() throws Exception {
 
         // Create a new stage and get the mainboard file
-        Stage stage = new Stage();
-        ExceptionGuardian.setRootStage(stage);
+        ExceptionGuardian.setRootStage(mainStage);
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainBoard.class.getResource("mainBoard.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
-            stage.setTitle("CrowdCoin - " + SQLData.credentials.getUsername());
-            stage.setScene(scene);
-            stage.setResizable(true);
-            stage.show();
+            mainStage.setTitle("CrowdCoin - " + SQLData.credentials.getUsername());
+            mainStage.setScene(scene);
+            mainStage.setResizable(true);
+            mainStage.show();
 
             // Initialize coin list
             MainBoardController controller = (MainBoardController) fxmlLoader.getController();
@@ -32,4 +33,9 @@ public class MainBoard {
         }
 
     }
+
+    public static Stage getMainStage() {
+        return mainStage;
+    }
+
 }

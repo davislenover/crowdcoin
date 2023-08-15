@@ -2,14 +2,17 @@ package com.crowdcoin.mainBoard.Interactive.input;
 
 import com.crowdcoin.FXTools.StageManager;
 import com.crowdcoin.mainBoard.Interactive.InteractiveFieldActionEvent;
+import com.crowdcoin.mainBoard.MainBoard;
 import com.crowdcoin.mainBoard.window.PopWindow;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.File;
 import java.util.List;
@@ -31,7 +34,6 @@ public class InteractiveDirectoryField extends InteractiveTextField {
     public InteractiveDirectoryField(String header, String description, InteractiveFieldActionEvent actionEvent, Stage stage) {
         super(header, description, actionEvent);
         this.stage = stage;
-
         Pane containnerPane = super.getPane();
         this.fileActionLink = new Hyperlink("Browse");
         this.fileActionLink.setOnAction(new FileLinkAction("Test",this));
@@ -78,10 +80,15 @@ public class InteractiveDirectoryField extends InteractiveTextField {
         public void handle(Event event) {
             DirectoryChooser chooser = new DirectoryChooser();
             chooser.setTitle(this.windowName);
-            File choosenFile = chooser.showDialog(stage);
+            // To avoid a user switching tabs while selecting a directory, hide the MainBoard window
+            // This will keep the Export PopWindow open however, it will be blocked due to the directory selector
+            // Thus one must close the directory window before continuing
+            MainBoard.getMainStage().hide();
+            File choosenFile = chooser.showDialog(stage.getScene().getWindow());
             if (choosenFile != null) {
                 textField.setValue(choosenFile.getAbsolutePath());
             }
+            MainBoard.getMainStage().show();
         }
     }
 

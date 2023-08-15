@@ -10,6 +10,8 @@ import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
 import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
 import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
+import com.crowdcoin.mainBoard.MainBoard;
+import com.crowdcoin.mainBoard.MainBoardController;
 import com.crowdcoin.mainBoard.WindowManager;
 import com.crowdcoin.mainBoard.export.CSVExporter;
 import com.crowdcoin.mainBoard.export.ExportBehaviour.ExportBehaviour;
@@ -17,8 +19,12 @@ import com.crowdcoin.mainBoard.export.ExportBehaviour.ExportBehaviourFactory;
 import com.crowdcoin.mainBoard.export.ExportBehaviour.GeneralExportBehaviours;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.SQLTableReader;
+import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
 
@@ -28,6 +34,7 @@ public class ExportTabPopWindow extends PopWindow {
     private SQLTableReader sqlTableReader;
     private WindowManager manager;
     private ExportBehaviour exportBehaviour;
+    private InteractiveDirectoryField chooseFile;
 
     public ExportTabPopWindow(String windowName, SQLTable sqlTable, SQLTableReader sqlTableReader, WindowManager manager) {
         super(windowName);
@@ -56,12 +63,10 @@ public class ExportTabPopWindow extends PopWindow {
             super.updateWindow();
 
             });
-
         exportBehaviourOptions.addAllValues(GeneralExportBehaviours.getNames());
         exportBehaviourOptions.addValidator(new LengthValidator(1));
         pane.addInputField(exportBehaviourOptions);
-
-        InputField chooseFile = new InteractiveDirectoryField("Directory Path","Choose the directory for the file to be saved to",(event, field, pane1) -> {return;}, stage);
+        chooseFile = new InteractiveDirectoryField("Directory Path","Choose the directory for the file to be saved to",(event, field, pane1) -> {return;}, stage);
         chooseFile.addValidator(new LengthValidator(1));
         pane.addInputField(chooseFile);
 
