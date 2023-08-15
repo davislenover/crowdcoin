@@ -14,9 +14,7 @@ import com.crowdcoin.mainBoard.table.Observe.Observer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Handles access of rows in an SQL Table in an ordered/iterative fashion
@@ -38,8 +36,10 @@ public class SQLTableReader implements Iterator<List<List<Object>>>, Observable<
     private int currentRowIndex;
     private int previousRowIndex;
     private int nextRowIndex;
-    private int previousRowIndexDifference;
     private int numOfRowsPerRequest = 10;
+
+    private Map<Integer,Integer> previousRowStartIndexTracker;
+    private int pageIndex;
     private List<Observer<ModifyEvent,String>> subscriptionList;
 
     /**
@@ -57,10 +57,11 @@ public class SQLTableReader implements Iterator<List<List<Object>>>, Observable<
         this.currentRowIndex = 0;
         this.nextRowIndex = 0;
         this.previousRowIndex = 0;
-        this.previousRowIndexDifference = 0;
+        this.pageIndex = 0;
         this.currentRowSet = new ArrayList<>();
         this.nextRowSet = new ArrayList<>();
         this.previousRowSet = new ArrayList<>();
+        this.previousRowStartIndexTracker = new HashMap<>();
         this.subscriptionList = new ArrayList<>();
         this.setupIterator();
 
@@ -73,13 +74,16 @@ public class SQLTableReader implements Iterator<List<List<Object>>>, Observable<
         // Get starting rows
         List<List<Object>> rows = this.sqlTable.getGroupFilteredRows(0,this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1);
         this.currentRowSet.addAll(rows);
-        this.currentRowCount+=rows.size();
         this.currentRowIndex=this.sqlTable.getLastAddedRowIndex();
+        this.currentRowCount+=this.currentRowSet.size();
 
         // Get next rows (to store in memory)
         List<List<Object>> nextRows = this.sqlTable.getGroupFilteredRows(this.currentRowIndex,this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1);
         this.nextRowSet.addAll(nextRows);
         this.nextRowIndex=this.sqlTable.getLastAddedRowIndex();
+
+        // The starting index is 0 (NOT THE INDEX OF THE LAST ROW VISIBLE ON THE PAGE)
+        this.previousRowStartIndexTracker.put(this.pageIndex,0);
 
         // Check if currentRow holds the last rows of data from the SQL Table
         checkRowPosition();
@@ -117,10 +121,10 @@ public class SQLTableReader implements Iterator<List<List<Object>>>, Observable<
         this.currentRowIndex = 0;
         this.nextRowIndex = 0;
         this.previousRowIndex = 0;
-        this.previousRowIndexDifference = 0;
         this.currentRowSet.clear();
         this.nextRowSet.clear();
         this.previousRowSet.clear();
+        this.previousRowStartIndexTracker.clear();
         this.setupIterator();
     }
 
@@ -182,12 +186,14 @@ public class SQLTableReader implements Iterator<List<List<Object>>>, Observable<
         // i.e., at least one more set of rows exists
         if (hasNext()) {
 
+            this.pageIndex++;
+
             // Move currentRowSet to previousRowSet, get nextRowSet in memory and store in currentRowSet
             // i.e., shift all lists forwards
             this.previousRowSet.clear();
             this.previousRowSet.addAll(currentRowSet);
-            this.previousRowIndexDifference+=this.currentRowIndex-this.previousRowIndex;
             this.previousRowIndex = currentRowIndex;
+            this.previousRowStartIndexTracker.put(this.pageIndex,currentRowIndex);
 
             this.currentRowSet.clear();
             this.currentRowSet.addAll(nextRowSet);
@@ -200,7 +206,6 @@ public class SQLTableReader implements Iterator<List<List<Object>>>, Observable<
             this.nextRowSet.clear();
             this.nextRowSet.addAll(this.sqlTable.getGroupFilteredRows(this.currentRowIndex,this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1));
             this.nextRowIndex = this.sqlTable.getLastAddedRowIndex();
-
             // Since the full set may have not been stored in nextRowSet, this indicates that either nextRowSet is storing the last set of rows (if it's not empty but has less than the maximum number of rows variable)
             // or currentRowSet is storing the last row set (if nextRowSet is empty)
             // So update booleans for this
@@ -217,6 +222,8 @@ public class SQLTableReader implements Iterator<List<List<Object>>>, Observable<
         // i.e., at least one more previous row exists
         if (!this.isFirstRow) {
 
+            this.pageIndex--;
+
             // Move currentRowSet to NextRowSet
             // i.e., shifting the lists backwards
             this.nextRowSet.clear();
@@ -231,18 +238,16 @@ public class SQLTableReader implements Iterator<List<List<Object>>>, Observable<
             this.currentRowSet.addAll(previousRowSet);
             this.currentRowIndex = previousRowIndex;
 
-
-
             this.previousRowSet.clear();
             // Check if the currentRowCount subtracted by the maximum number of rows to display is greater than 0
             // This is because currentRowCount "points" to the bottom of the currentRowSet (i.e., count all rows up to the bottom of what is displayed)
             // Thus, if this result is 0, then it implies the current row set displayed is the first row set and thus, we cannot store negative rows into previousRowSet below, just keep the previousSet list empty
             if (this.currentRowCount-this.numOfRowsPerRequest > 0) {
                 // If not 0, get previous rows
-                // This is because when getting rows from the database, currentRowCount points size as from the last item displayed thus, to get the new previous rows, we need to subtract currentRowCount-
-                // (by the size of the new currentRowSet (so now we "point" to the top of the new previous set) doubled (so now we "point" to the first element of the previous set))
-                this.previousRowSet.addAll(this.sqlTable.getGroupFilteredRows(this.previousRowIndex-this.previousRowIndexDifference,this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1));
-                this.previousRowIndex = this.sqlTable.getLastAddedRowIndex();
+                // Get the starting index of one more page below as the current page index denotes the current page the user is on, for PREVIOUS, get the page before the current page
+                // Note that all index variables set their index at the LAST row displayed on the page (i.e., if the top row in the table is index 10, then the actual currentRowIndex is set to 20 (assuming there are 10 rows to be displayed))
+                this.previousRowSet.addAll(this.sqlTable.getGroupFilteredRows(this.previousRowStartIndexTracker.get(this.pageIndex-1),this.numOfRowsPerRequest,0,this.sqlTable.getNumberOfColumns()-1));
+                this.previousRowIndex=this.sqlTable.getLastAddedRowIndex();
             }
 
             // Update booleans
@@ -262,7 +267,7 @@ public class SQLTableReader implements Iterator<List<List<Object>>>, Observable<
         }
 
         // If previousRowSet is empty, then currentRowSet must contain the starting rows
-        this.isFirstRow = this.previousRowSet.isEmpty();
+        this.isFirstRow = (this.previousRowSet.isEmpty());
 
     }
 
