@@ -1,7 +1,12 @@
 package com.crowdcoin.mainBoard.window;
 
 import com.crowdcoin.FXTools.StageManager;
+import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterCount;
+import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterTypeException;
+import com.crowdcoin.exceptions.modelClass.MultipleVariableMethodsException;
+import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
+import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.exceptions.table.UnknownColumnNameException;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
@@ -15,6 +20,8 @@ import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
 import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.table.DynamicModelClass;
 import com.crowdcoin.mainBoard.table.ModelClass;
+import com.crowdcoin.mainBoard.table.ModelClassFactory;
+import com.crowdcoin.mainBoard.table.Observe.Observer;
 import com.crowdcoin.networking.sqlcom.SQLColumnType;
 import com.crowdcoin.networking.sqlcom.data.SQLDatabase;
 import com.crowdcoin.networking.sqlcom.data.SQLDatabaseGroup;
@@ -23,6 +30,7 @@ import com.crowdcoin.networking.sqlcom.data.SQLTableGroup;
 import com.crowdcoin.networking.sqlcom.permissions.SQLPermission;
 import javafx.stage.Stage;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -75,6 +83,9 @@ public class AddUserPopWindow extends PopWindow {
                         List<String> paneInput = pane1.getAllInput();
 
                         try {
+                            // Refresh the table to get the most accurate next userID that is available
+                            table.refresh();
+                            this.gradingTableModelClass = new ModelClassFactory().buildClone(this.gradingTableModelClass,this.table.getRawRows(0,1,0,this.table.getNumberOfColumns()-1).get(0).toArray());
                             SQLTableGroup grantsGroup = this.userGrantsTable.getQueryGroup();
                             SQLDatabaseGroup database = this.table.getDatabase().getQueryGroup();
                             String userNameString = paneInput.get(0);
@@ -86,12 +97,30 @@ public class AddUserPopWindow extends PopWindow {
                             if (isAdminBool) {
                                 database.grantGlobalPermissions(userNameString,SQLPermission.GRANT_OPTION,SQLPermission.CREATE_USER,SQLPermission.SHOW_DATABASES);
                             }
-                            database.addColumn(this.table.getTableName(),DynamicModelClass.getVariableColumnPrefix(this.gradingTableModelClass)+DynamicModelClass.getNextVariableColumnInteger(this.gradingTableModelClass)+"_"+userNameString+"Value", SQLColumnType.VARCHAR_45,"0");
+                            database.addColumn(this.table.getTableName(),DynamicModelClass.getVariableColumnPrefix(this.gradingTableModelClass)+(DynamicModelClass.getNextVariableColumnInteger(this.gradingTableModelClass)+DynamicModelClass.getStartIndex())+"_"+userNameString+"Value", SQLColumnType.VARCHAR_45,"0");
                             database.executeAllQueries(database,grantsGroup);
                         } catch (SQLException exception) {
                             exception.printStackTrace();
                         } catch (FailedQueryException | UnknownColumnNameException exception) {
                             exception.printStackTrace();
+                        } catch (InvalidRangeException e) {
+                            throw new RuntimeException(e);
+                        } catch (MultipleVariableMethodsException e) {
+                            throw new RuntimeException(e);
+                        } catch (NotZeroArgumentException e) {
+                            throw new RuntimeException(e);
+                        } catch (InvalidVariableMethodParameterTypeException e) {
+                            throw new RuntimeException(e);
+                        } catch (InvalidVariableMethodParameterCount e) {
+                            throw new RuntimeException(e);
+                        } catch (InvocationTargetException e) {
+                            throw new RuntimeException(e);
+                        } catch (NoSuchMethodException e) {
+                            throw new RuntimeException(e);
+                        } catch (InstantiationException e) {
+                            throw new RuntimeException(e);
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
                         }
                         confirmationWindow.closeWindow();
                         super.closeWindow();

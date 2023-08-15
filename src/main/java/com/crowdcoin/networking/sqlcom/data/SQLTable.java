@@ -3,6 +3,7 @@ package com.crowdcoin.networking.sqlcom.data;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.exceptions.table.UnknownColumnNameException;
+import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
 import com.crowdcoin.mainBoard.table.Column;
 import com.crowdcoin.mainBoard.table.Observe.*;
 import com.crowdcoin.mainBoard.table.permissions.PermissionNames;
@@ -197,7 +198,7 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
      * @return true if the permission is allowed, false otherwise (even if the permission name does not exist)
      */
     public boolean checkPermissions(int columnIndex, String permission) {
-        return this.columnsPermList.get(columnIndex).checkPermissionValue(permission);
+        return this.getColumnObject(columnIndex).checkPermissionValue(permission);
     }
 
     /**
@@ -231,6 +232,8 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
         List<Object> returnRow = new ArrayList<>();
         // Get list of all column names in the desired column range to return data from
         List<String> columnRange = getColumnNameList(startColumn,endColumn);
+        // Move cursor to first result in ResultSet
+        result.next();
 
         // Loop through range and add data of the specified columns to the return list
         for (String columnName : columnRange) {
@@ -272,6 +275,8 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
 
         ResultSet result = this.connection.sendQuery(new GetColumnDataWithLimitQuery(this.tableName,rowIndex,1));
         List<Object> returnRow = new ArrayList<>();
+        // Move cursor to first result in ResultSet
+        result.next();
 
         // Loop through start to end and add the corresponding column data to return list
         // The result set is not guaranteed to have returned a query in any particular column position
@@ -280,7 +285,7 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
             String columnName = this.tableColumns.get(index)[0];
             if (this.constraints.isValid(columnName)) {
                 // Since columnPermList index matches, check permissions before adding to result
-                if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
+                if (this.getColumnObject(index).checkPermissionValue(isReadablePerm)) {
                     Object resultObject = result.getObject(columnName);
                     if (this.constraints.isValidGroup(columnName,resultObject.toString())) {
                         // getObject gets the corresponding data from a corresponding column name thus, given tableColumns list is sorted in ordinal position, returnRow list will add data according to ordinal position
@@ -382,7 +387,7 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
                 String columnName = this.tableColumns.get(index)[0];
                 if (this.constraints.isValid(columnName)) {
                     // Since columnPermList index matches, check permissions before adding to result
-                    if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
+                    if (this.getColumnObject(index).checkPermissionValue(isReadablePerm)) {
                         Object resultObject = result.getObject(columnName);
                         returnRow.add(resultObject);
                         isValid = this.constraints.isValidGroup(columnName,resultObject.toString());
@@ -569,7 +574,7 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
                 String columnName = this.tableColumns.get(index)[0];
                 if (this.constraints.isValid(columnName)) {
                     // Since columnPermList index matches, check permissions before adding to result
-                    if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
+                    if (this.getColumnObject(index).checkPermissionValue(isReadablePerm)) {
                         Object resultObject = result.getObject(columnName);
                         returnRow.add(resultObject);
                         isValid = this.constraints.isValidGroup(columnName,resultObject.toString());
@@ -656,7 +661,7 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
             throw new IndexOutOfBoundsException("The specified column does not exist within the table (" + columnWhereIndex + " where max is " + (this.tableColumns.size()-1) + ")");
         }
 
-        if (!this.columnsPermList.get(columnWriteIndex).checkPermissionValue(isWriteablePerm)) {
+        if (!this.getColumnObject(columnWriteIndex).checkPermissionValue(isWriteablePerm)) {
             throw new IllegalAccessError("ColumnWriteIndex, " + columnWriteIndex + ", user is not permitted to write to");
         }
 
@@ -914,7 +919,7 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
         for (int index = 0; index < this.tableColumns.size(); index++) {
             if (this.constraints.isValid(this.tableColumns.get(index)[0])) {
                 // Check perms before adding
-                if (this.columnsPermList.get(index).checkPermissionValue(isReadablePerm)) {
+                if (this.getColumnObject(index).checkPermissionValue(isReadablePerm)) {
                     columnTypes.add(this.tableColumns.get(index)[1]);
                 }
             }
@@ -1005,6 +1010,15 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
 
         return null;
 
+    }
+
+    // Method to get a column object with a column index. Takes into account variable columns
+    private Column getColumnObject(int columnIndex) {
+        try {
+            return this.columnsPermList.get(columnIndex);
+        } catch (Exception exception) {
+            return this.columnsPermList.get(this.columnsPermList.size()-1);
+        }
     }
 
     public String getTableName() {
