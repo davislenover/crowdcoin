@@ -61,7 +61,7 @@ public class ExportTabPopWindow extends PopWindow {
         exportBehaviourOptions.addValidator(new LengthValidator(1));
         pane.addInputField(exportBehaviourOptions);
 
-        InputField chooseFile = new InteractiveDirectoryField("Directory Path","Choose the directory for the file to be saved to",(event, field, pane1) -> {return;}, StageManager.getStage(this));
+        InputField chooseFile = new InteractiveDirectoryField("Directory Path","Choose the directory for the file to be saved to",(event, field, pane1) -> {return;}, stage);
         chooseFile.addValidator(new LengthValidator(1));
         pane.addInputField(chooseFile);
 

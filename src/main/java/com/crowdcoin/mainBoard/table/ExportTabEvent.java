@@ -22,6 +22,7 @@ public class ExportTabEvent implements TabActionEvent {
         try {
             exportWindow.start(StageManager.getStage(exportWindow));
         } catch (Exception e) {
+            e.printStackTrace();
             // TODO Error handling
         }
     }

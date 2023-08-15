@@ -54,7 +54,7 @@ public class StageManager {
     // Since PopWindows can be equivalent, get the stored PopWindow that is equivalent to a reference window
     private static PopWindow getStoredKey(PopWindow referenceWindow) {
         for (PopWindow window : stageMap.keySet()) {
-            if (window.equals(referenceWindow)) {
+            if (window.equals(referenceWindow) && window.hashCode() == referenceWindow.hashCode()) {
                 return window;
             }
         }

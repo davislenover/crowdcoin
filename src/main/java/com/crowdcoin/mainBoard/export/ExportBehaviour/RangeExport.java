@@ -3,10 +3,7 @@ package com.crowdcoin.mainBoard.export.ExportBehaviour;
 import com.crowdcoin.mainBoard.Interactive.InteractivePane;
 import com.crowdcoin.mainBoard.Interactive.input.InputField;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
-import com.crowdcoin.mainBoard.Interactive.input.validation.ComparatorValidator;
-import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
-import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
-import com.crowdcoin.mainBoard.Interactive.input.validation.TypeValidator;
+import com.crowdcoin.mainBoard.Interactive.input.validation.*;
 import com.crowdcoin.mainBoard.table.Column;
 import com.crowdcoin.mainBoard.table.DynamicModelClass;
 import com.crowdcoin.mainBoard.table.ModelClass;
@@ -17,6 +14,7 @@ import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.SQLTableReader;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class RangeExport implements ExportBehaviour {
@@ -62,7 +60,10 @@ public class RangeExport implements ExportBehaviour {
     public List<List<String>> getEntries(Object ... params) {
         // Setup
         int startingIndex = Integer.valueOf(params[0].toString());
+        // To the user, the range starts at 1 and not 0 thus, index "1" is 0
+        startingIndex = startingIndex-1;
         int endingIndex = Integer.valueOf(params[1].toString());
+        endingIndex = endingIndex-1;
         int numOfRows = endingIndex-startingIndex;
 
         List<List<String>> entries = new ArrayList<>();
@@ -100,23 +101,22 @@ public class RangeExport implements ExportBehaviour {
 
     @Override
     public void applyInputFieldsOnWindow() {
-        InputField field = new InteractiveTextField("Starting Entry","The number of the starting entry (inclusive), starting from 0",(event, field1, pane1) -> {return;});
+        InputField field = new InteractiveTextField("Starting Entry","The number of the starting entry (inclusive), starting from 1",(event, field1, pane1) -> {return;});
         field.addValidator(new LengthValidator(1));
+        field.addValidator(new ComparatorValidator((input, inputUnused) -> {
+            return Integer.compare(Integer.valueOf(input),Integer.valueOf(1));
+            // Add onto context
+        }," 1"));
         field.addValidator(new TypeValidator(Integer.class));
 
         InputField field2 = new InteractiveTextField("Ending Entry","The number of the ending entry (exclusive)",(event, field1, pane1) -> {return;});
         field2.addValidator(new LengthValidator(1));
         field2.addValidator(new TypeValidator(Integer.class));
-
-        field2.addValidator(new ComparatorValidator((input, inputUnused) -> {
-
-            if (Integer.valueOf(input) >= Integer.valueOf(field.getInput())) {
-                return 1;
-            } else {
-                return -1;
-            }
+        // Ending entry must be greater than the starting entry
+        field2.addValidator(new GreaterComparatorValidator((input, inputUnused) -> {
+            return Integer.compare(Integer.valueOf(input),Integer.valueOf(field.getInput()));
             // Add onto context
-        }," starting entry"));
+        },"starting entry"));
 
         pane.addInputField(field);
         pane.addInputField(field2);
