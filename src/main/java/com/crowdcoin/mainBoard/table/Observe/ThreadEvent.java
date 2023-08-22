@@ -3,35 +3,30 @@ package com.crowdcoin.mainBoard.table.Observe;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Event is triggered when something is modified (say an SQL database has a new row or a new filter was added)
- */
-public class ModifyEvent implements ObservableEvent<ModifyEventType,String> {
+public class ThreadEvent implements ObservableEvent<ThreadEventType,String> {
 
-    private ModifyEventType modifyEventType;
+    private ThreadEventType threadEventType;
     private List<String> eventData;
+
     private boolean broadcast = false;
 
-    public ModifyEvent(ModifyEventType modifyEventType) {
-        this.modifyEventType = modifyEventType;
+    public ThreadEvent(ThreadEventType eventType) {
+        this.threadEventType = eventType;
         this.eventData = new ArrayList<>();
     }
 
-    public ModifyEvent(ModifyEventType modifyEventType, String ... eventData) {
-        this.modifyEventType = modifyEventType;
+    public ThreadEvent(ThreadEventType eventType, String ... eventData) {
+        this.threadEventType = eventType;
 
         this.eventData = new ArrayList<>();
         this.eventData.addAll(List.of(eventData));
     }
 
     @Override
-    public ModifyEventType getEventType() {
-        return this.modifyEventType;
+    public ThreadEventType getEventType() {
+        return this.threadEventType;
     }
 
-    public void addEventData(String data) {
-        this.eventData.add(data);
-    }
     @Override
     public List<String> getEventData() {
         return this.eventData;
