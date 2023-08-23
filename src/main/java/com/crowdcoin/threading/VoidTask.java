@@ -5,27 +5,23 @@ package com.crowdcoin.threading;
  */
 public abstract class VoidTask implements Task<Void> {
     private TaskPriority taskPriority = TaskPriority.NEUTRAL;
-
-    /**
-     * Method to define arbitrary logic to execute on a new thread. Method must return a null value
-     * @return null value
-     */
+    private String taskId = "";
+    @Override
     public abstract Void runTask();
-
-    /**
-     * Sets the priority of the given {@link VoidTask}
-     * @param priority the given priority enum as a {@link TaskPriority} object
-     */
+    @Override
     public void setPriority(TaskPriority priority) {
         this.taskPriority = taskPriority;
     }
-
-    /**
-     * Gets the current priority level of the given {@link VoidTask} instance
-     * @return the given {@link TaskPriority} object
-     */
+    @Override
     public TaskPriority getTaskPriority() {
         return this.taskPriority;
     }
-
+    @Override
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
+    @Override
+    public String getTaskId() {
+        return this.taskId;
+    }
 }

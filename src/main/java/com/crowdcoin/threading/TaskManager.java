@@ -16,7 +16,6 @@ import java.util.concurrent.*;
  * Handles ordered execution of {@link Task}s ({@link Thread}s)
  */
 public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskEvent,String> {
-
     private PriorityQueue<Task<?>> tasks;
     private List<Observer<TaskEvent,String>> subscriptionList;
     private TaskWatcher<?> currentTask;
@@ -125,9 +124,9 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
     private static class TaskWatcher<T> implements Callable<T>,Observable<TaskEvent,String> {
 
         private List<Observer<TaskEvent,String>> subscriptionList;
-        private Callable<T> task;
+        private Task<T> task;
         private Future<T> endTask;
-        public TaskWatcher(Callable<T> task) {
+        public TaskWatcher(Task<T> task) {
             this.task = task;
             this.subscriptionList = new ArrayList<>();
         }
@@ -136,10 +135,11 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
         public T call() throws Exception {
             // Create a new thread to execute task on
             ExecutorService executorService = Executors.newSingleThreadExecutor();
+            String taskId = this.task.getTaskId();
             // Notify observers of the TaskWatcher instance that the runnable task is starting
             // Call runlater() as this event may affect UI elements thus, need to handle the event in the context of the JavaFX Application Thread
             Platform.runLater(() -> {
-                this.notifyObservers(new TaskEvent(TaskEventType.TASK_START));
+                this.notifyObservers(new TaskEvent(TaskEventType.TASK_START,taskId));
             });
             // When call() is called from submit(), newly created thread will run task
             this.endTask = executorService.submit(this.task);
@@ -154,7 +154,7 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
             }
             // Once complete, notify observers the task has finished
             Platform.runLater(() -> {
-                this.notifyObservers(new TaskEvent(TaskEventType.TASK_END));
+                this.notifyObservers(new TaskEvent(TaskEventType.TASK_END,taskId));
             });
             // Return value once value from new thread has been retrieved
             return returnValue;
@@ -192,12 +192,12 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
 
     /**
      * Runs the next task of highest priority in the current instance of ThreadManager. If no tasks are present or a task is currently running, invoking this method has no effect.
-     * Once a VoidTask has started {@link TaskEventType#TASK_START} is fired and once the same VoidTask ends, {@link TaskEventType#TASK_END} is fired. Both events are fired
+     * Once a Task has started {@link TaskEventType#TASK_START} is fired and once the same Task ends, {@link TaskEventType#TASK_END} is fired. Both events have the corresponding task id in the first event data String array and are fired
      * in the JavaFX application thread
      */
     public void runNextTask() {
         if (this.tasks.peek() != null && this.currentTask == null) {
-            this.currentTask = new TaskWatcher(this.tasks.poll());
+            this.currentTask = new TaskWatcher<>(this.tasks.poll());
             // Observe the current task to check for completion
             this.currentTask.addObserver(this);
             ExecutorService executorService = Executors.newSingleThreadExecutor();

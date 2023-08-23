@@ -10,13 +10,13 @@ import java.util.concurrent.Callable;
 public interface Task<T> extends Callable<T> {
 
     /**
-     * Sets the priority of the given {@link VoidTask}
+     * Sets the priority of the given {@link Task}
      * @param priority the given priority enum as a {@link TaskPriority} object
      */
     void setPriority(TaskPriority priority);
 
     /**
-     * Gets the current priority level of the given {@link VoidTask} instance
+     * Gets the current priority level of the given {@link Task} instance
      * @return the given {@link TaskPriority} object
      */
     TaskPriority getTaskPriority();
@@ -33,5 +33,17 @@ public interface Task<T> extends Callable<T> {
     default T call() throws Exception {
         return runTask();
     }
+
+    /**
+     * Gets the id of a task. The id will be returned in the first string of event data when a {@link com.crowdcoin.mainBoard.table.Observe.TaskEvent} is fired
+     * in relation to the given Task
+     * @return the task id as a String object
+     */
+    String getTaskId();
+
+    /**
+     * Sets the id of a task. If this method is not invoked, the default id is a blank String object
+     */
+    void setTaskId(String taskId);
 
 }
