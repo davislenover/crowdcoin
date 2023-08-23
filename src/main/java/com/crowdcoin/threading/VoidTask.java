@@ -1,18 +1,12 @@
 package com.crowdcoin.threading;
 
-import java.util.concurrent.Callable;
-
 /**
- * A task of arbitrary logic that can be run on a separate Thread. Typically ran by a {@link TaskManager}. By default, an instantiated VoidTask
- * has a priority level of {@link TaskPriority#NEUTRAL}
+ * A task of arbitrary logic with no return value that can be run on a separate Thread
  */
-public abstract class VoidTask implements Task<Integer> {
+public abstract class VoidTask implements Task<Void> {
     private TaskPriority taskPriority = TaskPriority.NEUTRAL;
 
-    /**
-     * The arbitrary logic to invoke upon invoking {@link Thread#start()}
-     */
-    public abstract void runTask();
+    public abstract Void runTask();
 
     /**
      * Sets the priority of the given {@link VoidTask}
@@ -33,9 +27,9 @@ public abstract class VoidTask implements Task<Integer> {
     /**
      * Overridden method to call {@link VoidTask#runTask()} on a new thread
      */
-    public Integer call() {
+    public Void call() {
         runTask();
-        return 0;
+        return null;
     }
 
 }
