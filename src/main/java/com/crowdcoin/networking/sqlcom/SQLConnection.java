@@ -176,7 +176,7 @@ public class SQLConnection implements Observer<TaskEvent,String> {
     public void executeGroupQuery(List<QueryBuilder> queries) throws SQLException {
         taskMgr.addTask(new VoidTask() {
             @Override
-            public void runTask() {
+            public Void runTask() {
                 Statement statement = null;
                 try {
                     statement = connection.createStatement();
@@ -196,6 +196,7 @@ public class SQLConnection implements Observer<TaskEvent,String> {
                 } finally {
                     statement = null;
                 }
+                return null;
             }
         });
 
@@ -212,7 +213,7 @@ public class SQLConnection implements Observer<TaskEvent,String> {
     public void executeGroupQueryNoCommit(List<QueryBuilder> queries) throws SQLException {
         taskMgr.addTask(new VoidTask() {
             @Override
-            public void runTask() {
+            public Void runTask() {
                 try {
 
                     if (groupStatement == null) {
@@ -226,6 +227,7 @@ public class SQLConnection implements Observer<TaskEvent,String> {
                 } catch (SQLException exception) {
                     // TODO Handle exception
                 }
+                return null;
             }
         });
 
@@ -236,7 +238,7 @@ public class SQLConnection implements Observer<TaskEvent,String> {
     public void commitGroupQuery() throws SQLException {
         taskMgr.addTask(new VoidTask() {
             @Override
-            public void runTask() {
+            public Void runTask() {
                 try {
                     if (groupStatement != null) {
                         connection.commit();
@@ -246,6 +248,7 @@ public class SQLConnection implements Observer<TaskEvent,String> {
                 } catch (SQLException exception) {
                     // TODO Error handling
                 }
+                return null;
             }
         });
 
@@ -260,7 +263,7 @@ public class SQLConnection implements Observer<TaskEvent,String> {
     public void rollBack() throws SQLException {
         taskMgr.addTask(new VoidTask() {
             @Override
-            public void runTask() {
+            public Void runTask() {
                 try {
                     connection.rollback();
                     if (groupStatement != null) {
@@ -270,6 +273,7 @@ public class SQLConnection implements Observer<TaskEvent,String> {
                 } catch (SQLException exception) {
                     // TODO Error handling
                 }
+                return null;
             }
         });
 
