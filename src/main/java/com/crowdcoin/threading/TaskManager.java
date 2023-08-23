@@ -2,8 +2,9 @@ package com.crowdcoin.threading;
 
 import com.crowdcoin.mainBoard.table.Observe.Observable;
 import com.crowdcoin.mainBoard.table.Observe.Observer;
-import com.crowdcoin.mainBoard.table.Observe.ThreadEvent;
-import com.crowdcoin.mainBoard.table.Observe.ThreadEventType;
+import com.crowdcoin.mainBoard.table.Observe.TaskEvent;
+import com.crowdcoin.mainBoard.table.Observe.TaskEventType;
+import javafx.application.Platform;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -13,11 +14,10 @@ import java.util.PriorityQueue;
 /**
  * Handles ordered execution of {@link Task}s ({@link Thread}s)
  */
-public class TaskManager implements Observable<ThreadEvent,String>, Observer<ThreadEvent,String> {
+public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskEvent,String> {
 
     private PriorityQueue<Task> tasks;
-    private List<Observer<ThreadEvent,String>> subscriptionList;
-
+    private List<Observer<TaskEvent,String>> subscriptionList;
     private checkThread currentTask;
 
     public TaskManager() {
@@ -49,7 +49,7 @@ public class TaskManager implements Observable<ThreadEvent,String>, Observer<Thr
     }
 
     @Override
-    public boolean addObserver(Observer<ThreadEvent, String> observer) {
+    public boolean addObserver(Observer<TaskEvent, String> observer) {
         if (!this.subscriptionList.contains(observer)) {
             return this.subscriptionList.add(observer);
         }
@@ -57,7 +57,7 @@ public class TaskManager implements Observable<ThreadEvent,String>, Observer<Thr
     }
 
     @Override
-    public boolean removeObserver(Observer<ThreadEvent, String> observer) {
+    public boolean removeObserver(Observer<TaskEvent, String> observer) {
         if (this.subscriptionList.contains(observer)) {
             this.subscriptionList.remove(observer);
             return true;
@@ -66,8 +66,8 @@ public class TaskManager implements Observable<ThreadEvent,String>, Observer<Thr
     }
 
     @Override
-    public void notifyObservers(ThreadEvent event) {
-        for (Observer<ThreadEvent,String> observer : this.subscriptionList) {
+    public void notifyObservers(TaskEvent event) {
+        for (Observer<TaskEvent,String> observer : this.subscriptionList) {
             observer.update(event);
         }
     }
@@ -85,10 +85,10 @@ public class TaskManager implements Observable<ThreadEvent,String>, Observer<Thr
     }
 
     @Override
-    public void update(ThreadEvent event) {
-        if (event.getEventType().equals(ThreadEventType.THREAD_START)) {
+    public void update(TaskEvent event) {
+        if (event.getEventType().equals(TaskEventType.THREAD_START)) {
             this.notifyObservers(event);
-        } else if (event.getEventType().equals(ThreadEventType.THREAD_END)) {
+        } else if (event.getEventType().equals(TaskEventType.THREAD_END)) {
             this.removeObserving();
             this.currentTask = null;
             this.notifyObservers(event);
@@ -118,9 +118,9 @@ public class TaskManager implements Observable<ThreadEvent,String>, Observer<Thr
     }
 
     // A class used to create a new thread to watch the status of an invoked thread (or task)
-    private class checkThread extends Thread implements Observable<ThreadEvent,String> {
+    private class checkThread extends Thread implements Observable<TaskEvent,String> {
 
-        private List<Observer<ThreadEvent,String>> subscriptionList;
+        private List<Observer<TaskEvent,String>> subscriptionList;
         private Runnable task;
         public checkThread(Runnable task) {
             this.task = task;
@@ -131,21 +131,27 @@ public class TaskManager implements Observable<ThreadEvent,String>, Observer<Thr
             // When run is called from start(), create a new thread for the runnable task
             Thread runThread = new Thread(this.task);
             // Notify observers of the checkThread instance that the runnable task is starting
-            this.notifyObservers(new ThreadEvent(ThreadEventType.THREAD_START));
+            // Call runlater() as this event may affect UI elements thus, need to handle the event in the context of the JavaFX Application Thread
+            Platform.runLater(() -> {
+                this.notifyObservers(new TaskEvent(TaskEventType.THREAD_START));
+            });
             runThread.start();
             try {
                 // Wait for the runnable task to complete
                 // This is done in a new thread thus the thread that called start() will not be waiting too
                 runThread.join();
             } catch (InterruptedException e) {
+                // TODO Error handling
                 throw new RuntimeException(e);
             }
             // Once complete, notify observers the task has finished
-            this.notifyObservers(new ThreadEvent(ThreadEventType.THREAD_END));
+            Platform.runLater(() -> {
+                this.notifyObservers(new TaskEvent(TaskEventType.THREAD_END));
+            });
         }
 
         @Override
-        public boolean addObserver(Observer<ThreadEvent, String> observer) {
+        public boolean addObserver(Observer<TaskEvent, String> observer) {
             if (!this.subscriptionList.contains(observer)) {
                 return this.subscriptionList.add(observer);
             }
@@ -153,7 +159,7 @@ public class TaskManager implements Observable<ThreadEvent,String>, Observer<Thr
         }
 
         @Override
-        public boolean removeObserver(Observer<ThreadEvent, String> observer) {
+        public boolean removeObserver(Observer<TaskEvent, String> observer) {
             if (this.subscriptionList.contains(observer)) {
                 this.subscriptionList.remove(observer);
                 return true;
@@ -162,8 +168,8 @@ public class TaskManager implements Observable<ThreadEvent,String>, Observer<Thr
         }
 
         @Override
-        public void notifyObservers(ThreadEvent event) {
-            for (Observer<ThreadEvent,String> observer : this.subscriptionList) {
+        public void notifyObservers(TaskEvent event) {
+            for (Observer<TaskEvent,String> observer : this.subscriptionList) {
                 observer.update(event);
             }
         }
@@ -176,6 +182,8 @@ public class TaskManager implements Observable<ThreadEvent,String>, Observer<Thr
 
     /**
      * Runs the next task of highest priority in the current instance of ThreadManager. If no tasks are present or a task is currently running, invoking this method has no effect.
+     * Once a Task has started {@link TaskEventType#THREAD_START} is fired and once the same Task ends, {@link TaskEventType#THREAD_END} is fired. Both events are fired
+     * in the JavaFX application thread
      */
     public void runNextTask() {
         if (this.tasks.peek() != null && this.currentTask == null) {

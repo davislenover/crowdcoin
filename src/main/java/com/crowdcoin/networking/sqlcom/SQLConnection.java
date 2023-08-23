@@ -4,19 +4,25 @@ package com.crowdcoin.networking.sqlcom;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.format.Defaults;
 import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
+import com.crowdcoin.mainBoard.table.Observe.Observer;
+import com.crowdcoin.mainBoard.table.Observe.TaskEvent;
 import com.crowdcoin.networking.sqlcom.query.QueryBuilder;
+import com.crowdcoin.threading.Task;
+import com.crowdcoin.threading.TaskManager;
+import com.crowdcoin.threading.TaskTools;
 
 import java.sql.*;
 import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Stack;
 
-public class SQLConnection {
+public class SQLConnection implements Observer<TaskEvent,String> {
     // Declare connection and credential info
     private Connection connection;
     private String address;
     private String schemaName;
     private Statement groupStatement = null;
+    private static TaskManager taskMgr = TaskTools.getTaskManager();
 
     // Constructor to get MySQL Connection
     // This class can throw exceptions
@@ -78,6 +84,8 @@ public class SQLConnection {
         }
         // Set AutoCommit to false, enable rollbacks
         this.connection.setAutoCommit(false);
+
+        taskMgr.addObserver(this);
     }
 
     /**
@@ -168,28 +176,32 @@ public class SQLConnection {
      * @throws SQLException if any query fails to execute
      */
     public void executeGroupQuery(List<QueryBuilder> queries) throws SQLException {
+        taskMgr.addTask(new Task() {
+            @Override
+            public void runTask() {
+                Statement statement = null;
+                try {
+                    statement = connection.createStatement();
 
-        Statement statement = null;
-        int result = 0;
+                    for (QueryBuilder query : queries) {
+                        statement.executeUpdate(query.getQuery());
+                    }
 
-        try {
-            statement = this.connection.createStatement();
+                    connection.commit();
 
-            for (QueryBuilder query : queries) {
-                statement.executeUpdate(query.getQuery());
+                } catch (SQLException exception) {
+                    try {
+                        statement.close();
+                    } catch (SQLException exception2) {
+                    }
+                    // TODO handle exception
+                } finally {
+                    statement = null;
+                }
             }
+        });
 
-            this.connection.commit();
-
-        } catch (SQLException exception) {
-            try {
-                statement.close();
-            } catch (SQLException exception2) {
-            }
-            throw exception;
-        } finally {
-            statement = null;
-        }
+        taskMgr.runNextTask();
 
     }
 
@@ -200,29 +212,47 @@ public class SQLConnection {
      * @throws SQLException if any query fails to execute
      */
     public void executeGroupQueryNoCommit(List<QueryBuilder> queries) throws SQLException {
+        taskMgr.addTask(new Task() {
+            @Override
+            public void runTask() {
+                try {
 
-        try {
+                    if (groupStatement == null) {
+                        groupStatement = connection.createStatement();
+                    }
 
-            if (this.groupStatement == null) {
-                this.groupStatement = this.connection.createStatement();
+                    for (QueryBuilder query : queries) {
+                        groupStatement.executeUpdate(query.getQuery());
+                    }
+
+                } catch (SQLException exception) {
+                    // TODO Handle exception
+                }
             }
+        });
 
-            for (QueryBuilder query : queries) {
-                this.groupStatement.executeUpdate(query.getQuery());
-            }
-
-        } catch (SQLException exception) {
-            throw exception;
-        }
+        taskMgr.runNextTask();
 
     }
 
     public void commitGroupQuery() throws SQLException {
-        if (this.groupStatement != null) {
-            this.connection.commit();
-            this.groupStatement.close();
-            this.groupStatement = null;
-        }
+        taskMgr.addTask(new Task() {
+            @Override
+            public void runTask() {
+                try {
+                    if (groupStatement != null) {
+                        connection.commit();
+                        groupStatement.close();
+                        groupStatement = null;
+                    }
+                } catch (SQLException exception) {
+                    // TODO Error handling
+                }
+            }
+        });
+
+        taskMgr.runNextTask();
+
     }
 
     /**
@@ -230,13 +260,33 @@ public class SQLConnection {
      * @throws SQLException if a database access error occurs
      */
     public void rollBack() throws SQLException {
-        this.connection.rollback();
-        if (this.groupStatement != null) {
-            this.groupStatement.close();
-            this.groupStatement = null;
-        }
+        taskMgr.addTask(new Task() {
+            @Override
+            public void runTask() {
+                try {
+                    connection.rollback();
+                    if (groupStatement != null) {
+                        groupStatement.close();
+                        groupStatement = null;
+                    }
+                } catch (SQLException exception) {
+                    // TODO Error handling
+                }
+            }
+        });
+
+        taskMgr.runNextTask();
+
     }
 
 
+    @Override
+    public void removeObserving() {
+        taskMgr.removeObserver(this);
+    }
 
+    @Override
+    public void update(TaskEvent event) {
+
+    }
 }

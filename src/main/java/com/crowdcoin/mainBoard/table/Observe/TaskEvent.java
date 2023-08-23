@@ -3,28 +3,28 @@ package com.crowdcoin.mainBoard.table.Observe;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ThreadEvent implements ObservableEvent<ThreadEventType,String> {
+public class TaskEvent implements ObservableEvent<TaskEventType,String> {
 
-    private ThreadEventType threadEventType;
+    private TaskEventType taskEventType;
     private List<String> eventData;
 
     private boolean broadcast = false;
 
-    public ThreadEvent(ThreadEventType eventType) {
-        this.threadEventType = eventType;
+    public TaskEvent(TaskEventType eventType) {
+        this.taskEventType = eventType;
         this.eventData = new ArrayList<>();
     }
 
-    public ThreadEvent(ThreadEventType eventType, String ... eventData) {
-        this.threadEventType = eventType;
+    public TaskEvent(TaskEventType eventType, String ... eventData) {
+        this.taskEventType = eventType;
 
         this.eventData = new ArrayList<>();
         this.eventData.addAll(List.of(eventData));
     }
 
     @Override
-    public ThreadEventType getEventType() {
-        return this.threadEventType;
+    public TaskEventType getEventType() {
+        return this.taskEventType;
     }
 
     @Override

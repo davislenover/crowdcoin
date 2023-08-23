@@ -1,12 +1,12 @@
 package com.crowdcoin.mainBoard.table.Observe;
 
-public enum ThreadEventType implements GeneralEventType {
+public enum TaskEventType implements GeneralEventType {
 
     THREAD_START("A new thread has started to execute"),THREAD_END("The thread that had previously started has finished executing");
 
     private String description;
 
-    ThreadEventType(String description) {
+    TaskEventType(String description) {
         this.description = description;
     }
 

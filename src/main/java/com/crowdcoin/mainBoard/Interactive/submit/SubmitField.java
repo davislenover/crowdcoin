@@ -11,4 +11,14 @@ public interface SubmitField extends Field {
      */
     void applyPane(GridPane targetPane, int targetRow);
 
+    /**
+     * Disables the use of the SubmitField
+     */
+    void disable();
+
+    /**
+     * Enables use of the SubmitField
+     */
+    void enable();
+
 }

@@ -60,6 +60,16 @@ public class InteractiveButton implements SubmitField {
     }
 
     @Override
+    public void disable() {
+        this.button.setDisable(true);
+    }
+
+    @Override
+    public void enable() {
+        this.button.setDisable(false);
+    }
+
+    @Override
     public Pane getPane() {
         return this.containerPane;
     }

@@ -10,7 +10,7 @@ public abstract class Task implements Runnable {
     /**
      * The arbitrary logic to invoke upon invoking {@link Thread#start()}
      */
-    abstract void runTask();
+    public abstract void runTask();
 
     /**
      * Sets the priority of the given {@link Task}
