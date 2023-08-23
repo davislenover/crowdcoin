@@ -11,6 +11,9 @@ import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.data.constraints.ConstraintContainer;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterManager;
 import com.crowdcoin.networking.sqlcom.query.*;
+import com.crowdcoin.threading.Task;
+import com.crowdcoin.threading.TaskManager;
+import com.crowdcoin.threading.TaskTools;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,9 +29,7 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
 
     private SQLDatabase database;
     private SQLTableGroup tableGroup = null;
-
     private List<Observer<ModifyEvent,String>> subscriptionList;
-
     private String tableName;
     // Within the String array (inside the list), index 0 corresponds to table name, 1 is data type as specified in SQL table, 2 specifies the ordinal position
     // (List, NOT String array) It is important to NOT directly correspond indices of columns to ordinal positions as column indices within this list are ordered in RELATIVE ordinal position. Ordinal positions start at 1. This means index 0 would correspond to an ordinal position of 1, 1 to 2, 2 to 3, etc
@@ -39,11 +40,10 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<Modify
     private String isReadablePerm = PermissionNames.ISREADABLE.getName();
     private String isWriteablePerm = PermissionNames.ISWRITEABLE.getName();
     private String isSystemWriteablePerm = PermissionNames.ISSYSTEMWRITEABLE.getName();
-
     private ConstraintContainer constraints;
-
     // Used when calling getGroupFilteredRows to store how many rows in total were retrieved (as some are excluded)
     private int lastRowAddedIndex = 0;
+    private TaskManager taskMgr = TaskTools.getTaskManager();
 
     /**
      * An object to get information from an SQL database

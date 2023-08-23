@@ -3,24 +3,24 @@ package com.crowdcoin.networking.sqlcom;
 
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.format.Defaults;
-import com.crowdcoin.mainBoard.table.Observe.Observer;
-import com.crowdcoin.mainBoard.table.Observe.TaskEvent;
+import com.crowdcoin.mainBoard.table.Observe.*;
 import com.crowdcoin.networking.sqlcom.query.QueryBuilder;
+import com.crowdcoin.threading.QuantifiableTask;
 import com.crowdcoin.threading.VoidTask;
 import com.crowdcoin.threading.TaskManager;
 import com.crowdcoin.threading.TaskTools;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-public class SQLConnection implements Observer<TaskEvent,String> {
+public class SQLConnection {
     // Declare connection and credential info
     private Connection connection;
     private String address;
     private String schemaName;
     private Statement groupStatement = null;
-    private static TaskManager taskMgr = TaskTools.getTaskManager();
 
     // Constructor to get MySQL Connection
     // This class can throw exceptions
@@ -82,8 +82,6 @@ public class SQLConnection implements Observer<TaskEvent,String> {
         }
         // Set AutoCommit to false, enable rollbacks
         this.connection.setAutoCommit(false);
-
-        taskMgr.addObserver(this);
     }
 
     /**
@@ -107,7 +105,7 @@ public class SQLConnection implements Observer<TaskEvent,String> {
 
         try {
             // Attempt to create the statements and execution of said statement
-            statement = this.connection.createStatement();
+            statement = connection.createStatement();
             // Get result of statement
             result = statement.executeQuery(query.getQuery());
 
@@ -122,6 +120,7 @@ public class SQLConnection implements Observer<TaskEvent,String> {
             } catch (Exception ignore) {
             }
             // If an exception occurs, throw custom failed query exception
+            // TODO Error handling
             throw new FailedQueryException(query.getQuery(), exception);
         } finally {
 
@@ -129,6 +128,7 @@ public class SQLConnection implements Observer<TaskEvent,String> {
             result = null;
 
         }
+
     }
 
     /**
@@ -140,36 +140,29 @@ public class SQLConnection implements Observer<TaskEvent,String> {
      */
     // TODO FIX RETURN
     public void executeQuery(QueryBuilder query) throws FailedQueryException {
-        taskMgr.addTask(new VoidTask() {
-            @Override
-            public Void runTask() {
-                Statement statement = null;
 
-                try {
-                    // Attempt to create the statements and execution of said statement
-                    statement = connection.createStatement();
-                    statement.executeUpdate(query.getQuery());
-                    // If no exception, commit the transaction
-                    connection.commit();
+        Statement statement = null;
 
-                } catch (Exception exception) {
-                    try {
-                        // Attempt to close connections if failed
-                        statement.close();
-                        // Ignore any exceptions
-                    } catch (Exception ignore) {
-                    }
-                    // If an exception occurs, throw custom failed query exception
-                    // TODO Error handling
-                    // throw new FailedQueryException(query.getQuery(), exception);
-                } finally {
-                    statement = null;
-                }
-                return null;
+        try {
+            // Attempt to create the statements and execution of said statement
+            statement = connection.createStatement();
+            statement.executeUpdate(query.getQuery());
+            // If no exception, commit the transaction
+            connection.commit();
+
+        } catch (Exception exception) {
+            try {
+                // Attempt to close connections if failed
+                statement.close();
+                // Ignore any exceptions
+            } catch (Exception ignore) {
             }
-        });
-
-        taskMgr.runNextTask();
+            // If an exception occurs, throw custom failed query exception
+            // TODO Error handling
+            throw new FailedQueryException(query.getQuery(), exception);
+        } finally {
+            statement = null;
+        }
 
     }
 
@@ -180,33 +173,26 @@ public class SQLConnection implements Observer<TaskEvent,String> {
      * @throws SQLException if any query fails to execute
      */
     public void executeGroupQuery(List<QueryBuilder> queries) throws SQLException {
-        taskMgr.addTask(new VoidTask() {
-            @Override
-            public Void runTask() {
-                Statement statement = null;
-                try {
-                    statement = connection.createStatement();
 
-                    for (QueryBuilder query : queries) {
-                        statement.executeUpdate(query.getQuery());
-                    }
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
 
-                    connection.commit();
-
-                } catch (SQLException exception) {
-                    try {
-                        statement.close();
-                    } catch (SQLException exception2) {
-                    }
-                    // TODO handle exception
-                } finally {
-                    statement = null;
-                }
-                return null;
+            for (QueryBuilder query : queries) {
+                statement.executeUpdate(query.getQuery());
             }
-        });
 
-        taskMgr.runNextTask();
+            connection.commit();
+
+        } catch (SQLException exception) {
+            try {
+                statement.close();
+            } catch (SQLException exception2) {
+            }
+            // TODO handle exception
+        } finally {
+            statement = null;
+        }
 
     }
 
@@ -217,49 +203,33 @@ public class SQLConnection implements Observer<TaskEvent,String> {
      * @throws SQLException if any query fails to execute
      */
     public void executeGroupQueryNoCommit(List<QueryBuilder> queries) throws SQLException {
-        taskMgr.addTask(new VoidTask() {
-            @Override
-            public Void runTask() {
-                try {
 
-                    if (groupStatement == null) {
-                        groupStatement = connection.createStatement();
-                    }
+        try {
 
-                    for (QueryBuilder query : queries) {
-                        groupStatement.executeUpdate(query.getQuery());
-                    }
-
-                } catch (SQLException exception) {
-                    // TODO Handle exception
-                }
-                return null;
+            if (groupStatement == null) {
+                groupStatement = connection.createStatement();
             }
-        });
 
-        taskMgr.runNextTask();
+            for (QueryBuilder query : queries) {
+                groupStatement.executeUpdate(query.getQuery());
+            }
+
+        } catch (SQLException exception) {
+            // TODO Handle exception
+        }
 
     }
 
     public void commitGroupQuery() throws SQLException {
-        taskMgr.addTask(new VoidTask() {
-            @Override
-            public Void runTask() {
-                try {
-                    if (groupStatement != null) {
-                        connection.commit();
-                        groupStatement.close();
-                        groupStatement = null;
-                    }
-                } catch (SQLException exception) {
-                    // TODO Error handling
-                }
-                return null;
+        try {
+            if (groupStatement != null) {
+                connection.commit();
+                groupStatement.close();
+                groupStatement = null;
             }
-        });
-
-        taskMgr.runNextTask();
-
+        } catch (SQLException exception) {
+            // TODO Error handling
+        }
     }
 
     /**
@@ -267,34 +237,14 @@ public class SQLConnection implements Observer<TaskEvent,String> {
      * @throws SQLException if a database access error occurs
      */
     public void rollBack() throws SQLException {
-        taskMgr.addTask(new VoidTask() {
-            @Override
-            public Void runTask() {
-                try {
-                    connection.rollback();
-                    if (groupStatement != null) {
-                        groupStatement.close();
-                        groupStatement = null;
-                    }
-                } catch (SQLException exception) {
-                    // TODO Error handling
-                }
-                return null;
+        try {
+            connection.rollback();
+            if (groupStatement != null) {
+                groupStatement.close();
+                groupStatement = null;
             }
-        });
-
-        taskMgr.runNextTask();
-
-    }
-
-
-    @Override
-    public void removeObserving() {
-        taskMgr.removeObserver(this);
-    }
-
-    @Override
-    public void update(TaskEvent event) {
-
+        } catch (SQLException exception) {
+            // TODO Error handling
+        }
     }
 }
