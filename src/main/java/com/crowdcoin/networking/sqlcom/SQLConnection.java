@@ -3,16 +3,14 @@ package com.crowdcoin.networking.sqlcom;
 
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.format.Defaults;
-import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
 import com.crowdcoin.mainBoard.table.Observe.Observer;
 import com.crowdcoin.mainBoard.table.Observe.TaskEvent;
 import com.crowdcoin.networking.sqlcom.query.QueryBuilder;
-import com.crowdcoin.threading.Task;
+import com.crowdcoin.threading.VoidTask;
 import com.crowdcoin.threading.TaskManager;
 import com.crowdcoin.threading.TaskTools;
 
 import java.sql.*;
-import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Stack;
 
@@ -176,7 +174,7 @@ public class SQLConnection implements Observer<TaskEvent,String> {
      * @throws SQLException if any query fails to execute
      */
     public void executeGroupQuery(List<QueryBuilder> queries) throws SQLException {
-        taskMgr.addTask(new Task() {
+        taskMgr.addTask(new VoidTask() {
             @Override
             public void runTask() {
                 Statement statement = null;
@@ -212,7 +210,7 @@ public class SQLConnection implements Observer<TaskEvent,String> {
      * @throws SQLException if any query fails to execute
      */
     public void executeGroupQueryNoCommit(List<QueryBuilder> queries) throws SQLException {
-        taskMgr.addTask(new Task() {
+        taskMgr.addTask(new VoidTask() {
             @Override
             public void runTask() {
                 try {
@@ -236,7 +234,7 @@ public class SQLConnection implements Observer<TaskEvent,String> {
     }
 
     public void commitGroupQuery() throws SQLException {
-        taskMgr.addTask(new Task() {
+        taskMgr.addTask(new VoidTask() {
             @Override
             public void runTask() {
                 try {
@@ -260,7 +258,7 @@ public class SQLConnection implements Observer<TaskEvent,String> {
      * @throws SQLException if a database access error occurs
      */
     public void rollBack() throws SQLException {
-        taskMgr.addTask(new Task() {
+        taskMgr.addTask(new VoidTask() {
             @Override
             public void runTask() {
                 try {

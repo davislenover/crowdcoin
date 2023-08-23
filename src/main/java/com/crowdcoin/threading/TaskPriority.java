@@ -1,7 +1,7 @@
 package com.crowdcoin.threading;
 
 /**
- * Defines {@link Task} object priority
+ * Defines {@link VoidTask} object priority
  */
 public enum TaskPriority {
 

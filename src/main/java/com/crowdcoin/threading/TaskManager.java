@@ -10,13 +10,14 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.concurrent.*;
 
 /**
- * Handles ordered execution of {@link Task}s ({@link Thread}s)
+ * Handles ordered execution of {@link VoidTask}s ({@link Thread}s)
  */
 public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskEvent,String> {
 
-    private PriorityQueue<Task> tasks;
+    private PriorityQueue<VoidTask> tasks;
     private List<Observer<TaskEvent,String>> subscriptionList;
     private checkThread currentTask;
 
@@ -26,10 +27,10 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
     }
 
     /**
-     * Adds a {@link Task} to the TaskManager. The position in which the given Task is added depends on the {@link TaskPriority} of the {@link Task} object
+     * Adds a {@link VoidTask} to the TaskManager. The position in which the given VoidTask is added depends on the {@link TaskPriority} of the {@link VoidTask} object
      * @param taskToAdd the given task to add
      */
-    public void addTask(Task taskToAdd) {
+    public void addTask(VoidTask taskToAdd) {
         this.tasks.add(taskToAdd);
     }
 
@@ -37,7 +38,7 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
      * Removes a task from the TaskManager. The given task may not be available if it has already been executed
      * @param taskToRemove the given task to remove
      */
-    public void removeTask(Task taskToRemove) {
+    public void removeTask(VoidTask taskToRemove) {
         this.tasks.remove(taskToRemove);
     }
 
@@ -96,9 +97,9 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
     }
 
     // Comparator for priority queue
-    private class TaskRunnerComparator implements Comparator<Task> {
+    private class TaskRunnerComparator implements Comparator<VoidTask> {
         @Override
-        public int compare(Task o1, Task o2) {
+        public int compare(VoidTask o1, VoidTask o2) {
             // Comparison is checked by fetching priority integer from enum
             // In a priority queue, the lower number has higher priority
             int o1Priority = o1.getTaskPriority().getPriority();
@@ -121,26 +122,27 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
     private class checkThread extends Thread implements Observable<TaskEvent,String> {
 
         private List<Observer<TaskEvent,String>> subscriptionList;
-        private Runnable task;
-        public checkThread(Runnable task) {
+        private Callable<Integer> task;
+        public checkThread(Callable<Integer> task) {
             this.task = task;
             this.subscriptionList = new ArrayList<>();
         }
         @Override
         public void run() {
-            // When run is called from start(), create a new thread for the runnable task
-            Thread runThread = new Thread(this.task);
+            // Create a new thread to execute task on
+            ExecutorService executorService = Executors.newSingleThreadExecutor();
             // Notify observers of the checkThread instance that the runnable task is starting
             // Call runlater() as this event may affect UI elements thus, need to handle the event in the context of the JavaFX Application Thread
             Platform.runLater(() -> {
                 this.notifyObservers(new TaskEvent(TaskEventType.THREAD_START));
             });
-            runThread.start();
+            // When call() is called from submit(), newly created thread will run task
+            Future<Integer> futureObj = executorService.submit(this.task);
             try {
-                // Wait for the runnable task to complete
-                // This is done in a new thread thus the thread that called start() will not be waiting too
-                runThread.join();
-            } catch (InterruptedException e) {
+                // Wait for the callable task to complete
+                // This is done in a new thread thus the thread that called submit() will not be waiting too
+                futureObj.get();
+            } catch (ExecutionException | InterruptedException e) {
                 // TODO Error handling
                 throw new RuntimeException(e);
             }
@@ -182,7 +184,7 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
 
     /**
      * Runs the next task of highest priority in the current instance of ThreadManager. If no tasks are present or a task is currently running, invoking this method has no effect.
-     * Once a Task has started {@link TaskEventType#THREAD_START} is fired and once the same Task ends, {@link TaskEventType#THREAD_END} is fired. Both events are fired
+     * Once a VoidTask has started {@link TaskEventType#THREAD_START} is fired and once the same VoidTask ends, {@link TaskEventType#THREAD_END} is fired. Both events are fired
      * in the JavaFX application thread
      */
     public void runNextTask() {
