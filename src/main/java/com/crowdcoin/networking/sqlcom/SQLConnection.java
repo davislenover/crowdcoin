@@ -138,33 +138,39 @@ public class SQLConnection implements Observer<TaskEvent,String> {
      * @return a number greater than 0 if the first result is a row count for the DML statement; 0 for statements that return nothing
      * @throws FailedQueryException if the query fails to execute. This could be for a multitude of reasons and is recommended to get rootException within this exception for exact cause.
      */
-    public int executeQuery(QueryBuilder query) throws FailedQueryException {
+    // TODO FIX RETURN
+    public void executeQuery(QueryBuilder query) throws FailedQueryException {
+        taskMgr.addTask(new VoidTask() {
+            @Override
+            public Void runTask() {
+                Statement statement = null;
 
-        Statement statement = null;
-        int result = 0;
+                try {
+                    // Attempt to create the statements and execution of said statement
+                    statement = connection.createStatement();
+                    statement.executeUpdate(query.getQuery());
+                    // If no exception, commit the transaction
+                    connection.commit();
 
-        try {
-            // Attempt to create the statements and execution of said statement
-            statement = this.connection.createStatement();
-            // Get result of statement
-            result = statement.executeUpdate(query.getQuery());
-            // If no exception, commit the transaction
-            this.connection.commit();
-
-            return result;
-
-        } catch (Exception exception) {
-            try {
-                // Attempt to close connections if failed
-                statement.close();
-                // Ignore any exceptions
-            } catch (Exception ignore) {
+                } catch (Exception exception) {
+                    try {
+                        // Attempt to close connections if failed
+                        statement.close();
+                        // Ignore any exceptions
+                    } catch (Exception ignore) {
+                    }
+                    // If an exception occurs, throw custom failed query exception
+                    // TODO Error handling
+                    // throw new FailedQueryException(query.getQuery(), exception);
+                } finally {
+                    statement = null;
+                }
+                return null;
             }
-            // If an exception occurs, throw custom failed query exception
-            throw new FailedQueryException(query.getQuery(), exception);
-        } finally {
-            statement = null;
-        }
+        });
+
+        taskMgr.runNextTask();
+
     }
 
     /**

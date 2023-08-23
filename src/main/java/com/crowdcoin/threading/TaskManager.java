@@ -17,9 +17,9 @@ import java.util.concurrent.*;
  */
 public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskEvent,String> {
 
-    private PriorityQueue<Task> tasks;
+    private PriorityQueue<Task<?>> tasks;
     private List<Observer<TaskEvent,String>> subscriptionList;
-    private TaskWatcher currentTask;
+    private TaskWatcher<?> currentTask;
     private Future<?> endTask;
 
     public TaskManager() {
@@ -30,10 +30,10 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
     }
 
     /**
-     * Adds a {@link VoidTask} to the TaskManager. The position in which the given VoidTask is added depends on the {@link TaskPriority} of the {@link VoidTask} object
+     * Adds a {@link Task} to the TaskManager. The position in which the given Task is added depends on the {@link TaskPriority} of the {@link Task} object
      * @param taskToAdd the given task to add
      */
-    public void addTask(VoidTask taskToAdd) {
+    public void addTask(Task<?> taskToAdd) {
         this.tasks.add(taskToAdd);
     }
 
@@ -41,7 +41,7 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
      * Removes a task from the TaskManager. The given task may not be available if it has already been executed
      * @param taskToRemove the given task to remove
      */
-    public void removeTask(VoidTask taskToRemove) {
+    public void removeTask(Task<?> taskToRemove) {
         this.tasks.remove(taskToRemove);
     }
 
@@ -122,7 +122,7 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
     }
 
     // A class used to create a new thread to watch the status of an invoked thread (or task)
-    private class TaskWatcher<T> implements Callable<T>,Observable<TaskEvent,String> {
+    private static class TaskWatcher<T> implements Callable<T>,Observable<TaskEvent,String> {
 
         private List<Observer<TaskEvent,String>> subscriptionList;
         private Callable<T> task;
