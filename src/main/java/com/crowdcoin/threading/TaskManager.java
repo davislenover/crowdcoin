@@ -19,6 +19,9 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
     private Future<?> endTask;
     private TaskException failedTaskException;
 
+    // Create a new thread to execute task on
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
     public TaskManager() {
         this.tasks = new PriorityQueue<>(new TaskRunnerComparator());
         this.subscriptionList = Collections.synchronizedList(new ArrayList<>());
@@ -92,10 +95,10 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
         if (eventType.equals(TaskEventType.TASK_START)) {
             this.notifyObservers(event);
         } else if (eventType.equals(TaskEventType.TASK_END)) {
-            this.removeObserving();
             this.currentTask = null;
             this.notifyObservers(event);
         } else if (eventType.equals(TaskEventType.TASK_FAILED)) {
+            this.currentTask = null;
             this.notifyObservers(event);
         }
     }
@@ -124,36 +127,42 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
 
     // A class used to create a new thread to watch the status of an invoked thread (or task)
     private class TaskWatcher<T> implements Callable<T>,Observable<TaskEvent,String> {
-
-        private List<Observer<TaskEvent,String>> subscriptionList;
+        // List is static to avoid concurrent modifications, only TaskManager is observing this class
+        private static List<Observer<TaskEvent,String>> subscriptionList = new ArrayList<>();
+        private static ExecutorService anotherService = Executors.newSingleThreadExecutor();
         private Task<T> task;
         private Future<T> endTask;
-        public TaskWatcher(Task<T> task) {
+        public TaskWatcher(Task<T> task,Observer<TaskEvent,String> observer) {
             this.task = task;
-            this.subscriptionList = new ArrayList<>();
+            if (subscriptionList.isEmpty()) {
+                subscriptionList.add(observer);
+            }
         }
 
         @Override
         public T call() throws Exception {
-            // Create a new thread to execute task on
-            ExecutorService executorService = Executors.newSingleThreadExecutor();
             String taskId = this.task.getTaskId();
             // Notify observers of the TaskWatcher instance that the callable task is starting
             // Call runlater() as this event may affect UI elements thus, need to handle the event in the context of the JavaFX Application Thread
             Platform.runLater(() -> {
+                // Fire event
                 this.notifyObservers(new TaskEvent(TaskEventType.TASK_START,taskId));
             });
             // When call() is called from submit(), newly created thread will run task
-            this.endTask = executorService.submit(this.task);
+            this.endTask = anotherService.submit(this.task);
             T returnValue;
             try {
-                // Wait for the callable task to complete and retrieve value
+                // Wait for the callable task to complete and retrieve value (i.e., the thread becomes blocked to wait for result)
                 // This is done in a new thread thus the thread that called submit() will not be waiting too
                 returnValue = this.endTask.get();
             } catch (ExecutionException e) {
                 try {
+                    // On ExecutionException, some error was thrown by the task (thread running the task)
+                    // Thus throw original error
                     throw e.getCause();
+                    // All Tasks will throw a TaskException on error
                 } catch (TaskException taskException) {
+                    // Set the TaskException to TaskManager and notify that the Task failed
                     failedTaskException = taskException;
                     Platform.runLater(() -> {
                         this.notifyObservers(new TaskEvent(TaskEventType.TASK_FAILED,taskId));
@@ -167,11 +176,10 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
                 // TODO Error handling
                 throw new RuntimeException(e);
             }
-            // Once complete, notify observers the task has finished
+            // Once complete (no errors), notify observers the task has finished
             Platform.runLater(() -> {
                 this.notifyObservers(new TaskEvent(TaskEventType.TASK_END,taskId));
             });
-            // Return value once value from new thread has been retrieved
             return returnValue;
         }
 
@@ -194,9 +202,7 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
 
         @Override
         public void notifyObservers(TaskEvent event) {
-            System.out.println("TASKID: " + event.getEventData().get(0) + " EVENT: " + event.getEventType());
             for (Observer<TaskEvent,String> observer : this.subscriptionList) {
-                System.out.println("UPDATE");
                 observer.update(event);
             }
         }
@@ -215,10 +221,8 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
     public void runNextTask() {
         if (this.tasks.peek() != null && this.currentTask == null) {
             this.failedTaskException = null;
-            this.currentTask = new TaskWatcher<>(this.tasks.poll());
-            // Observe the current task to check for completion
-            this.currentTask.addObserver(this);
-            ExecutorService executorService = Executors.newSingleThreadExecutor();
+            // Create new TaskWatcher to create a new thread to watch the task thread for status
+            this.currentTask = new TaskWatcher<>(this.tasks.poll(),this);
             // Call submit to create a new thread to watch the task thread for completion
             // Set return to future object in class
             this.endTask = executorService.submit(this.currentTask);
@@ -227,7 +231,7 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
 
     /**
      * Gets the most recently completed Task value (if any). It is strongly recommended to wait for {@link TaskEventType#TASK_END} event from
-     * the given TaskManager instance before invoking this method.
+     * the given TaskManager instance before invoking this method. If method is called before {@link TaskEventType#TASK_END} is fired, the calling thread will be blocked until result is returned
      * @return the completed task value as an {@link Object}. Null if no return value or the Task failed, identified by {@link TaskEventType#TASK_FAILED}. Calling class must know the specific type of the return value.
      */
     public Object getTaskValue() {
@@ -236,7 +240,9 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
                 return this.endTask.get();
             }
             return null;
-        } catch (Exception exception) {
+        } catch (ExecutionException exception) {
+            // TODO Error handling
+        } catch (InterruptedException exception) {
             // TODO Error handling
         }
         return null;
