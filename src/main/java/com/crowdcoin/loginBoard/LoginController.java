@@ -1,8 +1,12 @@
 package com.crowdcoin.loginBoard;
 
 import com.crowdcoin.format.Defaults;
+import com.crowdcoin.mainBoard.table.Observe.Observer;
+import com.crowdcoin.mainBoard.table.Observe.TaskEvent;
+import com.crowdcoin.mainBoard.table.Observe.TaskEventType;
 import com.crowdcoin.networking.connections.InternetConnection;
 import com.crowdcoin.networking.sqlcom.SQLData;
+import com.crowdcoin.threading.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -21,7 +25,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 
-public class LoginController {
+public class LoginController implements Observer<TaskEvent,String> {
 
     // Declare Objects for use in Scenebuilder by their type and ID (as defined in Scenebuilder)
     @FXML
@@ -34,13 +38,17 @@ public class LoginController {
     private Text messageField;
     @FXML
     private ProgressIndicator loadingAnimation;
-
     public static Boolean loginPassed = false;
+    private static TaskManager taskMgr = TaskTools.getTaskManager();
+    private static InternetConnection connection;
+    private static String connectionTaskId = "connectionCheck";
+    private static String loginTaskId = "loginTask";
+    private static Credentials loginInfo = null;
     @FXML
     protected void onLoginButtonClick() {
 
         // Create new credentials object and store the username and password as inputted into the text fields
-        Credentials loginInfo = new Credentials(loginUsername.getText(), loginPassword.getText());
+        loginInfo = new Credentials(loginUsername.getText(), loginPassword.getText());
 
 
         // Call subroutine to disable login (to avoid user from inputting while their current fields are processing)
@@ -49,108 +57,15 @@ public class LoginController {
         // Display message to let user know login is being attempted
         displayMessage("Logging in...", Color.GRAY);
 
-        // Test Connections - TO BE REVAMPED! ------
-
         // The problem here is that SQLConnection completely hangs the main JavaFX UI thread so there is no time to update the scene to say "Logging in..." and disabling the buttons, you just get a frozen screen!
-        // To solve this, we handle the sql connection in a separate thread, different from the main JavaFX UI thread
-        // Create new thread
-        Thread sqlConnection = new Thread(() -> {
+        // To solve this, we handle the sql connection in a Task (i.e., a separate Thread), different from the main JavaFX UI thread
+        connection = new InternetConnection();
+        connection.setTaskId(connectionTaskId);
+        taskMgr.addObserver(this);
+        taskMgr.addTask(connection);
+        taskMgr.runNextTask();
 
-            // First, check if there is a connection to the internet
-            // Create another thread and run it
-            InternetConnection internetCheck = new InternetConnection();
-
-            // Wait for internet check to finish
-            try {
-
-                internetCheck.join();
-
-            } catch (Exception e) {
-
-                // TODO Error
-
-            }
-
-            // Check result
-            if (internetCheck.isOnline()) {
-
-                try {
-
-                    // If connected, attempt login
-                    // "jdbc:mysql://192.168.2.56:3306/coinbase"
-                    SQLData.sqlConnection = new SQLConnection("jdbc:mysql://127.0.0.1:3306/sys",loginInfo.getUsername(), loginInfo.getPassword());
-
-                    // If no errors, then we can continue as the user has successfully logged in
-                    displayMessage(Defaults.goodLogin, Color.GREEN);
-
-                    // Set login info
-                    SQLData.credentials = loginInfo;
-
-                    // Get current stage
-                    Stage login = (Stage) loginButton.getScene().getWindow();
-
-                    // Wait a moment before opening main window
-                    try {
-                        Thread.sleep(1500);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    // To close the window outside the current JavaFX thread, we must call a runlater
-                    Platform.runLater(() -> {
-
-                        loginPassed=true;
-                        // Fire window close request event, this will trigger the event code in loginboard
-                        login.fireEvent(new WindowEvent(login, WindowEvent.WINDOW_CLOSE_REQUEST));
-
-                    });
-
-                } catch (Exception exception) {
-
-                    // Note since we are running the connection in a separate thread, all logic behind it must also be in the thread
-
-                    // Get error
-                    String errorMessage = exception.getMessage();
-
-                    // Check possible errors (we only expect invalid credentials)
-
-                    // Invalid credentials
-                    if (errorMessage.contains("Access denied")) {
-                        disableLogin(false);
-                        displayMessage(Defaults.invalidCredentials, Color.RED);
-
-                        // Internet but the server is not responding
-                    } else if (errorMessage.contains("The driver has not received any packets from the server")) {
-                        disableLogin(false);
-                        displayMessage(Defaults.invalidServer, Color.RED);
-
-                        // Any other error
-                    } else {
-                        // We need to throw this error to our ErrorHandler class as it's unexpected
-                        disableLogin(false);
-                        displayMessage(Defaults.abstractLoginError, Color.RED);
-                        System.out.println(errorMessage);
-                        System.out.println(exception.getCause());
-                    }
-
-                }
-
-            } else {
-
-                // Display no connection error
-                disableLogin(false);
-                displayMessage(Defaults.noConnection, Color.RED);
-
-            }
-
-
-        });
-
-        // After defining the thread, execute it
-        sqlConnection.start();
-
-        // -----
-
+        // Then await TaskEvent in update()
 
     }
 
@@ -193,4 +108,111 @@ public class LoginController {
 
     }
 
+    @Override
+    public void removeObserving() {
+        taskMgr.removeObserver(this);
+    }
+
+    @Override
+    public void update(TaskEvent event) {
+
+        TaskEventType eventType = event.getEventType();
+        String taskId = event.getEventData().get(0);
+
+        if (eventType.equals(TaskEventType.TASK_END)) {
+
+            if (taskId.equals(connectionTaskId)) {
+
+                if (connection.isOnline()) {
+                    
+                    // If connected to a network, attempt connection to database
+                    setupSQLConnection.setTaskId(loginTaskId);
+                    taskMgr.addTask(setupSQLConnection);
+                    taskMgr.runNextTask();
+                }
+
+            } else if (taskId.equals(loginTaskId)) {
+
+                // If this code executes, then connecting to the database was successful
+
+                // If no errors, then we can continue as the user has successfully logged in
+                displayMessage(Defaults.goodLogin, Color.GREEN);
+
+                // Set login info
+                SQLData.credentials = loginInfo;
+
+                // Get current stage
+                Stage login = (Stage) loginButton.getScene().getWindow();
+
+                // Wait a moment before opening main window
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+                // To close the window outside the current JavaFX thread, we must call a runlater
+                Platform.runLater(() -> {
+
+                    loginPassed=true;
+                    // Fire window close request event, this will trigger the event code in loginboard
+                    login.fireEvent(new WindowEvent(login, WindowEvent.WINDOW_CLOSE_REQUEST));
+
+                });
+
+            }
+
+        } else if (eventType.equals(TaskEventType.TASK_FAILED)) {
+
+            if (taskId.equals(connectionTaskId)) {
+
+                // Display no connection error
+                disableLogin(false);
+                displayMessage(Defaults.noConnection, Color.RED);
+
+            } else if (taskId.equals(loginTaskId)) {
+
+                // Note since we are running the connection in a separate thread, all logic behind it must also be in the thread
+
+                // Get error
+                String errorMessage = taskMgr.getFailedTaskException().getRootException().getMessage();
+
+                // Check possible errors (we only expect invalid credentials)
+
+                // Invalid credentials
+                if (errorMessage.contains("Access denied")) {
+                    disableLogin(false);
+                    displayMessage(Defaults.invalidCredentials, Color.RED);
+
+                    // Internet but the server is not responding
+                } else if (errorMessage.contains("The driver has not received any packets from the server")) {
+                    disableLogin(false);
+                    displayMessage(Defaults.invalidServer, Color.RED);
+
+                    // Any other error
+                } else {
+                    // We need to throw this error to our ErrorHandler class as it's unexpected
+                    disableLogin(false);
+                    displayMessage(Defaults.abstractLoginError, Color.RED);
+                    System.out.println(errorMessage);
+                    System.out.println(taskMgr.getFailedTaskException().getRootException().getCause());
+                }
+            }
+        }
+    }
+
+    // VoidTask declaration for setting up the SQLConnection to use when login button is pressed
+    private static VoidTask setupSQLConnection = new VoidTask() {
+        @Override
+        public Void runTask() throws TaskException {
+            try {
+                // If connected, attempt login
+                // "jdbc:mysql://192.168.2.56:3306/coinbase"
+                SQLData.sqlConnection = new SQLConnection("jdbc:mysql://127.0.0.1:3306/sys",loginInfo.getUsername(), loginInfo.getPassword());
+            } catch (Exception exception) {
+                throw new TaskException(exception);
+            }
+            return null;
+        }
+    };
 }

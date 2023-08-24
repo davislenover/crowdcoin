@@ -8,7 +8,7 @@ public abstract class QuantifiableTask<T> implements Task<T> {
     private TaskPriority taskPriority = TaskPriority.NEUTRAL;
     private String taskId = "";
     @Override
-    public abstract T runTask();
+    public abstract T runTask() throws TaskException;
     @Override
     public void setPriority(TaskPriority priority) {
         this.taskPriority = taskPriority;

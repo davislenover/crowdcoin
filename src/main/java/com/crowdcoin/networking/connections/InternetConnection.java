@@ -1,22 +1,25 @@
 package com.crowdcoin.networking.connections;
 
+import com.crowdcoin.threading.TaskException;
+import com.crowdcoin.threading.VoidTask;
+
 import java.net.URL;
 import java.net.URLConnection;
 
-public class InternetConnection extends Thread {
+public class InternetConnection extends VoidTask {
 
     // Boolean for other classes to reference
     private Boolean connectedToInternet;
 
-    public InternetConnection() {
-        // Check connection on creation
-        this.start();
+    /**
+     * Checks if the computer is connected to the internet
+     * @return true if a connection exists, false otherwise
+     */
+    public boolean isOnline() {
+        return connectedToInternet;
     }
 
-    // Call start() instead of run()
-    // run() will execute this method on the thread that created this object whereas start() will use a new thread
-    public void run() {
-
+    private void checkConnection() throws Exception {
         try {
 
             // Attempt to connect to Google Canada
@@ -30,17 +33,18 @@ public class InternetConnection extends Thread {
 
             // If not connected to the internet, an exception will be thrown
             connectedToInternet = false;
+            throw e;
 
         }
-
     }
 
-    /**
-     * Checks if the computer is connected to the internet
-     * @return true if a connection exists, false otherwise
-     */
-    public boolean isOnline() {
-        return connectedToInternet;
+    @Override
+    public Void runTask() throws TaskException {
+        try {
+            checkConnection();
+        } catch (Exception exception) {
+            throw new TaskException(exception);
+        }
+        return null;
     }
-
 }

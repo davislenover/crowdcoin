@@ -25,7 +25,7 @@ public interface Task<T> extends Callable<T> {
      * The arbitrary logic to invoke upon invoking {@link java.util.concurrent.ExecutorService#submit(Callable)}. One should utilize the {@link java.util.concurrent.ExecutorService}
      * class to invoke this method to run on a new thread. It should NOT be called explicitly
      */
-    T runTask();
+    T runTask() throws TaskException;
 
     /**
      * Overridden method to call {@link Task#runTask()} on a new thread.

@@ -7,7 +7,7 @@ public abstract class VoidTask implements Task<Void> {
     private TaskPriority taskPriority = TaskPriority.NEUTRAL;
     private String taskId = "";
     @Override
-    public abstract Void runTask();
+    public abstract Void runTask() throws TaskException;
     @Override
     public void setPriority(TaskPriority priority) {
         this.taskPriority = taskPriority;

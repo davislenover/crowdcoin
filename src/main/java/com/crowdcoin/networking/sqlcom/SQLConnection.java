@@ -33,12 +33,18 @@ public class SQLConnection {
 
             // Attempt a connection
             try {
+                DriverManager.setLoginTimeout(6);
                 this.connection = DriverManager.getConnection(address, databaseUsername, databasePassword);
                 this.address = address;
                 break;
 
                 // Catch timeout
             } catch (SQLTimeoutException e) {
+
+                // TODO
+
+                // Catch if access to url failed
+            } catch (SQLException e) {
 
                 // Check number of attempts already
                 if (currentAttemptNumber >= Defaults.maxConnectionAttempts) {
@@ -53,11 +59,6 @@ public class SQLConnection {
                     currentAttemptNumber++;
 
                 }
-
-                // Catch if access to url failed
-            } catch (SQLException e) {
-
-                // TODO
 
             }
 
