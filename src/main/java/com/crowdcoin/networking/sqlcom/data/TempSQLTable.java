@@ -40,6 +40,12 @@ public class TempSQLTable implements Observer<TaskEvent,String> {
     private int lastRowAddedIndex = 0;
     private TaskManager taskMgr = TaskTools.getTaskManager();
 
+    {
+        this.taskMgr.addObserver(this);
+    }
+
+    private SetupSQLTable setupObj = new SetupSQLTable();
+
     private BlockingDeque<Task<?>> queryTasks = new LinkedBlockingDeque<>();
     private List<Object> resultFromQuery = null;
 
@@ -67,15 +73,15 @@ public class TempSQLTable implements Observer<TaskEvent,String> {
         this.subscriptionList = new ArrayList<>();
         this.constraints = new ConstraintContainer();
 
+        this.setupObj.setupSQLTable();
 
     }
 
-    private class SetupSQLTable implements Observer<TaskEvent,String> {
-
-        private String getTableDataTaskId = "getData";
-        private String checkColumnNamesTaskId = "checkNames";
-        private String sortColumnObjectListTaskId = "sortColumns";
-        private String groupTaskId = "setupSQLTable";
+    private class SetupSQLTable {
+        private static String getTableDataTaskId = "getData";
+        private static String checkColumnNamesTaskId = "checkNames";
+        private static String sortColumnObjectListTaskId = "sortColumns";
+        private static String groupTaskId = "setupSQLTable";
 
         // Task gets table information and set's up tableColumn list
         private VoidTask getTableDataTask = new VoidTask() {
@@ -201,21 +207,10 @@ public class TempSQLTable implements Observer<TaskEvent,String> {
             setPriority(TaskPriority.VITAL);
         }};
 
-        @Override
-        public void removeObserving() {
-
-        }
-
-        @Override
-        public void update(TaskEvent event) {
-
-        }
-
         public void setupSQLTable() {
             taskMgr.addTask(this.groupedTask);
             taskMgr.runNextTask();
         }
-
     }
 
 
@@ -246,12 +241,15 @@ public class TempSQLTable implements Observer<TaskEvent,String> {
 
     @Override
     public void removeObserving() {
-
+        this.taskMgr.removeObserver(this);
     }
 
     @Override
     public void update(TaskEvent event) {
-
+        System.out.println("EVENT: " + event.getEventType().toString());
+        if (event.getEventData().get(0).equals(SetupSQLTable.groupTaskId)) {
+            System.out.println("COMPLETE!");
+        }
     }
 
     public List<Object> getResult() {

@@ -14,6 +14,7 @@ import com.crowdcoin.mainBoard.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.SQLData;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.SQLTableGroup;
+import com.crowdcoin.networking.sqlcom.data.TempSQLTable;
 import com.crowdcoin.networking.sqlcom.data.constraints.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -40,6 +41,7 @@ public class MainBoardController {
 
         CoinModel model = new CoinModel(12,"myDenomination","01/01/2002","myGrade","myCompany","01234","$101.93");
         ModelClass modelClass = new ModelClassFactory().build(model);
+        TempSQLTable testTable = new TempSQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
         SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
         SQLTable table2 = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
 
