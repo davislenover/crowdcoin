@@ -23,7 +23,7 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public TaskManager() {
-        this.tasks = new PriorityQueue<>(new TaskRunnerComparator());
+        this.tasks = new PriorityQueue<>();
         this.subscriptionList = Collections.synchronizedList(new ArrayList<>());
         this.currentTask = null;
         this.endTask = null;
@@ -100,28 +100,6 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
         } else if (eventType.equals(TaskEventType.TASK_FAILED)) {
             this.currentTask = null;
             this.notifyObservers(event);
-        }
-    }
-
-    // Comparator for priority queue
-    private class TaskRunnerComparator implements Comparator<Task> {
-        @Override
-        public int compare(Task o1, Task o2) {
-            // Comparison is checked by fetching priority integer from enum
-            // In a priority queue, the lower number has higher priority
-            int o1Priority = o1.getTaskPriority().getPriority();
-            int o2Priority = o2.getTaskPriority().getPriority();
-
-            if (o1Priority < o2Priority) {
-                return -1;
-            }
-            if (o1Priority == o2Priority) {
-                return 0;
-            }
-            if (o1Priority > o2Priority) {
-                return 1;
-            }
-            return 0;
         }
     }
 

@@ -1,5 +1,6 @@
 package com.crowdcoin.threading;
 
+import java.util.Comparator;
 import java.util.concurrent.Callable;
 
 /**
@@ -7,7 +8,7 @@ import java.util.concurrent.Callable;
  * Typically ran by a {@link TaskManager}. By default, an instantiated Task has a priority level of {@link TaskPriority#NEUTRAL}
  * @param <T> the given return type of the Task
  */
-public interface Task<T> extends Callable<T> {
+public interface Task<T> extends Callable<T>, Comparator<Task>, Comparable<Task> {
 
     /**
      * Sets the priority of the given {@link Task}
@@ -45,5 +46,29 @@ public interface Task<T> extends Callable<T> {
      * Sets the id of a task. If this method is not invoked, the default id is a blank String object
      */
     void setTaskId(String taskId);
+
+    @Override
+    default int compare(Task o1, Task o2) {
+        // Comparison is checked by fetching priority integer from enum
+        // In a priority queue, the lower number has higher priority
+        int o1Priority = o1.getTaskPriority().getPriority();
+        int o2Priority = o2.getTaskPriority().getPriority();
+
+        if (o1Priority < o2Priority) {
+            return -1;
+        }
+        if (o1Priority == o2Priority) {
+            return 0;
+        }
+        if (o1Priority > o2Priority) {
+            return 1;
+        }
+        return 0;
+    }
+
+    @Override
+    default int compareTo(Task o) {
+        return this.compare(this,o);
+    }
 
 }
