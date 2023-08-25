@@ -67,9 +67,7 @@ public class TempSQLTable implements Observer<TaskEvent,String> {
         this.subscriptionList = new ArrayList<>();
         this.constraints = new ConstraintContainer();
 
-        getTableData();
-        checkColumnNames();
-        sortColumnObjectList();
+
     }
 
     private class SetupSQLTable implements Observer<TaskEvent,String> {
@@ -77,9 +75,10 @@ public class TempSQLTable implements Observer<TaskEvent,String> {
         private String getTableDataTaskId = "getData";
         private String checkColumnNamesTaskId = "checkNames";
         private String sortColumnObjectListTaskId = "sortColumns";
+        private String groupTaskId = "setupSQLTable";
 
         // Task gets table information and set's up tableColumn list
-        private Task<Void> getTableDataTask = new VoidTask() {
+        private VoidTask getTableDataTask = new VoidTask() {
             @Override
             public Void runTask() throws TaskException {
                 try {
@@ -129,7 +128,7 @@ public class TempSQLTable implements Observer<TaskEvent,String> {
         }
 
         // Task to check that Column object names match that of one column name from the SQL table
-        private Task<Void> checkColumnNamesTask = new VoidTask() {
+        private VoidTask checkColumnNamesTask = new VoidTask() {
             @Override
             public Void runTask() throws TaskException {
                 try {
@@ -175,7 +174,7 @@ public class TempSQLTable implements Observer<TaskEvent,String> {
             checkColumnNamesTask.setTaskId(this.checkColumnNamesTaskId);
         }
 
-        private Task<Void> sortColumnObjectListTask = new VoidTask() {
+        private VoidTask sortColumnObjectListTask = new VoidTask() {
             @Override
             public Void runTask() throws TaskException {
                 // First, set ordinal position of each Column
@@ -194,12 +193,18 @@ public class TempSQLTable implements Observer<TaskEvent,String> {
             sortColumnObjectListTask.setTaskId(this.sortColumnObjectListTaskId);
         }
 
+        private VoidGroupTask groupedTask = new VoidGroupTask() {{
+            addTask(getTableDataTask);
+            addTask(checkColumnNamesTask);
+            addTask(sortColumnObjectListTask);
+            setTaskId(groupTaskId);
+            setPriority(TaskPriority.VITAL);
+        }};
+
         @Override
         public void removeObserving() {
 
         }
-
-
 
         @Override
         public void update(TaskEvent event) {
@@ -207,9 +212,8 @@ public class TempSQLTable implements Observer<TaskEvent,String> {
         }
 
         public void setupSQLTable() {
-            taskMgr.addTask(this.getTableDataTask);
-            taskMgr.addTask(this.checkColumnNamesTask);
-            taskMgr.addTask(this.sortColumnObjectListTask);
+            taskMgr.addTask(this.groupedTask);
+            taskMgr.runNextTask();
         }
 
     }

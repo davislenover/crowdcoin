@@ -13,7 +13,7 @@ import java.util.concurrent.*;
  * Handles ordered execution of {@link Task}s ({@link Thread}s)
  */
 public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskEvent,String> {
-    private PriorityQueue<Task<?>> tasks;
+    private PriorityBlockingQueue<Task<?>> tasks;
     private List<Observer<TaskEvent,String>> subscriptionList;
     private TaskWatcher<?> currentTask;
     private Future<?> endTask;
@@ -23,7 +23,7 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public TaskManager() {
-        this.tasks = new PriorityQueue<>();
+        this.tasks = new PriorityBlockingQueue<>();
         this.subscriptionList = Collections.synchronizedList(new ArrayList<>());
         this.currentTask = null;
         this.endTask = null;

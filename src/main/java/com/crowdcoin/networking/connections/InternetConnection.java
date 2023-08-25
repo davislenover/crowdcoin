@@ -3,7 +3,7 @@ package com.crowdcoin.networking.connections;
 import com.crowdcoin.threading.TaskException;
 import com.crowdcoin.threading.VoidTask;
 
-import java.net.URL;
+import java.net.URI;
 import java.net.URLConnection;
 
 public class InternetConnection extends VoidTask {
@@ -23,8 +23,8 @@ public class InternetConnection extends VoidTask {
         try {
 
             // Attempt to connect to Google Canada
-            URL url = new URL("https://google.ca");
-            URLConnection connection = url.openConnection();
+            URI url = new URI("https://google.ca");
+            URLConnection connection = url.toURL().openConnection();
             connection.connect();
             connectedToInternet = true;
             connection.getInputStream().close();
