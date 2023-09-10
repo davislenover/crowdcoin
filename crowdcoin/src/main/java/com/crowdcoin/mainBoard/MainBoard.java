@@ -8,7 +8,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class MainBoard {
-
     private static Stage mainStage = new Stage();
 
     // Subroutine to start main window after login
