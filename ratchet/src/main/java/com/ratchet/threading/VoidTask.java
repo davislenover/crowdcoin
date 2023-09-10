@@ -10,7 +10,7 @@ public abstract class VoidTask implements Task<Void> {
     public abstract Void runTask() throws TaskException;
     @Override
     public void setPriority(TaskPriority priority) {
-        this.taskPriority = taskPriority;
+        this.taskPriority = priority;
     }
     @Override
     public TaskPriority getTaskPriority() {

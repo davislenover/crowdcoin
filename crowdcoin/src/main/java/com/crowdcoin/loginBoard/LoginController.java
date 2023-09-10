@@ -6,10 +6,7 @@ import com.ratchet.observe.TaskEvent;
 import com.ratchet.observe.TaskEventType;
 import com.crowdcoin.networking.connections.InternetConnection;
 import com.crowdcoin.networking.sqlcom.SQLData;
-import com.ratchet.threading.TaskException;
-import com.ratchet.threading.TaskManager;
-import com.ratchet.threading.TaskTools;
-import com.ratchet.threading.VoidTask;
+import com.ratchet.threading.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -130,6 +127,7 @@ public class LoginController implements Observer<TaskEvent,String> {
                     
                     // If connected to a network, attempt connection to database
                     setupSQLConnection.setTaskId(loginTaskId);
+                    setupSQLConnection.setObjectToHold(this);
                     taskMgr.addTask(setupSQLConnection);
                     taskMgr.runNextTask();
                 }
@@ -195,7 +193,7 @@ public class LoginController implements Observer<TaskEvent,String> {
     }
 
     // VoidTask declaration for setting up the SQLConnection to use when login button is pressed
-    private static VoidTask setupSQLConnection = new VoidTask() {
+    private static ArgumentVoidTask<LoginController> setupSQLConnection = new ArgumentVoidTask<>() {
         @Override
         public Void runTask() throws TaskException {
             try {
@@ -206,7 +204,7 @@ public class LoginController implements Observer<TaskEvent,String> {
 
                 Platform.runLater(() -> {
                     // If no errors, then we can continue as the user has successfully logged in
-                    displayMessage(Defaults.goodLogin, Color.GREEN);
+                    this.getObjectHeld().displayMessage(Defaults.goodLogin, Color.GREEN);
                 });
 
                 // Wait a moment before returning

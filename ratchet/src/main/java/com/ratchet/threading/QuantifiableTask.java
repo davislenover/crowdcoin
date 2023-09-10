@@ -11,7 +11,7 @@ public abstract class QuantifiableTask<T> implements Task<T> {
     public abstract T runTask() throws TaskException;
     @Override
     public void setPriority(TaskPriority priority) {
-        this.taskPriority = taskPriority;
+        this.taskPriority = priority;
     }
     @Override
     public TaskPriority getTaskPriority() {
