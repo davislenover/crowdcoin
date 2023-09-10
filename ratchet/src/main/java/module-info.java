@@ -1,3 +1,3 @@
 module com.ratchet {
-    exports com.ratchet.testPackage;
+    exports com.ratchet;
 }

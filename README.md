@@ -33,3 +33,4 @@ Status: Pending (P), Started (S), Blocked (B), Done (D)
 | F15 | Add/Remove Users (Admin)                            | Davis Lenover      | 2023-08-04 |  | S (Working in tandem with F16)                                      |
 | F16 | Exception/Query Exception System                    | Davis Lenover      | 2023-08-08 |  | S                                                                   |
 | F17 | Multithreading System                               | Davis Lenover      | 2023-08-22 |  | S                                                                   |
+| F18 | Move Ratchet java files to dedicated Ratchet module | Davis Lenover      | 2023-09-09 |  | S                                                                   |
