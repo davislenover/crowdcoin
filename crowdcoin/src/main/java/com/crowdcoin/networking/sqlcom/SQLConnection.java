@@ -3,15 +3,9 @@ package com.crowdcoin.networking.sqlcom;
 
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.format.Defaults;
-import com.crowdcoin.mainBoard.table.Observe.*;
 import com.crowdcoin.networking.sqlcom.query.QueryBuilder;
-import com.crowdcoin.threading.QuantifiableTask;
-import com.crowdcoin.threading.VoidTask;
-import com.crowdcoin.threading.TaskManager;
-import com.crowdcoin.threading.TaskTools;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 

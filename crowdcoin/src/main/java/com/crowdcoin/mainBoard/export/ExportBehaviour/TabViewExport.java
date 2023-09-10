@@ -1,13 +1,11 @@
 package com.crowdcoin.mainBoard.export.ExportBehaviour;
 
-import com.crowdcoin.mainBoard.Interactive.InteractivePane;
+import com.ratchet.interactive.InteractivePane;
 import com.crowdcoin.mainBoard.table.Column;
-import com.crowdcoin.mainBoard.table.DynamicModelClass;
-import com.crowdcoin.mainBoard.table.ModelClass;
-import com.crowdcoin.mainBoard.table.ModelClassFactory;
+import com.crowdcoin.mainBoard.table.modelClass.DynamicModelClass;
+import com.crowdcoin.mainBoard.table.modelClass.ModelClass;
 import com.crowdcoin.mainBoard.table.permissions.IsReadable;
-import com.crowdcoin.mainBoard.window.PopWindow;
-import com.crowdcoin.networking.sqlcom.data.SQLTable;
+import com.ratchet.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTableReader;
 
 import java.util.ArrayList;

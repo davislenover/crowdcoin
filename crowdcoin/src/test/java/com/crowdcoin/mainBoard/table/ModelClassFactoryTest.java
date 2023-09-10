@@ -4,6 +4,9 @@ import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterCount;
 import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterTypeException;
 import com.crowdcoin.exceptions.modelClass.MultipleVariableMethodsException;
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
+import com.crowdcoin.mainBoard.table.modelClass.ModelClass;
+import com.crowdcoin.mainBoard.table.modelClass.ModelClassFactory;
+import com.crowdcoin.mainBoard.table.modelClass.TableReadable;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -48,7 +51,7 @@ class ModelClassFactoryTest {
     @Test
     public void testNotZeroArgs() {
         class testClass {
-            @TableReadable (columnName = "test")
+            @TableReadable(columnName = "test")
             public int dummyMethod(int test) {
                 return test;
             }

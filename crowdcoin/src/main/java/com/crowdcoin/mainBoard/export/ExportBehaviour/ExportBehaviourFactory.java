@@ -1,9 +1,7 @@
 package com.crowdcoin.mainBoard.export.ExportBehaviour;
 
-import com.crowdcoin.mainBoard.Interactive.InteractivePane;
-import com.crowdcoin.mainBoard.table.ModelClass;
-import com.crowdcoin.mainBoard.window.PopWindow;
-import com.crowdcoin.networking.sqlcom.data.SQLTable;
+import com.ratchet.interactive.InteractivePane;
+import com.ratchet.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTableReader;
 
 /**

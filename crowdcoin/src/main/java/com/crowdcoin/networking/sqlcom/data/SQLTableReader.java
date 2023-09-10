@@ -6,11 +6,11 @@ import com.crowdcoin.exceptions.modelClass.MultipleVariableMethodsException;
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
-import com.crowdcoin.mainBoard.table.ModelClass;
-import com.crowdcoin.mainBoard.table.ModelClassFactory;
-import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
-import com.crowdcoin.mainBoard.table.Observe.Observable;
-import com.crowdcoin.mainBoard.table.Observe.Observer;
+import com.crowdcoin.mainBoard.table.modelClass.ModelClass;
+import com.crowdcoin.mainBoard.table.modelClass.ModelClassFactory;
+import com.ratchet.observe.ModifyEvent;
+import com.ratchet.observe.Observable;
+import com.ratchet.observe.Observer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;

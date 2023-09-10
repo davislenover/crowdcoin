@@ -1,19 +1,18 @@
 package com.crowdcoin.networking.sqlcom.data.filter;
 
-import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
-import com.crowdcoin.mainBoard.Interactive.InteractivePane;
-import com.crowdcoin.mainBoard.Interactive.input.InputField;
-import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
-import com.crowdcoin.mainBoard.Interactive.input.validation.ComparatorValidator;
-import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
-import com.crowdcoin.mainBoard.Interactive.input.validation.TypeValidator;
-import com.crowdcoin.mainBoard.window.PopWindow;
+import com.ratchet.interactive.FieldActionDummyEvent;
+import com.ratchet.interactive.InteractivePane;
+import com.ratchet.interactive.input.InputField;
+import com.ratchet.interactive.input.InteractiveTextField;
+import com.ratchet.interactive.input.validation.ComparatorValidator;
+import com.ratchet.interactive.input.validation.LengthValidator;
+import com.ratchet.interactive.input.validation.TypeValidator;
+import com.ratchet.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.ExtendedFilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 
 /**

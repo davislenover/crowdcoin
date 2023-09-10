@@ -1,10 +1,10 @@
 package com.crowdcoin.networking.sqlcom.data.filter;
 
-import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
-import com.crowdcoin.mainBoard.Interactive.*;
-import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextArea;
-import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
-import com.crowdcoin.mainBoard.window.PopWindow;
+import com.ratchet.interactive.FieldActionDummyEvent;
+import com.ratchet.interactive.input.InteractiveTextArea;
+import com.ratchet.interactive.input.validation.LengthValidator;
+import com.ratchet.interactive.InteractivePane;
+import com.ratchet.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.ExtendedFilterOperators;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 

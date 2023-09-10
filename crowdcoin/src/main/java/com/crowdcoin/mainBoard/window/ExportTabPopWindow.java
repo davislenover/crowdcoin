@@ -1,30 +1,24 @@
 package com.crowdcoin.mainBoard.window;
 
-import com.crowdcoin.FXTools.StageManager;
-import com.crowdcoin.mainBoard.Interactive.InteractivePane;
-import com.crowdcoin.mainBoard.Interactive.input.InputField;
-import com.crowdcoin.mainBoard.Interactive.input.InteractiveChoiceBox;
+import com.ratchet.interactive.InteractivePane;
+import com.ratchet.interactive.input.InputField;
+import com.ratchet.interactive.input.InteractiveChoiceBox;
 import com.crowdcoin.mainBoard.Interactive.input.InteractiveDirectoryField;
-import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
-import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
-import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
-import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
-import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
-import com.crowdcoin.mainBoard.MainBoard;
-import com.crowdcoin.mainBoard.MainBoardController;
-import com.crowdcoin.mainBoard.WindowManager;
+import com.ratchet.interactive.input.InteractiveTextField;
+import com.ratchet.interactive.input.validation.LengthValidator;
+import com.ratchet.interactive.input.validation.PaneValidator;
+import com.ratchet.interactive.submit.InteractiveButton;
+import com.ratchet.interactive.submit.SubmitField;
+import com.ratchet.window.WindowManager;
 import com.crowdcoin.mainBoard.export.CSVExporter;
 import com.crowdcoin.mainBoard.export.ExportBehaviour.ExportBehaviour;
 import com.crowdcoin.mainBoard.export.ExportBehaviour.ExportBehaviourFactory;
 import com.crowdcoin.mainBoard.export.ExportBehaviour.GeneralExportBehaviours;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.SQLTableReader;
-import javafx.scene.Scene;
+import com.ratchet.window.PopWindow;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
 

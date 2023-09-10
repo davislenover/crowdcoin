@@ -1,12 +1,15 @@
 package com.crowdcoin.loginBoard;
 
 import com.crowdcoin.format.Defaults;
-import com.crowdcoin.mainBoard.table.Observe.Observer;
-import com.crowdcoin.mainBoard.table.Observe.TaskEvent;
-import com.crowdcoin.mainBoard.table.Observe.TaskEventType;
+import com.ratchet.observe.Observer;
+import com.ratchet.observe.TaskEvent;
+import com.ratchet.observe.TaskEventType;
 import com.crowdcoin.networking.connections.InternetConnection;
 import com.crowdcoin.networking.sqlcom.SQLData;
-import com.crowdcoin.threading.*;
+import com.ratchet.threading.TaskException;
+import com.ratchet.threading.TaskManager;
+import com.ratchet.threading.TaskTools;
+import com.ratchet.threading.VoidTask;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -135,21 +138,11 @@ public class LoginController implements Observer<TaskEvent,String> {
 
                 // If this code executes, then connecting to the database was successful
 
-                // If no errors, then we can continue as the user has successfully logged in
-                displayMessage(Defaults.goodLogin, Color.GREEN);
-
                 // Set login info
                 SQLData.credentials = loginInfo;
 
                 // Get current stage
                 Stage login = (Stage) loginButton.getScene().getWindow();
-
-                // Wait a moment before opening main window
-                try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
 
                 // To close the window outside the current JavaFX thread, we must call a runlater
                 Platform.runLater(() -> {
@@ -207,8 +200,22 @@ public class LoginController implements Observer<TaskEvent,String> {
         public Void runTask() throws TaskException {
             try {
                 // If connected, attempt login
+                // "jdbc:mysql://127.0.0.1:3306/sys"
                 // "jdbc:mysql://192.168.2.56:3306/coinbase"
-                SQLData.sqlConnection = new SQLConnection("jdbc:mysql://127.0.0.1:3306/sys",loginInfo.getUsername(), loginInfo.getPassword());
+                SQLData.sqlConnection = new SQLConnection("jdbc:mysql://192.168.2.56:3306/coinbase",loginInfo.getUsername(), loginInfo.getPassword());
+
+                Platform.runLater(() -> {
+                    // If no errors, then we can continue as the user has successfully logged in
+                    displayMessage(Defaults.goodLogin, Color.GREEN);
+                });
+
+                // Wait a moment before returning
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
             } catch (Exception exception) {
                 throw new TaskException(exception);
             }

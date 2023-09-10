@@ -1,7 +1,7 @@
 package com.crowdcoin.loginBoard;
 
-import com.crowdcoin.exceptions.handler.ExceptionGuardian;
-import com.crowdcoin.exceptions.handler.GeneralExceptionHandler;
+import com.ratchet.exceptions.handler.ExceptionGuardian;
+import com.ratchet.exceptions.handler.GeneralExceptionHandler;
 import com.crowdcoin.mainBoard.MainBoard;
 import javafx.application.Application;
 import javafx.application.Platform;

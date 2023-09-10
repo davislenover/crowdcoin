@@ -1,25 +1,20 @@
 package com.crowdcoin.mainBoard.window;
 
-import com.crowdcoin.FXTools.StageManager;
-import com.crowdcoin.exceptions.validation.ValidationException;
-import com.crowdcoin.format.defaultActions.interactive.FieldActionDummyEvent;
-import com.crowdcoin.mainBoard.Interactive.InteractivePane;
-import com.crowdcoin.mainBoard.Interactive.input.InputField;
-import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
-import com.crowdcoin.mainBoard.Interactive.input.validation.LengthValidator;
-import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
-import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
-import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
-import com.crowdcoin.mainBoard.table.CoinModel;
-import com.crowdcoin.mainBoard.table.Column;
-import com.crowdcoin.mainBoard.table.ModelClass;
-import com.crowdcoin.mainBoard.table.TabBar;
-import com.crowdcoin.mainBoard.table.permissions.IsReadable;
+import com.ratchet.window.StageManager;
+import com.ratchet.interactive.FieldActionDummyEvent;
+import com.ratchet.interactive.InteractivePane;
+import com.ratchet.interactive.input.InputField;
+import com.ratchet.interactive.input.InteractiveTextField;
+import com.ratchet.interactive.input.validation.LengthValidator;
+import com.ratchet.interactive.input.validation.PaneValidator;
+import com.ratchet.interactive.submit.InteractiveButton;
+import com.ratchet.interactive.submit.SubmitField;
 import com.crowdcoin.mainBoard.table.permissions.IsWriteable;
-import com.crowdcoin.mainBoard.table.permissions.Permission;
 import com.crowdcoin.networking.sqlcom.Generation.Generator;
 import com.crowdcoin.networking.sqlcom.Generation.IDGenerator;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
+import com.ratchet.window.InfoPopWindow;
+import com.ratchet.window.PopWindow;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;

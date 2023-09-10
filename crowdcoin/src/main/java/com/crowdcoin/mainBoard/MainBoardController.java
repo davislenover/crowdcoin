@@ -1,19 +1,22 @@
 package com.crowdcoin.mainBoard;
 
-import com.crowdcoin.FXTools.StageManager;
+import com.crowdcoin.mainBoard.table.modelClass.*;
+import com.crowdcoin.mainBoard.table.modelClass.models.CoinModel;
+import com.crowdcoin.mainBoard.table.modelClass.models.PermsModel;
+import com.crowdcoin.mainBoard.table.modelClass.models.UserModel;
+import com.ratchet.window.StageManager;
 import com.crowdcoin.mainBoard.table.*;
 import com.crowdcoin.mainBoard.table.tabActions.GradeRowEvent;
 import com.crowdcoin.mainBoard.table.tabActions.ViewTableRowEvent;
 import com.crowdcoin.mainBoard.table.tabActions.ViewUserRowEvent;
-import com.crowdcoin.mainBoard.toolBar.MenuGroup;
-import com.crowdcoin.mainBoard.toolBar.MenuGroupContainer;
-import com.crowdcoin.mainBoard.toolBar.MenuOption;
+import com.ratchet.menu.MenuGroup;
+import com.ratchet.menu.MenuGroupContainer;
+import com.ratchet.menu.MenuOption;
 import com.crowdcoin.mainBoard.window.AddUserPopWindow;
 import com.crowdcoin.mainBoard.window.NewEntryPopWindow;
-import com.crowdcoin.mainBoard.window.PopWindow;
+import com.ratchet.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.SQLData;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
-import com.crowdcoin.networking.sqlcom.data.SQLTableGroup;
 import com.crowdcoin.networking.sqlcom.data.TempSQLTable;
 import com.crowdcoin.networking.sqlcom.data.constraints.*;
 import javafx.application.Platform;
@@ -92,7 +95,7 @@ public class MainBoardController {
             }
         }));
 
-        ModelClass modelClassUserNames = new ModelClassFactory().build(new permsModel("test"));
+        ModelClass modelClassUserNames = new ModelClassFactory().build(new PermsModel("test"));
         SQLTable tableUserData = new SQLTable(SQLData.getSqlConnection(),"userData", modelClassUser.getColumns());
         SQLTable userNameTable = new SQLTable(SQLData.getSqlConnection(),"userGrantsData",modelClassUserNames.getColumns());
         MenuGroup test2 = new MenuGroup("Test2");
@@ -106,7 +109,7 @@ public class MainBoardController {
             }
         }));
 
-        Tab testUserTab = new Tab(new permsModel("test"),userNameTable,"testUserTab");
+        Tab testUserTab = new Tab(new PermsModel("test"),userNameTable,"testUserTab");
         testUserTab.setTabTableAction(new ViewUserRowEvent(tableUserData));
 
         test2.addOption(new MenuOption("Open Users Tab", option -> {

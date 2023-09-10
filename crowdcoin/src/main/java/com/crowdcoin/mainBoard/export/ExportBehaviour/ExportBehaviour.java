@@ -1,8 +1,5 @@
 package com.crowdcoin.mainBoard.export.ExportBehaviour;
 
-import com.crowdcoin.mainBoard.Interactive.InteractivePane;
-import com.crowdcoin.mainBoard.window.PopWindow;
-
 import java.util.List;
 
 public interface ExportBehaviour {

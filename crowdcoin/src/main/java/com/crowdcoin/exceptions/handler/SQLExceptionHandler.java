@@ -1,7 +1,8 @@
 package com.crowdcoin.exceptions.handler;
 
-import com.crowdcoin.exceptions.handler.strategies.ExceptionStrategy;
-import com.crowdcoin.exceptions.handler.strategies.WarningException;
+import com.ratchet.exceptions.handler.GuardianHandler;
+import com.ratchet.exceptions.handler.strategies.ExceptionStrategy;
+import com.ratchet.exceptions.handler.strategies.WarningException;
 
 import java.sql.SQLException;
 

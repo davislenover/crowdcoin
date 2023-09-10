@@ -1,21 +1,16 @@
 package com.crowdcoin.mainBoard.Interactive.input;
 
-import com.crowdcoin.FXTools.StageManager;
-import com.crowdcoin.mainBoard.Interactive.InteractiveFieldActionEvent;
+import com.ratchet.interactive.InteractiveFieldActionEvent;
 import com.crowdcoin.mainBoard.MainBoard;
-import com.crowdcoin.mainBoard.window.PopWindow;
+import com.ratchet.interactive.input.InteractiveTextField;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import java.io.File;
-import java.util.List;
 import java.util.regex.Pattern;
 
 public class InteractiveDirectoryField extends InteractiveTextField {

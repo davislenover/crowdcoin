@@ -1,13 +1,13 @@
 package com.crowdcoin.networking.sqlcom.data.filter;
 
-import com.crowdcoin.FXTools.StageManager;
-import com.crowdcoin.mainBoard.WindowManager;
-import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
+import com.ratchet.window.StageManager;
+import com.ratchet.window.WindowManager;
+import com.ratchet.observe.ModifyEvent;
 import com.crowdcoin.mainBoard.window.EditFilterPopWindow;
 import com.crowdcoin.mainBoard.window.NewFilterPopWindow;
-import com.crowdcoin.mainBoard.table.Observe.Observable;
-import com.crowdcoin.mainBoard.table.Observe.Observer;
-import com.crowdcoin.mainBoard.window.PopWindow;
+import com.ratchet.observe.Observable;
+import com.ratchet.observe.Observer;
+import com.ratchet.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.MenuItem;

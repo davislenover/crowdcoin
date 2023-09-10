@@ -1,16 +1,16 @@
 package com.crowdcoin.mainBoard.table;
 
-import com.crowdcoin.exceptions.handler.ExceptionGuardian;
-import com.crowdcoin.exceptions.handler.GeneralExceptionHandler;
+import com.ratchet.exceptions.handler.ExceptionGuardian;
+import com.ratchet.exceptions.handler.GeneralExceptionHandler;
 import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterCount;
 import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterTypeException;
 import com.crowdcoin.exceptions.modelClass.MultipleVariableMethodsException;
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
-import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
-import com.crowdcoin.mainBoard.table.Observe.ModifyEventType;
-import com.crowdcoin.mainBoard.table.Observe.Observer;
+import com.ratchet.observe.ModifyEvent;
+import com.ratchet.observe.ModifyEventType;
+import com.ratchet.observe.Observer;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TabPane;

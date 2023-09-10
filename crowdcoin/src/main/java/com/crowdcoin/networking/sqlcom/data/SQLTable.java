@@ -3,17 +3,18 @@ package com.crowdcoin.networking.sqlcom.data;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
 import com.crowdcoin.exceptions.table.UnknownColumnNameException;
-import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
 import com.crowdcoin.mainBoard.table.Column;
-import com.crowdcoin.mainBoard.table.Observe.*;
 import com.crowdcoin.mainBoard.table.permissions.PermissionNames;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.data.constraints.ConstraintContainer;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterManager;
 import com.crowdcoin.networking.sqlcom.query.*;
-import com.crowdcoin.threading.Task;
-import com.crowdcoin.threading.TaskManager;
-import com.crowdcoin.threading.TaskTools;
+import com.ratchet.threading.TaskManager;
+import com.ratchet.threading.TaskTools;
+import com.ratchet.observe.ModifyEvent;
+import com.ratchet.observe.ModifyEventType;
+import com.ratchet.observe.Observable;
+import com.ratchet.observe.Observer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,7 +26,7 @@ import java.util.List;
  * Handles communication between a program and an SQL table within an SQL Database.
  * Note this class takes into account permissions and constraints, where a method in question has "raw" in it, both permissions and constraints are ignored. All methods which check permissions also check constraints
  */
-public class SQLTable implements QueryGroupable<SQLTableGroup>,Observable<ModifyEvent,String>, Observer<ModifyEvent,String> {
+public class SQLTable implements QueryGroupable<SQLTableGroup>, Observable<ModifyEvent,String>, Observer<ModifyEvent,String> {
 
     private SQLDatabase database;
     private SQLTableGroup tableGroup = null;

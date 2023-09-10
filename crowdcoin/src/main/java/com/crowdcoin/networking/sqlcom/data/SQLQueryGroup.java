@@ -1,7 +1,7 @@
 package com.crowdcoin.networking.sqlcom.data;
 
-import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
-import com.crowdcoin.mainBoard.table.Observe.Observable;
+import com.ratchet.observe.ModifyEvent;
+import com.ratchet.observe.Observable;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.query.QueryBuilder;
 

@@ -1,5 +1,7 @@
 package com.crowdcoin.mainBoard.table;
 
+import com.crowdcoin.mainBoard.table.modelClass.TableReadable;
+
 public class testModel {
 
     private int value1;
@@ -12,7 +14,7 @@ public class testModel {
         this.value3=value3;
     }
 
-    @TableReadable (order = 2,columnName = "test")
+    @TableReadable(order = 2,columnName = "test")
     public int testMethod1() {
         return this.value1;
     }

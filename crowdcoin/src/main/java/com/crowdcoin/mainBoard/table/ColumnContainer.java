@@ -2,10 +2,10 @@ package com.crowdcoin.mainBoard.table;
 import com.crowdcoin.exceptions.columnContainer.NoColumnsException;
 import com.crowdcoin.exceptions.columnContainer.NoTableViewInstanceException;
 import com.crowdcoin.exceptions.columnContainer.UnknownRowException;
+import com.crowdcoin.mainBoard.table.modelClass.ModelClass;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 
 import java.util.ArrayList;

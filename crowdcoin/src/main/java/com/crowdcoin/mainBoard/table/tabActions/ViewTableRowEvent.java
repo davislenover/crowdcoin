@@ -1,28 +1,25 @@
 package com.crowdcoin.mainBoard.table.tabActions;
 
-import com.crowdcoin.FXTools.StageManager;
-import com.crowdcoin.exceptions.validation.ValidationException;
-import com.crowdcoin.mainBoard.Interactive.InteractiveTabPane;
-import com.crowdcoin.mainBoard.Interactive.input.InputField;
-import com.crowdcoin.mainBoard.Interactive.input.InteractiveTextField;
-import com.crowdcoin.mainBoard.Interactive.input.validation.MatchValidator;
-import com.crowdcoin.mainBoard.Interactive.input.validation.PaneValidator;
-import com.crowdcoin.mainBoard.Interactive.submit.InteractiveButton;
-import com.crowdcoin.mainBoard.Interactive.submit.SubmitField;
-import com.crowdcoin.mainBoard.WindowManager;
+import com.ratchet.window.StageManager;
+import com.ratchet.interactive.InteractiveTabPane;
+import com.ratchet.interactive.input.InputField;
+import com.ratchet.interactive.input.InteractiveTextField;
+import com.ratchet.interactive.input.validation.MatchValidator;
+import com.ratchet.interactive.input.validation.PaneValidator;
+import com.ratchet.interactive.submit.InteractiveButton;
+import com.ratchet.interactive.submit.SubmitField;
+import com.ratchet.window.WindowManager;
 import com.crowdcoin.mainBoard.table.ColumnContainer;
-import com.crowdcoin.mainBoard.table.ModelClass;
-import com.crowdcoin.mainBoard.table.Observe.ModifyEventType;
-import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
-import com.crowdcoin.mainBoard.table.TabActionEvent;
-import com.crowdcoin.mainBoard.window.InfoPopWindow;
+import com.crowdcoin.mainBoard.table.modelClass.ModelClass;
+import com.ratchet.observe.ModifyEventType;
+import com.ratchet.observe.ModifyEvent;
+import com.ratchet.window.InfoPopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ViewTableRowEvent implements TabActionEvent {

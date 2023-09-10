@@ -1,7 +1,7 @@
 package com.crowdcoin.networking.sqlcom.data.filter;
 
-import com.crowdcoin.mainBoard.Interactive.InteractivePane;
-import com.crowdcoin.mainBoard.window.PopWindow;
+import com.ratchet.interactive.InteractivePane;
+import com.ratchet.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.filter.filterOperators.FilterOperators;
 
 import java.util.List;

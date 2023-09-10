@@ -6,10 +6,10 @@ import com.crowdcoin.exceptions.modelClass.MultipleVariableMethodsException;
 import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.exceptions.table.InvalidRangeException;
-import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
-import com.crowdcoin.mainBoard.table.Observe.ModifyEventType;
-import com.crowdcoin.mainBoard.table.Observe.Observable;
-import com.crowdcoin.mainBoard.table.Observe.Observer;
+import com.crowdcoin.mainBoard.table.modelClass.ModelClass;
+import com.crowdcoin.mainBoard.table.modelClass.ModelClassFactory;
+import com.ratchet.observe.ModifyEvent;
+import com.ratchet.observe.ModifyEventType;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.SQLTableReader;
 import javafx.scene.control.Button;
@@ -19,9 +19,6 @@ import javafx.scene.control.TableView;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 /**

@@ -1,7 +1,7 @@
 package com.crowdcoin.networking.connections;
 
-import com.crowdcoin.threading.TaskException;
-import com.crowdcoin.threading.VoidTask;
+import com.ratchet.threading.TaskException;
+import com.ratchet.threading.VoidTask;
 
 import java.net.URI;
 import java.net.URLConnection;

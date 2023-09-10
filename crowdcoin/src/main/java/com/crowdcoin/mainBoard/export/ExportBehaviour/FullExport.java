@@ -1,14 +1,14 @@
 package com.crowdcoin.mainBoard.export.ExportBehaviour;
 
-import com.crowdcoin.mainBoard.Interactive.InteractivePane;
+import com.crowdcoin.mainBoard.table.modelClass.DynamicModelClass;
+import com.crowdcoin.mainBoard.table.modelClass.ModelClass;
+import com.ratchet.interactive.InteractivePane;
 import com.crowdcoin.mainBoard.table.*;
 import com.crowdcoin.mainBoard.table.permissions.IsReadable;
-import com.crowdcoin.mainBoard.window.PopWindow;
+import com.ratchet.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTableReader;
-import javafx.scene.control.TableView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FullExport implements ExportBehaviour {

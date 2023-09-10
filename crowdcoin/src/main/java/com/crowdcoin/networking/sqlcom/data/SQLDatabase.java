@@ -1,10 +1,10 @@
 package com.crowdcoin.networking.sqlcom.data;
 
 import com.crowdcoin.exceptions.network.FailedQueryException;
-import com.crowdcoin.mainBoard.table.Observe.ModifyEvent;
-import com.crowdcoin.mainBoard.table.Observe.ModifyEventType;
-import com.crowdcoin.mainBoard.table.Observe.Observable;
-import com.crowdcoin.mainBoard.table.Observe.Observer;
+import com.ratchet.observe.ModifyEvent;
+import com.ratchet.observe.ModifyEventType;
+import com.ratchet.observe.Observable;
+import com.ratchet.observe.Observer;
 import com.crowdcoin.networking.sqlcom.SQLColumnType;
 import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.permissions.SQLPermission;
