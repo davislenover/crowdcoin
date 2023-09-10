@@ -1,4 +1,4 @@
-![CrowdCoin x Ratchet](imgs/CrowdCoinImg.jpg)
+![CrowdCoin x Ratchet](crowdcoin/imgs/CrowdCoinImg.jpg)
 
 # CrowdCoin
 CrowdCoin enables a group of users to both keep track of item valuations all in one place. The backend utilizes an SQL database while the frontend employs Ratchet, a framework on-top of JavaFX, designed to streamline the process of modifying both UI elements and their behaviors. All-together this allows users to interact with the database in an intuitive manner while ensuring the system is scalable and maintainable.
