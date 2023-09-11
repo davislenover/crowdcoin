@@ -14,4 +14,5 @@ module com.ratchet {
     exports com.ratchet.exceptions.handler;
     exports com.ratchet.exceptions.handler.strategies;
     exports com.ratchet.menu;
+    exports com.ratchet.system;
 }

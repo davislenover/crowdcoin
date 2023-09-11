@@ -3,7 +3,7 @@ package com.crowdcoin.mainBoard.window;
 import com.ratchet.interactive.InteractivePane;
 import com.ratchet.interactive.input.InputField;
 import com.ratchet.interactive.input.InteractiveChoiceBox;
-import com.crowdcoin.mainBoard.Interactive.input.InteractiveDirectoryField;
+import com.ratchet.interactive.input.InteractiveDirectoryField;
 import com.ratchet.interactive.input.InteractiveTextField;
 import com.ratchet.interactive.input.validation.LengthValidator;
 import com.ratchet.interactive.input.validation.PaneValidator;

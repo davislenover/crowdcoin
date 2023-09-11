@@ -23,7 +23,7 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
     private TaskException failedTaskException;
 
     // Create a new thread to execute task on
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public TaskManager() {
         this.tasks = new PriorityBlockingQueue<>();
@@ -101,6 +101,7 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
             this.currentTask = null;
             this.notifyObservers(event);
         } else if (eventType.equals(TaskEventType.TASK_FAILED)) {
+            this.currentTask.closeWatcher();
             this.currentTask = null;
             this.notifyObservers(event);
         }
@@ -192,6 +193,11 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
         public void clearObservers() {
             this.subscriptionList.clear();
         }
+
+        public static void closeWatcher() {
+            anotherService.close();
+        }
+
     }
 
     /**
@@ -236,6 +242,11 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
      */
     public TaskException getFailedTaskException() {
         return this.failedTaskException;
+    }
+
+    public static void closeManager() {
+        executorService.close();
+        TaskWatcher.closeWatcher();
     }
 
 

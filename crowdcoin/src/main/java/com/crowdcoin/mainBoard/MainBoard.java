@@ -3,6 +3,7 @@ package com.crowdcoin.mainBoard;
 import com.ratchet.exceptions.handler.ExceptionGuardian;
 import com.ratchet.exceptions.handler.GeneralExceptionHandler;
 import com.crowdcoin.networking.sqlcom.SQLData;
+import com.ratchet.system.RatchetSystem;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -13,8 +14,9 @@ public class MainBoard {
     // Subroutine to start main window after login
     public static void start() throws Exception {
 
+        RatchetSystem.setRootStage(mainStage);
+
         // Create a new stage and get the mainboard file
-        ExceptionGuardian.setRootStage(mainStage);
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainBoard.class.getResource("mainBoard.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
@@ -22,6 +24,8 @@ public class MainBoard {
             mainStage.setScene(scene);
             mainStage.setResizable(true);
             mainStage.show();
+
+            mainStage.setOnCloseRequest(windowEvent -> RatchetSystem.exit(0));
 
             // Initialize coin list
             MainBoardController controller = (MainBoardController) fxmlLoader.getController();
@@ -31,10 +35,6 @@ public class MainBoard {
             guardian.handleException(e);
         }
 
-    }
-
-    public static Stage getMainStage() {
-        return mainStage;
     }
 
 }

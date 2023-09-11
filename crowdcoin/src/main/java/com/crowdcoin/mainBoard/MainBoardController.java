@@ -4,6 +4,8 @@ import com.crowdcoin.mainBoard.table.modelClass.*;
 import com.crowdcoin.mainBoard.table.modelClass.models.CoinModel;
 import com.crowdcoin.mainBoard.table.modelClass.models.PermsModel;
 import com.crowdcoin.mainBoard.table.modelClass.models.UserModel;
+import com.ratchet.threading.TaskManager;
+import com.ratchet.threading.TaskTools;
 import com.ratchet.window.StageManager;
 import com.crowdcoin.mainBoard.table.*;
 import com.crowdcoin.mainBoard.table.tabActions.GradeRowEvent;
@@ -19,7 +21,7 @@ import com.crowdcoin.networking.sqlcom.SQLData;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.TempSQLTable;
 import com.crowdcoin.networking.sqlcom.data.constraints.*;
-import javafx.application.Platform;
+import com.ratchet.system.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import com.crowdcoin.mainBoard.table.Tab;
@@ -80,7 +82,7 @@ public class MainBoardController {
         MenuGroupContainer testContainer = new MenuGroupContainer(this.toolBar);
 
         MenuGroup test1 = new MenuGroup("Test1");
-        test1.addOption(new MenuOption("Exit", p -> Platform.exit()));
+        test1.addOption(new MenuOption("Exit", p -> RatchetSystem.exit(0)));
         test1.addOption(new MenuOption("Hello", p -> System.out.println("Hello world!")));
         test1.addOption(new MenuOption("New Tab Test", p -> testBar.addTab(testTab)));
         test1.addOption(new MenuOption("New Entry",p-> {

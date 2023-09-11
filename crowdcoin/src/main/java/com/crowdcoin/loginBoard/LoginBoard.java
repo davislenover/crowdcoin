@@ -3,6 +3,7 @@ package com.crowdcoin.loginBoard;
 import com.ratchet.exceptions.handler.ExceptionGuardian;
 import com.ratchet.exceptions.handler.GeneralExceptionHandler;
 import com.crowdcoin.mainBoard.MainBoard;
+import com.ratchet.system.RatchetSystem;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -18,7 +19,7 @@ import java.io.IOException;
 public class LoginBoard extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        ExceptionGuardian.setRootStage(stage);
+        RatchetSystem.setRootStage(stage);
         FXMLLoader fxmlLoader = new FXMLLoader(LoginBoard.class.getResource("loginBoard.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 600, 400);
         stage.setTitle("CrowdCoin - Login");
@@ -49,8 +50,7 @@ public class LoginBoard extends Application {
                 } else {
 
                     // Exit
-                    Platform.exit();
-                    System.exit(0);
+                    RatchetSystem.exit(0);
 
                 }
 

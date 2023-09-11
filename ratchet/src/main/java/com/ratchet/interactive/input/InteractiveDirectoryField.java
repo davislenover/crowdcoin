@@ -1,8 +1,7 @@
-package com.crowdcoin.mainBoard.Interactive.input;
+package com.ratchet.interactive.input;
 
 import com.ratchet.interactive.InteractiveFieldActionEvent;
-import com.crowdcoin.mainBoard.MainBoard;
-import com.ratchet.interactive.input.InteractiveTextField;
+import com.ratchet.system.RatchetSystem;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Hyperlink;
@@ -13,6 +12,9 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.regex.Pattern;
 
+/**
+ * A field allowing the input of directories. Note that when selecting a directory, this field will hide the root stage set within {@link RatchetSystem}
+ */
 public class InteractiveDirectoryField extends InteractiveTextField {
     private static int linkTextTranslateX = 320;
     private Hyperlink fileActionLink;
@@ -78,12 +80,12 @@ public class InteractiveDirectoryField extends InteractiveTextField {
             // To avoid a user switching tabs while selecting a directory, hide the MainBoard window
             // This will keep the Export PopWindow open however, it will be blocked due to the directory selector
             // Thus one must close the directory window before continuing
-            MainBoard.getMainStage().hide();
+            RatchetSystem.getRootStage().hide();
             File choosenFile = chooser.showDialog(stage.getScene().getWindow());
             if (choosenFile != null) {
                 textField.setValue(choosenFile.getAbsolutePath());
             }
-            MainBoard.getMainStage().show();
+            RatchetSystem.getRootStage().show();
         }
     }
 

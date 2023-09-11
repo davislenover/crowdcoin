@@ -1,9 +1,8 @@
 package com.ratchet.exceptions.handler;
+import com.ratchet.system.RatchetSystem;
 import javafx.stage.Stage;
 
 public class ExceptionGuardian<T extends Throwable> {
-
-    private static Stage rootStage = null;
     private GuardianHandler<T> handler;
 
     /**
@@ -15,19 +14,11 @@ public class ExceptionGuardian<T extends Throwable> {
     }
 
     /**
-     * Sets the root stage for all ExceptionGuardian instances. This root scene may be closed when certain exceptions occur
-     * @param root the given root scene
-     */
-    public static void setRootStage(Stage root) {
-        rootStage = root;
-    }
-
-    /**
-     * Gets the root Stage object (if set)
-     * @return the root Stage object, null if not already set
+     * Gets the root Stage object (if set) from {@link RatchetSystem#getRootStage()}
+     * @return the root Stage object, Null if not already set
      */
     public static Stage getRootStage() {
-        return rootStage;
+        return RatchetSystem.getRootStage();
     }
 
     /**
