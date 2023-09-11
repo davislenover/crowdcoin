@@ -68,6 +68,8 @@ public class FilterController implements Observable<ModifyEvent,String> {
         });
         filterButton.getItems().add(newFilter);
 
+        filterButton.setText("Filters - " + filterButton.getItems().size());
+
     }
 
     @Override
