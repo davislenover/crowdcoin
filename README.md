@@ -7,6 +7,16 @@ CrowdCoin enables a group of users to both keep track of item valuations all in 
 - Both CrowdCoin and Ratchet are still in active development! This guide will evolve overtime as development continues.
 - Currently, CrowdCoin is operable but requires more technical know-how to get up and running. Below is the status of each feature being implemented
 
+# Installation
+## Preview Build
+### Dependencies
+- OpenJDK 20
+- Java 8 or later
+### Instructions
+1. Clone the repository to your local machine ```git clone https://github.com/davislenover/crowdcoin.git```
+2. Navigate to the ```crowdcoinproject``` directory (```crowdcoin/crowdcoinproject```)
+3. To build a preview jar with Ratchet dependencies, run the following: ```mvn clean install```
+
 ### Definition of Done
 
 -- Item operates as expected by client and is functionally sound (i.e. has been proven correct via testing by programmer) --
