@@ -12,10 +12,13 @@ CrowdCoin enables a group of users to both keep track of item valuations all in 
 ### Dependencies
 - OpenJDK 20
 - Java 8 or later
-### Instructions
+- You can use an IDE of choice (such as Intelij which will handle a lot of maven's jdk and javafx dependencies for you) or the Terminal
+- It's assumed Maven is correctly setup and operating with OpenJDK 20
+### Instructions (All Platforms)
 1. Clone the repository to your local machine ```git clone https://github.com/davislenover/crowdcoin.git```
 2. Navigate to the ```crowdcoinproject``` directory (```crowdcoin/crowdcoinproject```)
 3. To build a preview jar with Ratchet dependencies, run the following: ```mvn clean install```
+4. Navigate to ```crowdcoin/crowdcoin/target``` and execute the jar with dependencies
 
 ### Definition of Done
 
