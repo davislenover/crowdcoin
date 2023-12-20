@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Worker implements ThreadingWorker {
 
     private AtomicBoolean isActive;
-    private Queue<TaskFuturePair> tasks;
+    private Queue<TaskFutureTuple> tasks;
     private threadWorker threadWorker;
 
     /**
@@ -37,7 +37,7 @@ public class Worker implements ThreadingWorker {
      */
     public synchronized Future performTask(Task<?> task) {
         Future returnFuture = new Future();
-        TaskFuturePair pair = new TaskFuturePair(task,returnFuture);
+        TaskFutureTuple pair = new TaskFutureTuple(task,returnFuture);
         this.tasks.offer(pair);
         this.notify();
         return returnFuture;
@@ -51,21 +51,31 @@ public class Worker implements ThreadingWorker {
         this.notify();
     }
 
-    private synchronized void doNextTask() {
-        // Check if there are tasks and that the worker is currently active
-        while(this.tasks.isEmpty() && this.isActive.get()) {
-            try {
-                // If not, block until a task is added or worker becomes in-active
-                this.wait();
-            } catch (Exception exception) {
-                // TODO
+    private void doNextTask() {
+        TaskFutureTuple nextTask = null;
+        synchronized (this) {
+            // Check if there are tasks and that the worker is currently active
+            while(this.tasks.isEmpty() && this.isActive.get()) {
+                try {
+                    // If not, block until a task is added or worker becomes in-active
+                    this.wait();
+                } catch (Exception exception) {
+                    // TODO
+                }
             }
+
+            // Check if signal was for a new task
+            if (this.isActive.get()) {
+                nextTask = this.tasks.poll();
+            }
+
         }
-        // Check if signal was for a new task
-        if (this.isActive.get()) {
+
+        // Exit monitor to allow other threads to add tasks to queue
+
+        if (nextTask != null) {
             try {
                 // Perform the task from the queue and place result in corresponding futures
-                TaskFuturePair nextTask = this.tasks.poll();
                 nextTask.getFuture().setItem(nextTask.getTask().runTask());
             } catch (TaskException | NullPointerException e) {
                 // TODO
