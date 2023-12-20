@@ -18,6 +18,7 @@ public class Worker<T> extends Thread {
         this.isActive.set(true);
         this.tasks = new LinkedList<>();
         this.futures = new LinkedList<>();
+        this.start();
     }
 
     public synchronized Future<T> performTask(Task<T> task) {
