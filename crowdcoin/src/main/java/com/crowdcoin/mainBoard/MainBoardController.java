@@ -46,7 +46,7 @@ public class MainBoardController {
 
         CoinModel model = new CoinModel(12,"myDenomination","01/01/2002","myGrade","myCompany","01234","$101.93");
         ModelClass modelClass = new ModelClassFactory().build(model);
-        TempSQLTable testTable = new TempSQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
+        //TempSQLTable testTable = new TempSQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
         SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
         SQLTable table2 = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
 
