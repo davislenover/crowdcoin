@@ -5,7 +5,7 @@ import com.ratchet.threading.Task;
 import java.util.Comparator;
 
 // Package-private class. Data structure for Workers to keep track of Task objects and their corresponding Future objects
-class TaskFuturePair implements Comparator<TaskFuturePair> {
+public class TaskFuturePair implements Comparator<TaskFuturePair> {
 
     private Task<?> task;
     private Future correspondingFuture;

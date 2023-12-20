@@ -7,7 +7,10 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Worker {
+/**
+ * A {@link ThreadingWorker} class which executes {@link Task}s in an arbitrary order
+ */
+public class Worker implements ThreadingWorker {
 
     private AtomicBoolean isActive;
     private Queue<TaskFuturePair> tasks;
