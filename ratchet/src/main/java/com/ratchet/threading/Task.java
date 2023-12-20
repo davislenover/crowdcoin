@@ -7,7 +7,7 @@ import java.util.concurrent.Callable;
 
 /**
  * A task of arbitrary logic that can be run on a separate Thread
- * Typically ran by a {@link TaskManager}. By default, an instantiated Task has a priority level of {@link TaskPriority#NEUTRAL}
+ * Typically ran by a {@link TaskManager}. By default, an instantiated Task has a priority level of {@link TaskPriority#LOW}
  * @param <T> the given return type of the Task
  */
 public interface Task<T> extends Callable<T>, Comparator<Task>, Comparable<Task> {

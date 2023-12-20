@@ -5,7 +5,7 @@ package com.ratchet.threading;
  * @param <T> the given return type of the Task
  */
 public abstract class QuantifiableTask<T> implements Task<T> {
-    private TaskPriority taskPriority = TaskPriority.NEUTRAL;
+    private TaskPriority taskPriority = TaskPriority.LOW;
     private String taskId = "";
     @Override
     public abstract T runTask() throws TaskException;

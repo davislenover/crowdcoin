@@ -5,7 +5,7 @@ package com.ratchet.threading;
  */
 public enum TaskPriority {
 
-    NEGLIGIBLE(10),LOW(9),MINOR(8),MODERATE(7),NEUTRAL(6),IMPORTANT(5),HIGH(4),CRITICAL(3),URGENT(2),VITAL(1);
+    LOW(1),HIGH(0);
 
     private final int priority;
 
@@ -16,4 +16,5 @@ public enum TaskPriority {
     public int getPriority() {
         return this.priority;
     }
+
 }

@@ -4,7 +4,7 @@ package com.ratchet.threading;
  * A task of arbitrary logic with no return value that can be run on a separate Thread
  */
 public abstract class VoidTask implements Task<Void> {
-    private TaskPriority taskPriority = TaskPriority.NEUTRAL;
+    private TaskPriority taskPriority = TaskPriority.LOW;
     private String taskId = "";
     @Override
     public abstract Void runTask() throws TaskException;

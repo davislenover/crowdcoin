@@ -3,32 +3,27 @@ package com.ratchet.threading.workers;
 import com.ratchet.threading.Task;
 import com.ratchet.threading.TaskException;
 
-import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Worker {
+public class PriorityWorker extends Worker {
 
     private AtomicBoolean isActive;
     private Queue<TaskFuturePair> tasks;
     private threadWorker threadWorker;
 
-    /**
-     * Create a new active {@link Worker}
-     */
-    public Worker() {
-        this.isActive = new AtomicBoolean();
-        this.isActive.set(true);
-        this.tasks = new LinkedList<>();
+    public PriorityWorker(int taskCapacity) {
+        // Create priority queue with comparator from VoidTask (all types of tasks use the same default compare() method)
+        this.tasks = new PriorityQueue<>(taskCapacity, new TaskFuturePair(null,null));
 
         this.threadWorker = new threadWorker();
         this.threadWorker.start();
-
     }
 
     /**
      * A thread-safe method which gives the corresponding {@link Worker} a {@link Task} object to execute.
-     * @param task the given task to complete on a separate Thread. All {@link Task}s given will be executed sequentially in the order they were received.
+     * @param task the given task to complete on a separate Thread. All {@link Task}s are executed according to their priority. When other tasks of the same priority exist with the given {@link PriorityWorker}, the order in which they are executed is non-deterministic.
      * @return Will return a {@link Future} object. A {@link Future} object is where another Thread can check if the Task computation from the given {@link Worker} has been completed.
      * Once complete, the Thread can get that computed value via the {@link Future} object
      */
@@ -78,5 +73,6 @@ public class Worker {
             }
         }
     }
+
 
 }

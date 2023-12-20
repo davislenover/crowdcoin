@@ -4,6 +4,7 @@ import com.ratchet.observe.Observable;
 import com.ratchet.observe.Observer;
 import com.ratchet.observe.TaskEvent;
 import com.ratchet.observe.TaskEventType;
+import com.ratchet.threading.workers.Worker;
 import javafx.application.Platform;
 
 
@@ -24,6 +25,7 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
 
     // Create a new thread to execute task on
     private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private static final Worker<?> worker = new Worker<>();
 
     public TaskManager() {
         this.tasks = new PriorityBlockingQueue<>();
@@ -112,8 +114,9 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
         // List is static to avoid concurrent modifications, only TaskManager is observing this class
         private static List<Observer<TaskEvent,String>> subscriptionList = new ArrayList<>();
         private static ExecutorService anotherService = Executors.newSingleThreadExecutor();
+        private Worker<T> worker = new Worker<>();
         private Task<T> task;
-        private Future<T> endTask;
+        private Worker.Future<T> endTask;
         public TaskWatcher(Task<T> task, Observer<TaskEvent,String> observer) {
             this.task = task;
             if (subscriptionList.isEmpty()) {
@@ -130,14 +133,15 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
                 // Fire event
                 this.notifyObservers(new TaskEvent(TaskEventType.TASK_START,taskId));
             });
-            // When call() is called from submit(), newly created thread will run task
-            this.endTask = anotherService.submit(this.task);
+            // call performTask(), which will add the task to the worker queue for execution on a separate Thread
+            this.endTask = this.worker.performTask(this.task);
+
             T returnValue;
             try {
-                // Wait for the callable task to complete and retrieve value (i.e., the thread becomes blocked to wait for result)
-                // This is done in a new thread thus the thread that called submit() will not be waiting too
-                returnValue = this.endTask.get();
-            } catch (ExecutionException e) {
+                // Wait for the  task to complete and retrieve value (i.e., the thread becomes blocked to wait for result)
+                // This is done in a new thread thus the thread that called performTask() will not be waiting too
+                returnValue = this.endTask.getItem();
+            } catch (Exception e) {
                 try {
                     // On ExecutionException, some error was thrown by the task (thread running the task)
                     // Thus throw original error
@@ -154,9 +158,6 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
                     // TODO Error handling
                     throw new RuntimeException(ex);
                 }
-            } catch (InterruptedException e) {
-                // TODO Error handling
-                throw new RuntimeException(e);
             }
             // Once complete (no errors), notify observers the task has finished
             Platform.runLater(() -> {
@@ -212,7 +213,7 @@ public class TaskManager implements Observable<TaskEvent,String>, Observer<TaskE
             this.currentTask = new TaskWatcher<>(this.tasks.poll(),this);
             // Call submit to create a new thread to watch the task thread for completion
             // Set return to future object in class
-            this.endTask = executorService.submit(this.currentTask);
+            this.endTask = worker.performTask(this.currentTask);
         }
     }
 
