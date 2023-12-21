@@ -4,7 +4,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 /**
- * An extension of {@link VoidTask} which contains a group of {@link VoidTask}s. Treated as one {@link Task<Void>} by {@link TaskManager}. All tasks
+ * An extension of {@link VoidTask} which contains a group of {@link VoidTask}s. Treated as one {@link Task<Void>} by a {@link com.ratchet.threading.workers.ThreadingWorker}. All tasks
  * will run under the same thread
  */
 public class VoidGroupTask extends VoidTask {
@@ -12,7 +12,7 @@ public class VoidGroupTask extends VoidTask {
 
     /**
      * Adds a Task to the group. To define the order of execution for all Tasks within the group, set the {@link TaskPriority} for EACH INDIVIDUAL Task accordingly.
-     * Setting the {@link TaskPriority} of the given {@link VoidGroupTask} instance sets the {@link TaskPriority} for the GROUP for {@link TaskManager}
+     * Setting the {@link TaskPriority} of the given {@link VoidGroupTask} instance sets the {@link TaskPriority} for the GROUP for a {@link com.ratchet.threading.workers.ThreadingWorker}
      * @param task
      */
     public void addTask(VoidTask task) {

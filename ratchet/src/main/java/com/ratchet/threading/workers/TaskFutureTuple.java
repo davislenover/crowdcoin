@@ -18,11 +18,11 @@ public class TaskFutureTuple implements Comparator<TaskFutureTuple> {
     }
 
     public Task<?> getTask() {
-        return this.getTask();
+        return this.task;
     }
 
     public Future getFuture() {
-        return this.getFuture();
+        return this.correspondingFuture;
     }
 
     /**

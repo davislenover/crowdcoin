@@ -1,6 +1,5 @@
 package com.ratchet.system;
 
-import com.ratchet.threading.TaskManager;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 
@@ -32,7 +31,7 @@ public class RatchetSystem {
      */
     public static void exit(int exitCode) {
         Platform.exit();
-        TaskManager.closeManager();
+        //TaskManager.closeManager();
         System.exit(exitCode);
     }
 
