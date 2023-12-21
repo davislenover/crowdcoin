@@ -7,6 +7,9 @@ import com.ratchet.observe.TaskEventType;
 import com.crowdcoin.networking.connections.InternetConnection;
 import com.crowdcoin.networking.sqlcom.SQLData;
 import com.ratchet.threading.*;
+import com.ratchet.threading.workers.Future;
+import com.ratchet.threading.workers.ThreadingWorker;
+import com.ratchet.threading.workers.Worker;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -39,7 +42,8 @@ public class LoginController implements Observer<TaskEvent,String> {
     @FXML
     private ProgressIndicator loadingAnimation;
     public static Boolean loginPassed = false;
-    private static TaskManager taskMgr = TaskTools.getTaskManager();
+    private static ThreadingWorker taskMgr = new Worker();
+    private static Future futureConnection;
     private static InternetConnection connection;
     private static String connectionTaskId = "connectionCheck";
     private static String loginTaskId = "loginTask";
@@ -61,9 +65,8 @@ public class LoginController implements Observer<TaskEvent,String> {
         // To solve this, we handle the sql connection in a Task (i.e., a separate Thread), different from the main JavaFX UI thread
         connection = new InternetConnection();
         connection.setTaskId(connectionTaskId);
-        taskMgr.addObserver(this);
-        taskMgr.addTask(connection);
-        taskMgr.runNextTask();
+        futureConnection = taskMgr.performTask(connection);
+        futureConnection.addObserver(this);
 
         // Then await TaskEvent in update()
 
@@ -110,7 +113,7 @@ public class LoginController implements Observer<TaskEvent,String> {
 
     @Override
     public void removeObserving() {
-        taskMgr.removeObserver(this);
+        futureConnection.removeObserver(this);
     }
 
     @Override
@@ -128,8 +131,8 @@ public class LoginController implements Observer<TaskEvent,String> {
                     // If connected to a network, attempt connection to database
                     setupSQLConnection.setTaskId(loginTaskId);
                     setupSQLConnection.setObjectToHold(this);
-                    taskMgr.addTask(setupSQLConnection);
-                    taskMgr.runNextTask();
+                    futureConnection = taskMgr.performTask(setupSQLConnection);
+                    futureConnection.addObserver(this);
                 }
 
             } else if (taskId.equals(loginTaskId)) {
@@ -165,8 +168,13 @@ public class LoginController implements Observer<TaskEvent,String> {
 
                 // Note since we are running the connection in a separate thread, all logic behind it must also be in the thread
 
+                String errorMessage = "NULL";
                 // Get error
-                String errorMessage = taskMgr.getFailedTaskException().getRootException().getMessage();
+                try {
+                    futureConnection.getItem();
+                } catch (TaskException e) {
+                    errorMessage = e.getRootException().getMessage();
+                }
 
                 // Check possible errors (we only expect invalid credentials)
 
@@ -186,7 +194,12 @@ public class LoginController implements Observer<TaskEvent,String> {
                     disableLogin(false);
                     displayMessage(Defaults.abstractLoginError, Color.RED);
                     System.out.println(errorMessage);
-                    System.out.println(taskMgr.getFailedTaskException().getRootException().getCause());
+                    // Get error
+                    try {
+                        futureConnection.getItem();
+                    } catch (TaskException e) {
+                        System.out.println(e.getRootException().getMessage());
+                    }
                 }
             }
         }
@@ -200,7 +213,7 @@ public class LoginController implements Observer<TaskEvent,String> {
                 // If connected, attempt login
                 // "jdbc:mysql://127.0.0.1:3306/sys"
                 // "jdbc:mysql://192.168.2.56:3306/coinbase"
-                SQLData.sqlConnection = new SQLConnection("jdbc:mysql://192.168.2.56:3306/coinbase",loginInfo.getUsername(), loginInfo.getPassword());
+                SQLData.sqlConnection = new SQLConnection("jdbc:postgresql://192.168.2.56:5432/coinbase",loginInfo.getUsername(), loginInfo.getPassword());
                 Platform.runLater(() -> {
                     // If no errors, then we can continue as the user has successfully logged in
                     this.getObjectHeld().displayMessage(Defaults.goodLogin, Color.GREEN);

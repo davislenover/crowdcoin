@@ -9,8 +9,6 @@ import com.crowdcoin.networking.sqlcom.SQLConnection;
 import com.crowdcoin.networking.sqlcom.data.constraints.ConstraintContainer;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterManager;
 import com.crowdcoin.networking.sqlcom.query.*;
-import com.ratchet.threading.TaskManager;
-import com.ratchet.threading.TaskTools;
 import com.ratchet.observe.ModifyEvent;
 import com.ratchet.observe.ModifyEventType;
 import com.ratchet.observe.Observable;
@@ -44,7 +42,6 @@ public class SQLTable implements QueryGroupable<SQLTableGroup>, Observable<Modif
     private ConstraintContainer constraints;
     // Used when calling getGroupFilteredRows to store how many rows in total were retrieved (as some are excluded)
     private int lastRowAddedIndex = 0;
-    private TaskManager taskMgr = TaskTools.getTaskManager();
 
     /**
      * An object to get information from an SQL database
