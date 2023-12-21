@@ -41,11 +41,11 @@ public class MainBoardController {
     // Method to initialize coin list on startup
     public void initializeList() throws Exception {
 
-        CoinModel model = new CoinModel(12,"myDenomination","01/01/2002","myGrade","myCompany","01234","$101.93");
+        CoinModel model = new CoinModel(12.00,"TEST","TESTCOMP","DENOM","0000/00/00",0000);
         ModelClass modelClass = new ModelClassFactory().build(model);
         //TempSQLTable testTable = new TempSQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
-        SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
-        SQLTable table2 = new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns());
+        SQLTable table = new SQLTable(SQLData.getSqlConnection(),"coins",modelClass.getColumns());
+        SQLTable table2 = new SQLTable(SQLData.getSqlConnection(),"coins",modelClass.getColumns());
 
         UserModel userModel = new UserModel(101,0.00,"test","test2");
         ModelClass modelClassUser = new ModelClassFactory().build(userModel);
@@ -61,7 +61,7 @@ public class MainBoardController {
         table3.getConstraints().add(nameConstraintIsGraded);
 
         Tab testWorkTab = new Tab(userModel,table3,"testWorkTab");
-        testWorkTab.setTabTableAction(new GradeRowEvent(new SQLTable(SQLData.getSqlConnection(),"coindata",modelClass.getColumns())));
+        testWorkTab.setTabTableAction(new GradeRowEvent(new SQLTable(SQLData.getSqlConnection(),"coins",modelClass.getColumns())));
 
         // Test Tab 1
         Tab testTab = new Tab(model,table,"testTab");

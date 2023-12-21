@@ -3,67 +3,53 @@ package com.crowdcoin.mainBoard.table.modelClass.models;
 import com.crowdcoin.mainBoard.table.modelClass.TableReadable;
 
 public class CoinModel {
-
+    private Double certNumber;
+    private String certGrade;
     private String certCompany;
-    private String certNumber;
-    private int coinID;
-    private String dateOfIssue;
-    private String declaredValue;
     private String denomination;
-    private String grade;
+    private String dateOfIssue;
+    private Integer subId;
 
     // When creating a constructor for the model, make sure that the types match that of what is read from the actual database table
-    public CoinModel(Integer coinID, String denomination, String dateOfIssue,String grade, String certCompany,String certNumber,String declaredValue) {
+    public CoinModel(Double certificationNumber, String certificationGrade, String certificationCompany, String denomination, String dateOfIssue, Integer submissionId) {
 
-        this.certCompany = certCompany;
-        this.certNumber = certNumber;
-        this.coinID = coinID;
-        this.dateOfIssue = dateOfIssue;
-        this.declaredValue = declaredValue;
+        this.certNumber = certificationNumber;
+        this.certGrade = certificationGrade;
+        this.certCompany = certificationCompany;
         this.denomination = denomination;
-        this.grade = grade;
+        this.dateOfIssue = dateOfIssue;
+        this.subId = submissionId;
 
     }
 
-    @TableReadable(order = 4, columnName = "certificationCompany")
+    @TableReadable(order = 0, columnName = "certificationnumber")
+    public Double certNumber() {
+        return certNumber;
+    }
+
+    @TableReadable (order = 1, columnName = "certificationgrade")
+    public String certGrade() {
+        return certGrade;
+    }
+
+    @TableReadable (order = 2, columnName = "certificationcompany")
     public String certCompany() {
         return certCompany;
     }
 
-    @TableReadable (order = 5, columnName = "certificationNumber")
-    public String certNumber() {
-        return certNumber;
-    }
-
-    @TableReadable (order = 0, columnName = "coinID", isUserWriteable = false)
-    public int coinID() {
-        return coinID;
-    }
-
-    @TableReadable (order = 2, columnName = "dateOfIssue")
-    public String dateOfIssue() {
-        return dateOfIssue;
-    }
-
-    @TableReadable (order = 6, columnName = "declaredValue")
-    public String declaredValue() {
-        return declaredValue;
-    }
-
-    @TableReadable (order = 1, columnName = "denomination")
+    @TableReadable (order = 3, columnName = "denomination")
     public String denomination() {
         return denomination;
     }
 
-    @TableReadable (order = 3, columnName = "grade")
-    public String grade() {
-        return grade;
+    @TableReadable (order = 4, columnName = "dateofissue")
+    public String dateOfIssue() {
+        return dateOfIssue;
     }
 
-    public void setCoinID(int newId) {
-
-        this.coinID = newId;
-
+    @TableReadable (order = 5, columnName = "submissionid")
+    public Integer submissionId() {
+        return subId;
     }
 
 }
