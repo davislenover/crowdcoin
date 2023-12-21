@@ -1,5 +1,6 @@
 package com.ratchet.threading.workers;
 
+import com.ratchet.observe.TaskEventType;
 import com.ratchet.threading.Task;
 import com.ratchet.threading.TaskException;
 
@@ -75,10 +76,11 @@ public class Worker implements ThreadingWorker {
 
         if (nextTask != null) {
             try {
+                nextTask.getFuture().setTaskStatus(TaskEventType.TASK_START);
                 // Perform the task from the queue and place result in corresponding futures
                 nextTask.getFuture().setItem(nextTask.getTask().runTask());
-            } catch (TaskException | NullPointerException e) {
-                // TODO
+            } catch (TaskException e) {
+                nextTask.getFuture().setException(e);
             }
         }
     }
