@@ -19,7 +19,6 @@ public class Future implements Observable<TaskEvent,String> {
     private List<Observer<TaskEvent,String>> subscriptionList;
     private Object futureObject;
     private TaskEventType taskStatus;
-
     private TaskException exception;
 
     public Future() {
@@ -86,7 +85,7 @@ public class Future implements Observable<TaskEvent,String> {
      * @throws TaskException if the corresponding Task failed. Any calls to this method under a state in which the corresponding {@link com.ratchet.threading.Task} failed will throw a {@link TaskException}. Catch the error and call {@link TaskException#getRootException()} to find root cause.
      */
     public synchronized Object getItem() throws TaskException {
-        while(!this.taskStatus.equals(TaskEventType.TASK_END) || !this.taskStatus.equals(TaskEventType.TASK_FAILED)) {
+        while(!this.taskStatus.equals(TaskEventType.TASK_END) && !this.taskStatus.equals(TaskEventType.TASK_FAILED)) {
             try {
                 this.wait();
             } catch (Exception exception) {
