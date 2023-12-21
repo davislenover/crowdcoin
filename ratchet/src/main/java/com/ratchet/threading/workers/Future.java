@@ -3,12 +3,12 @@ import com.ratchet.observe.Observable;
 import com.ratchet.observe.Observer;
 import com.ratchet.observe.TaskEvent;
 import com.ratchet.observe.TaskEventType;
+import com.ratchet.threading.Task;
 import com.ratchet.threading.TaskException;
 import javafx.application.Platform;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A class which is responsible for waiting on {@link Worker}'s to finish a computation. {@link Worker}s will place their computed value's in this object when completed. {@link Platform} can be notified of completion through an {@link com.ratchet.observe.ObservableEvent}
@@ -20,14 +20,24 @@ public class Future implements Observable<TaskEvent,String> {
     private Object futureObject;
     private TaskEventType taskStatus;
     private TaskException exception;
+    private final String futureId;
 
-    public Future() {
+    public Future(String futureId) {
+        this.futureId = futureId;
         this.subscriptionList = new ArrayList<>();
         this.taskStatus = TaskEventType.TASK_BLOCKED;
     }
 
     /**
-     * Checks the status of task from the Future object. This method only blocks if another Thread is accessing it concurrently but will not wait on the computation by the {@link Worker} to be completed
+     * Gets the corresponding future id for the given {@link Future} object. This is typically the same as the corresponding {@link Task#getTaskId()}
+     * @return the future id as a {@link String} object
+     */
+    public String getFutureId() {
+        return this.futureId;
+    }
+
+    /**
+     * Checks the status of task from the Future object. This method only blocks if another Thread is accessing it concurrently but will not wait on the computation by the {@link Worker} to be completed. Changing the status via this method will not notify any {@link Observer}s
      * @return a {@link TaskEventType} object
      */
     public synchronized TaskEventType getStatus() {
@@ -45,7 +55,7 @@ public class Future implements Observable<TaskEvent,String> {
             this.taskStatus = TaskEventType.TASK_END;
             this.notifyAll();
             Platform.runLater(() -> {
-                this.notifyObservers(new TaskEvent(this.taskStatus));
+                this.notifyObservers(new TaskEvent(this.taskStatus,this.futureId));
             });
         }
     }
@@ -61,7 +71,7 @@ public class Future implements Observable<TaskEvent,String> {
             this.taskStatus = TaskEventType.TASK_FAILED;
             this.notifyAll();
             Platform.runLater(() -> {
-                this.notifyObservers(new TaskEvent(this.taskStatus));
+                this.notifyObservers(new TaskEvent(this.taskStatus,this.futureId));
             });
         }
     }
@@ -112,7 +122,7 @@ public class Future implements Observable<TaskEvent,String> {
             this.subscriptionList.add(observer);
             if (this.taskStatus.equals(TaskEventType.TASK_END) || this.taskStatus.equals(TaskEventType.TASK_FAILED)) {
                 Platform.runLater(() -> {
-                    this.notifyObservers(new TaskEvent(this.taskStatus));
+                    this.notifyObservers(new TaskEvent(this.taskStatus,this.futureId));
                 });
             }
             return true;

@@ -31,11 +31,12 @@ public class PriorityWorker implements ThreadingWorker {
     /**
      * A thread-safe method which gives the corresponding {@link PriorityWorker} a {@link Task} object to execute.
      * @param task the given {@link Task} to complete on a separate Thread. All {@link Task}s are executed according to their {@link com.ratchet.threading.TaskPriority}. When other {@link Task}s of the same priority exist within the given {@link PriorityWorker}, the order in which they are executed is non-deterministic.
-     * @return Will return a {@link Future} object. A {@link Future} object is where another Thread can check if the {@link Task} computation from the given {@link PriorityWorker} has been completed.
+     * @return Will return a {@link Future} object. A {@link Future} object is where another Thread can check if the {@link Task} computation from the given {@link PriorityWorker} has been completed. The {@link Future#getFutureId()} is the same as the given {@link Task#getTaskId()} at the time of method call
      * Once complete, the Thread can get that computed value via the {@link Future} object
      */
     public synchronized Future performTask(Task<?> task) {
-        Future returnFuture = new Future();
+        // Set taskId to the same as the Future object id for possible cross-referencing
+        Future returnFuture = new Future(task.getTaskId());
         TaskFutureTuple pair = new TaskFutureTuple(task,returnFuture);
         this.tasks.offer(pair);
         this.notify();

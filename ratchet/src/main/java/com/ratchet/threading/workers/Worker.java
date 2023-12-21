@@ -33,11 +33,11 @@ public class Worker implements ThreadingWorker {
     /**
      * A thread-safe method which gives the corresponding {@link Worker} a {@link Task} object to execute.
      * @param task the given task to complete on a separate Thread. All {@link Task}s given will be executed sequentially in the order they were received.
-     * @return Will return a {@link Future} object. A {@link Future} object is where another Thread can check if the Task computation from the given {@link Worker} has been completed.
+     * @return Will return a {@link Future} object. A {@link Future} object is where another Thread can check if the Task computation from the given {@link Worker} has been completed. The {@link Future#getFutureId()} is the same as the given {@link Task#getTaskId()} at the time of method call
      * Once complete, the Thread can get that computed value via the {@link Future} object
      */
     public synchronized Future performTask(Task<?> task) {
-        Future returnFuture = new Future();
+        Future returnFuture = new Future(task.getTaskId());
         TaskFutureTuple pair = new TaskFutureTuple(task,returnFuture);
         this.tasks.offer(pair);
         this.notify();
