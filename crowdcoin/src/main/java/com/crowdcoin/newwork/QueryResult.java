@@ -3,17 +3,16 @@ package com.crowdcoin.newwork;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A translation class between a {@link java.sql.ResultSet} and a {@link javafx.scene.control.TableView}
  */
-public class QueryResult {
+public class QueryResult implements Iterator<Tuple> {
     private Map<Integer,String> columnPositionsToNames;
     private List<Tuple> tuples;
+
+    private int currentPosition;
 
     /**
      * Creates a new {@link QueryResult}
@@ -26,6 +25,8 @@ public class QueryResult {
         // Get columns and tuples (rows)
         this.extractColumns(resultSet);
         this.getTuples(resultSet);
+
+        this.currentPosition = 0;
 
     }
 
@@ -59,50 +60,35 @@ public class QueryResult {
         }
     }
 
+    @Override
+    public boolean hasNext() {
+        return this.currentPosition != (this.tuples.size()-1);
+    }
+
+    @Override
+    public Tuple next() {
+        return this.tuples.get(currentPosition++);
+    }
+
     /**
-     * Tuple object representing a single tuple (row) from a {@link ResultSet}
+     * Gets the number of Tuples (Rows) present within the given {@link QueryResult} object
+     * @return the number of Tuples as an Integer
      */
-    private static class Tuple {
+    public int getTuplesCount() {
+        return this.tuples.size();
+    }
 
-        private int tupleNumber;
-
-        private Map<Integer,Object> tupleValues;
-
-        public Tuple(int tupleNumber) {
-            this.tupleNumber = tupleNumber;
-            this.tupleValues = new HashMap<>();
+    /**
+     * Sets the current row position for iteration. Tuple (Row) 1 is indexed at position 0, Row 2 is 1, ....
+     * @param position the position to set
+     * @return true if a valid position was set, false otherwise (position before call will remain the same)
+     */
+    public boolean setPosition(int position) {
+        if (position >= 0 && position < this.tuples.size()) {
+            this.currentPosition = position;
+            return true;
         }
-
-        /**
-         * Adds the value of a specific column for a given tuple (row)
-         * @param columnIndex the corresponding column
-         * @param value the data for the given column for the given tuple (row)
-         */
-        public void add(Integer columnIndex, Object value) {
-            this.tupleValues.put(columnIndex,value);
-        }
-
-        /**
-         * Gets the data corresponding to the columnIndex
-         * @param columnIndex the given column for the given tuple (row) to retrieve data from
-         * @return the corresponding data as an {@link Object}, null if columnIndex does not exist within the {@link Tuple} object
-         */
-        public Object get(Integer columnIndex) {
-            if (this.tupleValues.containsKey(columnIndex)) {
-                return this.tupleValues.get(columnIndex);
-            }
-            return null;
-        }
-
-        /**
-         * Get tuple (row) number
-         * @return the tuple (row) number as an Integer
-         */
-        public int getTupleNumber() {
-            return this.tupleNumber;
-        }
-
-
+        return false;
     }
 
 }

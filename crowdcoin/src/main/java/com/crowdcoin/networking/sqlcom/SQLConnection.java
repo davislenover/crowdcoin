@@ -4,7 +4,6 @@ package com.crowdcoin.networking.sqlcom;
 import com.crowdcoin.exceptions.network.FailedQueryException;
 import com.crowdcoin.format.Defaults;
 import com.crowdcoin.networking.sqlcom.query.QueryBuilder;
-import com.crowdcoin.newwork.Query;
 
 import java.sql.*;
 import java.util.List;
@@ -128,45 +127,6 @@ public class SQLConnection {
     }
 
     /**
-     * Execute query on database that returns some result (e.g., using SELECT). This method call is not transactional
-     * @param query a QueryBuilder containing the query to execute
-     * @return a ResultSet object containing the result of the query execution (data)
-     * @throws FailedQueryException if the query fails to execute. This could be for a multitude of reasons and is recommended to get rootException within this exception for exact cause
-     */
-    public ResultSet sendQuery(Query query) throws FailedQueryException {
-
-        Statement statement = null;
-        ResultSet result = null;
-
-        try {
-            // Attempt to create the statements and execution of said statement
-            statement = connection.createStatement();
-            // Get result of statement
-            result = statement.executeQuery(query.getQuery());
-
-            return result;
-
-        } catch (Exception exception) {
-            try {
-                // Attempt to close connections if failed
-                statement.close();
-                result.close();
-                // Ignore any exceptions
-            } catch (Exception ignore) {
-            }
-            // If an exception occurs, throw custom failed query exception
-            // TODO Error handling
-            throw new FailedQueryException(query.getQuery(), exception);
-        } finally {
-
-            statement = null;
-            result = null;
-
-        }
-
-    }
-
-    /**
      * Execute manipulative (DML statement) on database (i.e., write to table, any command where a result is not required). This method call is transactional meaning a savepoint is set before the query is executed.
      * An attempt will be made to commit the query right after execution. If an execution occurs, one must call {@link SQLConnection#rollBack()} to rollback the failed query. One can also call {@link SQLConnection#rollBack()} if the query was determined to not be of use
      * @param query a QueryBuilder containing the query to execute
@@ -175,41 +135,6 @@ public class SQLConnection {
      */
     // TODO FIX RETURN
     public void executeQuery(QueryBuilder query) throws FailedQueryException {
-
-        Statement statement = null;
-
-        try {
-            // Attempt to create the statements and execution of said statement
-            statement = connection.createStatement();
-            statement.executeUpdate(query.getQuery());
-            // If no exception, commit the transaction
-            connection.commit();
-
-        } catch (Exception exception) {
-            try {
-                // Attempt to close connections if failed
-                statement.close();
-                // Ignore any exceptions
-            } catch (Exception ignore) {
-            }
-            // If an exception occurs, throw custom failed query exception
-            // TODO Error handling
-            throw new FailedQueryException(query.getQuery(), exception);
-        } finally {
-            statement = null;
-        }
-
-    }
-
-    /**
-     * Execute manipulative (DML statement) on database (i.e., write to table, any command where a result is not required). This method call is transactional meaning a savepoint is set before the query is executed.
-     * An attempt will be made to commit the query right after execution. If an execution occurs, one must call {@link SQLConnection#rollBack()} to rollback the failed query. One can also call {@link SQLConnection#rollBack()} if the query was determined to not be of use
-     * @param query a QueryBuilder containing the query to execute
-     * @return a number greater than 0 if the first result is a row count for the DML statement; 0 for statements that return nothing
-     * @throws FailedQueryException if the query fails to execute. This could be for a multitude of reasons and is recommended to get rootException within this exception for exact cause.
-     */
-    // TODO FIX RETURN
-    public void executeQuery(Query query) throws FailedQueryException {
 
         Statement statement = null;
 

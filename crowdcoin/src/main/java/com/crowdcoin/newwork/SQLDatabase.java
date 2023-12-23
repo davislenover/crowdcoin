@@ -1,8 +1,8 @@
 package com.crowdcoin.newwork;
 
 import com.crowdcoin.networking.sqlcom.SQLConnection;
+import com.crowdcoin.networking.sqlcom.query.QueryBuilder;
 import com.ratchet.threading.QuantifiableTask;
-import com.ratchet.threading.Task;
 import com.ratchet.threading.TaskException;
 import com.ratchet.threading.VoidTask;
 import com.ratchet.threading.workers.Future;
@@ -28,10 +28,10 @@ public class SQLDatabase {
     /**
      * Execute a query with a return for a {@link QueryResult}. Query will be processed on another Thread by a {@link PriorityWorker} and as such, this method may block if the capacity for the
      * {@link PriorityWorker} is full
-     * @param query the specified {@link Query} to execute
+     * @param query the specified {@link QueryBuilder} to execute
      * @return a {@link Future} object holding the {@link QueryResult} when the query finishes. It is recommended to observe said {@link Future} object to be notified when the query completes
      */
-    public Future executeQuantifiedQuery(Query query) {
+    public Future executeQuantifiedQuery(QueryBuilder query) {
         return this.queryExecuter.performTask(new QuantifiableTask<QueryResult>() {
             @Override
             public QueryResult runTask() throws TaskException {
@@ -50,10 +50,10 @@ public class SQLDatabase {
     /**
      * Execute a query without a return. Query will be processed on another Thread by a {@link PriorityWorker} and as such, this method may block if the capacity for the
      * {@link PriorityWorker} is full
-     * @param query the specified {@link Query} to execute
+     * @param query the specified {@link QueryBuilder} to execute
      * @return a {@link Future} object holding a {@link Void} object when the query finishes. It is recommended to observe said {@link Future} object to be notified when the query completes
      */
-    public Future executeQuery(Query query) {
+    public Future executeQuery(QueryBuilder query) {
         return this.queryExecuter.performTask(new VoidTask() {
             @Override
             public Void runTask() throws TaskException {
