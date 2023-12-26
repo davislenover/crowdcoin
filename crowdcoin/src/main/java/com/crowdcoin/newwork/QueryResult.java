@@ -79,7 +79,7 @@ public class QueryResult implements Iterator<Tuple> {
     }
 
     /**
-     * Sets the current row position for iteration. Tuple (Row) 1 is indexed at position 0, Row 2 is 1, ....
+     * Sets the current row position for iteration. Tuple (Row) 1 is indexed at position 0, Row 2 is 1, .... Row X is X-1
      * @param position the position to set
      * @return true if a valid position was set, false otherwise (position before call will remain the same)
      */
