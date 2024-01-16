@@ -71,7 +71,7 @@ public class GradeRowEvent implements TabActionEvent {
                     columnIndex++;
                 }
 
-                InteractiveChoiceBox gradeChoice = new InteractiveChoiceBox("Grade","Select your grading assessment here",(event, field, pane1) -> {
+                InteractiveChoiceBox gradeChoice = new InteractiveChoiceBox("Grade","SelectQuery your grading assessment here",(event, field, pane1) -> {
 
                     if (pane1.getSubmitFieldsSize() == 0) {
                         SubmitField submitButton = new InteractiveButton("Submit Assessment",(event1, button, pane2) -> {

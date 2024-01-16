@@ -215,7 +215,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
         // Apply filters
         this.filterController.applyFilters(filterButton,this.sqlTable.getFilterManager(),this.sqlTable,this.windowManager);
 
-        // Select any previously saved row in TableView
+        // SelectQuery any previously saved row in TableView
         destinationTable.getSelectionModel().select(this.columnContainer.getCurrentSelectedRelativeIndex());
 
         // Set Export Button Action
