@@ -1,5 +1,8 @@
 package com.crowdcoin.newwork.names;
 
+/**
+ * A simple data structure to provide names with aliases
+ */
 public class AliasedName {
 
     private String name;
@@ -24,7 +27,7 @@ public class AliasedName {
     public boolean equals(Object o) {
         try {
             AliasedName testObj = (AliasedName) o;
-            return this.getAlias() == null ? testObj.getAlias() == null && this.getName().equals(testObj.getName()) : this.getAlias().equals(testObj.getAlias()) && this.getName().equals(testObj.getName());
+            return this.getAlias().equals(testObj.getAlias()) && this.getName().equals(testObj.getName());
         } catch (Exception e) {
             return false;
         }
