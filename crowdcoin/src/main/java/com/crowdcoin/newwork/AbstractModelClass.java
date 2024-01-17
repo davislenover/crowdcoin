@@ -20,10 +20,8 @@ public class AbstractModelClass extends ModelClass {
      * @param columns
      * @Note It is recommended to call ModelClassFactory build() on a class instance to produce a ModelClass object
      */
-    public AbstractModelClass(Object classInstance, Method associatedGetDataMethod, List<Column> columns) {
-        super(classInstance, new ArrayList<>() {{
-            add(associatedGetDataMethod);
-        }}, columns);
+    public AbstractModelClass(Object classInstance, List<Method> associatedGetDataMethod, List<Column> columns) {
+        super(classInstance, associatedGetDataMethod, columns);
     }
 
     @Override

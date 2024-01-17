@@ -56,4 +56,9 @@ public @interface TableReadable {
      */
     boolean abstractGetDataMethod() default false;
 
+    /**
+     * Defines if the class contains an abstract get column data method. The method should return a Map<Integer,String> where the Integer (column index) should correspond to the column name
+     */
+    boolean abstractGetColumnsMethod() default false;
+
 }

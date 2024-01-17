@@ -2,6 +2,7 @@ package com.crowdcoin.newwork;
 
 import com.crowdcoin.mainBoard.table.modelClass.TableReadable;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,11 +12,13 @@ import java.util.Map;
 public class Tuple {
     private int tupleNumber;
 
+    private Map<Integer,String> columnPositionToName;
     private Map<Integer,Object> tupleValues;
 
     public Tuple(int tupleNumber) {
         this.tupleNumber = tupleNumber;
         this.tupleValues = new HashMap<>();
+        this.columnPositionToName = new HashMap<>();
     }
 
     /**
@@ -23,8 +26,9 @@ public class Tuple {
      * @param columnIndex the corresponding column
      * @param value the data for the given column for the given tuple (row)
      */
-    public void add(Integer columnIndex, Object value) {
+    public void add(Integer columnIndex, String columnName, Object value) {
         this.tupleValues.put(columnIndex,value);
+        this.columnPositionToName.put(columnIndex,columnName);
     }
 
     /**
@@ -46,6 +50,14 @@ public class Tuple {
      */
     public int getTupleNumber() {
         return this.tupleNumber;
+    }
+
+    /**
+     * @return a {@link Map<Integer,String>} which stores the column index's with their corresponding names
+     */
+    @TableReadable(abstractGetColumnsMethod = true)
+    public Map<Integer,String> getColumnPositionToName() {
+        return Collections.unmodifiableMap(this.columnPositionToName);
     }
 
 }

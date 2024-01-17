@@ -51,7 +51,7 @@ public class QueryResult implements Iterator<Tuple> {
                 Tuple newTuple = new Tuple(resultSet.getRow());
                 // Populate tuple data
                 for (Integer columnIndex : this.columnPositionsToNames.keySet()) {
-                    newTuple.add(columnIndex,resultSet.getObject(columnIndex));
+                    newTuple.add(columnIndex,this.columnPositionsToNames.get(columnIndex),resultSet.getObject(columnIndex));
                 }
                 this.tuples.add(newTuple);
             }

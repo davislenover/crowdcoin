@@ -1,9 +1,6 @@
 package com.crowdcoin.mainBoard.table.modelClass;
 
-import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterCount;
-import com.crowdcoin.exceptions.modelClass.InvalidVariableMethodParameterTypeException;
-import com.crowdcoin.exceptions.modelClass.MultipleVariableMethodsException;
-import com.crowdcoin.exceptions.modelClass.NotZeroArgumentException;
+import com.crowdcoin.exceptions.modelClass.*;
 import com.crowdcoin.exceptions.tab.IncompatibleModelClassException;
 import com.crowdcoin.exceptions.tab.IncompatibleModelClassMethodNamesException;
 import com.crowdcoin.exceptions.tab.ModelClassConstructorTypeException;
@@ -13,11 +10,13 @@ import com.crowdcoin.mainBoard.table.permissions.IsSystemWriteable;
 import com.crowdcoin.mainBoard.table.permissions.IsWriteable;
 import com.crowdcoin.networking.sqlcom.SQLTypes;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
+import com.crowdcoin.newwork.AbstractModelClass;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.InvalidParameterException;
 import java.util.*;
 
 public class ModelClassFactory {
@@ -29,15 +28,72 @@ public class ModelClassFactory {
      * @throws NotZeroArgumentException if any method that is annotated contains more than zero arguments
      * @Note for a method to be added to the ModelClass, one must specify an @TableReadable annotation above the specified method
      */
-    public ModelClass build(Object classInstance) throws NotZeroArgumentException, MultipleVariableMethodsException, InvalidVariableMethodParameterCount, InvalidVariableMethodParameterTypeException {
+    public ModelClass build(Object classInstance) throws NotZeroArgumentException, MultipleVariableMethodsException, InvalidVariableMethodParameterCount, InvalidVariableMethodParameterTypeException, InvalidAnnotationUsageException, InvalidAbstractColumnReturnTypeException {
         List<Method> methodList = new ArrayList<>();
         List<Column> columnList = new ArrayList<>();
         boolean isVariable = false;
+        boolean isAbstract = false;
 
         for (Method methodCandidate : classInstance.getClass().getMethods()) {
 
             // For all methods found within class, check if TableReadable annotation is attached
             if (methodCandidate.isAnnotationPresent(TableReadable.class)) {
+
+                // Check if the class is able to be modeled after an abstract model class
+                if (methodCandidate.getAnnotation(TableReadable.class).abstractGetDataMethod()) {
+
+                    // Check for invalid states
+                    if (methodCandidate.getParameterCount() != 1) {
+                        throw new InvalidParameterException();
+                    }
+                    if (!methodCandidate.getParameterTypes()[0].equals(Integer.class)) {
+                        throw new InvalidParameterException();
+                    }
+                    if (!methodList.isEmpty()) {
+                        throw new InvalidAnnotationUsageException();
+                    }
+
+                    methodList.add(methodCandidate);
+
+                    // Find column data method to construct column objects
+                    for (Method methodCandidateColumns : classInstance.getClass().getMethods()) {
+
+                        if (methodCandidateColumns.isAnnotationPresent(TableReadable.class)) {
+
+                            if (methodCandidateColumns.getAnnotation(TableReadable.class).abstractGetColumnsMethod()) {
+
+                                // Check to make sure return is of a Map<Integer, String> type
+                                Class<?> returnType = methodCandidateColumns.getReturnType();
+                                if (Map.class.isAssignableFrom(returnType)) {
+
+                                    try {
+                                        Map<Integer,String> columnData = (Map<Integer, String>) methodCandidateColumns.invoke(classInstance);
+                                        Class<?> abstractDataReturnType = methodCandidate.getReturnType();
+                                        for (Integer columnIndex : columnData.keySet()) {
+                                            Column newColumn = new Column(columnData.get(columnIndex),abstractDataReturnType,methodCandidate);
+                                            newColumn.setOrdinalPosition(columnIndex);
+                                            columnList.add(newColumn);
+                                        }
+
+                                        break;
+
+
+                                    } catch (Exception e) {
+                                        throw new InvalidAbstractColumnReturnTypeException(returnType);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (columnList.isEmpty()) {
+                        throw new InvalidAnnotationUsageException();
+                    } else {
+                        isAbstract = true;
+                        break;
+                    }
+
+                }
 
                 if (methodCandidate.getAnnotation(TableReadable.class).isVariable()) {
                     if (!isVariable) {
@@ -83,6 +139,10 @@ public class ModelClassFactory {
 
         if(isVariable) {
             return new DynamicModelClass(classInstance,methodList,columnList);
+        }
+
+        if (isAbstract) {
+            return new AbstractModelClass(classInstance,methodList,columnList);
         }
 
         return new ModelClass(classInstance,methodList,columnList);
