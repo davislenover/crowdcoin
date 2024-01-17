@@ -3,7 +3,7 @@ package com.crowdcoin.newwork;
 import com.crowdcoin.networking.sqlcom.data.filter.Filter;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterManager;
 import com.crowdcoin.networking.sqlcom.query.QueryBuilder;
-import com.crowdcoin.newwork.names.Column;
+import com.crowdcoin.mainBoard.table.Column;
 import com.crowdcoin.newwork.names.Table;
 
 import java.util.ArrayList;

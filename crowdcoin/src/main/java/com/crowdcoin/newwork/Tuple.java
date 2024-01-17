@@ -1,5 +1,7 @@
 package com.crowdcoin.newwork;
 
+import com.crowdcoin.mainBoard.table.modelClass.TableReadable;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +32,7 @@ public class Tuple {
      * @param columnIndex the given column for the given tuple (row) to retrieve data from
      * @return the corresponding data as an {@link Object}, null if columnIndex does not exist within the {@link Tuple} object
      */
+    @TableReadable(abstractGetDataMethod = true)
     public Object getData(Integer columnIndex) {
         if (this.tupleValues.containsKey(columnIndex)) {
             return this.tupleValues.get(columnIndex);

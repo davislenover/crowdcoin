@@ -49,6 +49,11 @@ public @interface TableReadable {
      * Specifies the name of the column within the table within the SQL database. Each method MUST specify this
      * @return the name of the column as a String object
      */
-    String columnName();
+    String columnName() default "";
+
+    /**
+     * Defines if the class is usable by an abstract model class. Only one of these annotations can be present within any given class
+     */
+    boolean abstractGetDataMethod() default false;
 
 }

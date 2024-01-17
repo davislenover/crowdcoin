@@ -8,9 +8,9 @@ import java.util.List;
 
 public class ModelClass {
 
-    private Object classWithMethods;
-    private List<Method> dataMethods;
-    private List<Column> columns;
+    protected Object classWithMethods;
+    protected List<Method> dataMethods;
+    protected List<Column> columns;
 
     /**
      * Create a ModelClass for TableColumn's to reference (i.e., TableColumns will invoke specified methods which get data within the ModelClass to display on screen)

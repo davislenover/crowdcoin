@@ -2,6 +2,7 @@ package com.crowdcoin.mainBoard.table;
 
 import com.crowdcoin.mainBoard.table.permissions.Permission;
 import com.crowdcoin.mainBoard.table.permissions.Privileged;
+import com.crowdcoin.newwork.names.AliasedName;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * A class to house information about a column from an SQL database (such as column permissions). Classes looking to find more information other than the name of the column should look to this class to provide such info.
  */
-public class Column implements Privileged {
+public class Column extends AliasedName implements Privileged {
 
     private List<Permission> permissions;
     private String columnName;
@@ -20,6 +21,15 @@ public class Column implements Privileged {
     private boolean isVariable = false;
 
     public Column(String columnName,Class columnDataType, Method columnDataMethod) {
+        super(columnName, "");
+        this.columnName = columnName;
+        this.permissions = new ArrayList<>();
+        this.columnDataType = columnDataType;
+        this.columnDataMethod = columnDataMethod;
+    }
+
+    public Column(String columnName, String alias, Class columnDataType, Method columnDataMethod) {
+        super(columnName, alias);
         this.columnName = columnName;
         this.permissions = new ArrayList<>();
         this.columnDataType = columnDataType;
@@ -136,4 +146,13 @@ public class Column implements Privileged {
         this.permissions.remove(permissionIndex);
         return true;
     }
+
+    /**
+     * Gets the column name formatted for a SELECT query (SELECT). If the Column has an alias, the name and the alias will be concatenated via: "name AS alias"
+     * @return a {@link String} object
+     */
+    public String getColumnAsQuery() {
+        return super.getAlias().isEmpty() ? super.getName() : super.getName() + " AS " + super.getAlias();
+    }
+
 }
