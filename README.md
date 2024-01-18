@@ -5,7 +5,7 @@ CrowdCoin enables a group of users to both keep track of item valuations all in 
 
 # Status of Project
 - Both CrowdCoin and Ratchet are still in active development! This guide will evolve overtime as development continues.
-- Currently, CrowdCoin is operable but requires more technical know-how to get up and running. Below is the status of each feature being implemented
+- Currently under the latest commits, CrowdCoin (the software to demonstrate Ratchet) is not operable (as it's core functionality is being re-worked). Ratchet is working but requires more technical know-how to get up and running. Below is the status of each feature being implemented
 
 # Installation
 ## Preview Build
