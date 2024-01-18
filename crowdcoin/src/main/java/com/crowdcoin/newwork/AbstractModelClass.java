@@ -4,7 +4,6 @@ import com.crowdcoin.mainBoard.table.Column;
 import com.crowdcoin.mainBoard.table.modelClass.ModelClass;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,13 +34,11 @@ public class AbstractModelClass extends ModelClass {
 
     public Object getData(String columnName) {
         try {
-            // Columns in list, their index corresponds to the index to pass into the get data method
-            int methodIndex = 0;
             for (Column column : this.columns) {
                 if (column.getColumnName().equals(columnName)) {
-                    return super.dataMethods.get(0).invoke(super.classWithMethods,methodIndex);
+                    // Ordinal position corresponds to the key at which the data exists
+                    return super.dataMethods.get(0).invoke(super.classWithMethods,column.getOrdinalPosition());
                 }
-                methodIndex++;
             }
         } catch (Exception e) {
             return null;

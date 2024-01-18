@@ -159,7 +159,7 @@ public class ModelClassFactory {
      * @throws InstantiationException if the specified class cannot be instantiated
      * @throws IllegalAccessException if the class access modifiers prohibit instantiation in this manner
      */
-    public ModelClass buildClone(ModelClass modelClass, Object ... params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NotZeroArgumentException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount {
+    public ModelClass buildClone(ModelClass modelClass, Object ... params) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, NotZeroArgumentException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount, InvalidAbstractColumnReturnTypeException, InvalidAnnotationUsageException {
 
         if (isVariable(modelClass)) {
             // Setup
