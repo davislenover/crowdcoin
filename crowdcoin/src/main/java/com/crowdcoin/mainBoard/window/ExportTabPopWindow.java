@@ -1,5 +1,6 @@
 package com.crowdcoin.mainBoard.window;
 
+import com.crowdcoin.mainBoard.table.TableViewManager;
 import com.ratchet.interactive.InteractivePane;
 import com.ratchet.interactive.input.InputField;
 import com.ratchet.interactive.input.InteractiveChoiceBox;
@@ -25,12 +26,12 @@ import java.util.ArrayList;
 public class ExportTabPopWindow extends PopWindow {
 
     private SQLTable sqlTable;
-    private SQLTableReader sqlTableReader;
+    private TableViewManager sqlTableReader;
     private WindowManager manager;
     private ExportBehaviour exportBehaviour;
     private InteractiveDirectoryField chooseFile;
 
-    public ExportTabPopWindow(String windowName, SQLTable sqlTable, SQLTableReader sqlTableReader, WindowManager manager) {
+    public ExportTabPopWindow(String windowName, SQLTable sqlTable, TableViewManager sqlTableReader, WindowManager manager) {
         super(windowName);
         this.sqlTable = sqlTable;
         this.sqlTableReader = sqlTableReader;

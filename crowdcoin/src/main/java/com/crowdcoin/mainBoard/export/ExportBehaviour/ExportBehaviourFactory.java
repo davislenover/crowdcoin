@@ -1,5 +1,6 @@
 package com.crowdcoin.mainBoard.export.ExportBehaviour;
 
+import com.crowdcoin.mainBoard.table.TableViewManager;
 import com.ratchet.interactive.InteractivePane;
 import com.ratchet.window.PopWindow;
 import com.crowdcoin.networking.sqlcom.data.SQLTableReader;
@@ -11,9 +12,9 @@ public class ExportBehaviourFactory {
 
     InteractivePane pane;
     PopWindow window;
-    SQLTableReader reader;
+    TableViewManager reader;
 
-    public ExportBehaviourFactory(InteractivePane pane, PopWindow window, SQLTableReader tableReader) {
+    public ExportBehaviourFactory(InteractivePane pane, PopWindow window, TableViewManager tableReader) {
         this.pane = pane;
         this.window = window;
         this.reader = tableReader;

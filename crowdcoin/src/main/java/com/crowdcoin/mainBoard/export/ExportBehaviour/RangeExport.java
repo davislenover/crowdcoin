@@ -1,5 +1,6 @@
 package com.crowdcoin.mainBoard.export.ExportBehaviour;
 
+import com.crowdcoin.mainBoard.table.TableViewManager;
 import com.ratchet.interactive.InteractivePane;
 import com.ratchet.interactive.input.InputField;
 import com.ratchet.interactive.input.InteractiveTextField;
@@ -22,11 +23,11 @@ public class RangeExport implements ExportBehaviour {
 
     private InteractivePane pane;
     private PopWindow window;
-    private SQLTableReader tableReader;
+    private TableViewManager tableReader;
 
     private String isReadablePerm = IsReadable.class.getSimpleName();
 
-    public RangeExport(InteractivePane pane, PopWindow window, SQLTableReader tableReader) {
+    public RangeExport(InteractivePane pane, PopWindow window, TableViewManager tableReader) {
         this.pane = pane;
         this.window = window;
         this.tableReader = tableReader;
@@ -71,7 +72,7 @@ public class RangeExport implements ExportBehaviour {
         try {
 
             // Get a group of rows
-            List<ModelClass> modelClasses = this.tableReader.getRows(startingIndex,numOfRows);
+            List<ModelClass> modelClasses = this.tableReader.getModelClassRows(startingIndex,numOfRows);
             // Loop through one row at a time, construct it into one entry list and add that to the entries list
             for (ModelClass row : modelClasses) {
                 List<String> newEntry = new ArrayList<>();

@@ -1,19 +1,24 @@
 package com.crowdcoin.newwork;
 
 import com.crowdcoin.exceptions.table.InvalidRangeException;
+import com.crowdcoin.mainBoard.table.modelClass.ModelClass;
+import com.ratchet.observe.ModifyEvent;
+import com.ratchet.observe.Observable;
+import com.ratchet.observe.Observer;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class QueryResultReader implements Iterator<List<Tuple>> {
+public class QueryResultReader implements Iterator<List<Tuple>>, Observable<ModifyEvent,String> {
     private QueryResult queryResult;
     private int tupleCount;
     private int currentStartIndex;
     private int currentEndIndex;
     private int numberOfRowsPerSet;
     private int lastDifference;
+    private List<Observer<ModifyEvent,String>> subscriptionList;
 
     public QueryResultReader(QueryResult queryResult, int numberOfRowsPerSet) {
 
@@ -113,7 +118,7 @@ public class QueryResultReader implements Iterator<List<Tuple>> {
         }
     }
 
-    private List<Tuple> getCurrentSet() {
+    protected List<Tuple> getCurrentSet() {
         List<Tuple> returnList = new ArrayList<>();
         this.queryResult.setPosition(this.currentStartIndex);
         for (int index = this.currentStartIndex; index <= this.currentEndIndex; index++) {
@@ -153,6 +158,31 @@ public class QueryResultReader implements Iterator<List<Tuple>> {
     public List<Tuple> previous() {
         this.setCurrentRowPrevious();
         return this.getCurrentSet();
+    }
+
+    @Override
+    public boolean addObserver(Observer<ModifyEvent,String> observer) {
+        if (!this.subscriptionList.contains(observer)) {
+            return this.subscriptionList.add(observer);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeObserver(Observer<ModifyEvent,String> observer) {
+        return this.subscriptionList.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(ModifyEvent event) {
+        for (Observer<ModifyEvent,String> observer : List.copyOf(this.subscriptionList)) {
+            observer.update(event);
+        }
+    }
+
+    @Override
+    public void clearObservers() {
+        this.subscriptionList.clear();
     }
 
 }

@@ -2,6 +2,8 @@ package com.crowdcoin.mainBoard.export.ExportBehaviour;
 
 import com.crowdcoin.mainBoard.table.modelClass.DynamicModelClass;
 import com.crowdcoin.mainBoard.table.modelClass.ModelClass;
+import com.crowdcoin.mainBoard.table.modelClass.ModelClassFactory;
+import com.crowdcoin.newwork.QueryResultReader;
 import com.ratchet.interactive.InteractivePane;
 import com.crowdcoin.mainBoard.table.*;
 import com.crowdcoin.mainBoard.table.permissions.IsReadable;
@@ -15,12 +17,12 @@ public class FullExport implements ExportBehaviour {
 
     private InteractivePane pane;
     private PopWindow window;
-    private SQLTableReader tableReader;
+    private TableViewManager tableReader;
     private int numOfRowsPerRequest = 10;
 
     private String isReadablePerm = IsReadable.class.getSimpleName();
 
-    public FullExport(InteractivePane pane, PopWindow window, SQLTableReader tableReader) {
+    public FullExport(InteractivePane pane, PopWindow window, TableViewManager tableReader) {
         this.pane = pane;
         this.window = window;
         this.tableReader = tableReader;
@@ -65,7 +67,7 @@ public class FullExport implements ExportBehaviour {
 
             while (!hasReachedEnd) {
                 // Get a group of rows
-                List<ModelClass> modelClasses = this.tableReader.getRows(currentRowIndex,currentRowIndex+this.numOfRowsPerRequest);
+                List<ModelClass> modelClasses = this.tableReader.getModelClassRows(currentRowIndex,currentRowIndex+this.numOfRowsPerRequest);
                 // Loop through one row at a time, construct it into one entry list and add that to the entries list
                 for (ModelClass row : modelClasses) {
                     // Build modelClass for the given row

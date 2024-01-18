@@ -1,5 +1,6 @@
 package com.crowdcoin.mainBoard.export.ExportBehaviour;
 
+import com.crowdcoin.mainBoard.table.TableViewManager;
 import com.ratchet.interactive.InteractivePane;
 import com.crowdcoin.mainBoard.table.Column;
 import com.crowdcoin.mainBoard.table.modelClass.DynamicModelClass;
@@ -15,11 +16,11 @@ public class TabViewExport implements ExportBehaviour {
 
     private InteractivePane pane;
     private PopWindow window;
-    private SQLTableReader tableReader;
+    private TableViewManager tableReader;
 
     private String isReadablePerm = IsReadable.class.getSimpleName();
 
-    public TabViewExport(InteractivePane pane, PopWindow window, SQLTableReader reader) {
+    public TabViewExport(InteractivePane pane, PopWindow window, TableViewManager reader) {
         this.pane = pane;
         this.window = window;
         this.tableReader = reader;

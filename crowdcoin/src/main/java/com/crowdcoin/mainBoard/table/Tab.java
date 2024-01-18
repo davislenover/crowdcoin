@@ -36,7 +36,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
     private ColumnContainer columnContainer;
     private ModelClass modelClass;
     private ModelClassFactory factory;
-    //private TableViewManager tableViewManager; // TODO Need to be changed, tabs should hold a form of a main query and will call on a database object to run that query to get results
+    private TableViewManager tableViewManager; // TODO Need to be changed, tabs should hold a form of a main query and will call on a database object to run that query to get results
     //private SQLTable sqlTable; // TODO Need to be changed
     private InteractiveTabPane interactiveTabPane;
     private FilterController filterController;
@@ -87,7 +87,8 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
         // Check validity of modelClass
         ModelClassFactory.checkModelClassValidity(this.modelClass,this.sqlTable);
 
-        this.tableViewManager = new TableViewManager(this.sqlTable,this.columnContainer,this.modelClass,this.factory);
+        //INSERT SOME QUERYRESULT HERE, this.columnContainer, this.factory
+        this.tableViewManager = new TableViewManager();
 
         setupTab();
 
