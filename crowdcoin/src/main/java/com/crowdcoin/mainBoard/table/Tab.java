@@ -10,7 +10,11 @@ import com.crowdcoin.mainBoard.table.modelClass.ModelClass;
 import com.crowdcoin.mainBoard.table.modelClass.ModelClassFactory;
 import com.crowdcoin.mainBoard.table.tabActions.ExportTabEvent;
 import com.crowdcoin.mainBoard.table.tabActions.TabActionEvent;
+import com.crowdcoin.newwork.QueryResult;
+import com.crowdcoin.newwork.SQLDatabase;
+import com.crowdcoin.newwork.SelectQuery;
 import com.ratchet.interactive.InteractiveTabPane;
+import com.ratchet.threading.workers.Future;
 import com.ratchet.window.WindowManager;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
 import com.crowdcoin.networking.sqlcom.data.filter.FilterController;
@@ -34,10 +38,9 @@ import java.util.List;
 public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent,String> {
 
     private ColumnContainer columnContainer;
-    private ModelClass modelClass;
-    private ModelClassFactory factory;
     private TableViewManager tableViewManager; // TODO Need to be changed, tabs should hold a form of a main query and will call on a database object to run that query to get results
-    //private SQLTable sqlTable; // TODO Need to be changed
+    private SQLDatabase database;
+    private SelectQuery selectQuery;
     private InteractiveTabPane interactiveTabPane;
     private FilterController filterController;
     private WindowManager windowManager;
@@ -64,31 +67,33 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
 
     /**
      * Create a Tab object. Similar to a tab in a web browser, a Tab object stores a "state" of the TableView. Upon creation, a blank InteractiveTabPane is available for use
-     * @param classToModel an instance of the class to model for column data. This class will be used to get values for columns. To learn more, please see ModelClass and ModelClassFactory
-     * @param sqlTable an SQLTable object which is responsible for gathering data of a specific table found within the database
      * @param tabID a String identifier for the tab instance
      * @throws NotZeroArgumentException if the model class contains invokable methods that have more than zero parameters
      * @throws IncompatibleModelClassException if the model class does not contain the same number of invokable methods as there are columns within the given table within the database (as specified within the SQLTable object)
      * @throws ModelClassConstructorTypeException if the modelClass constructor contains an argument type mismatch to one or more columns within the database table. This could mean the constructor arguments of the modeling class are not in the correct order. Note that SQLTable returns a list where each element is a row of the database table sorted in ordinal position thus it is imperative to organize constructor parameters in the same position as column ordinal position
      */
-    public Tab(Object classToModel, SQLTable sqlTable, String tabID) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException, FailedQueryException, SQLException, InvalidRangeException, IncompatibleModelClassMethodNamesException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount, InvalidAbstractColumnReturnTypeException, InvalidAnnotationUsageException {
+    public Tab(SelectQuery queryToUse, SQLDatabase database, String tabID) throws NotZeroArgumentException, IncompatibleModelClassException, ModelClassConstructorTypeException, FailedQueryException, SQLException, InvalidRangeException, IncompatibleModelClassMethodNamesException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount, InvalidAbstractColumnReturnTypeException, InvalidAnnotationUsageException {
 
         // Create instances needed
         this.columnContainer = new ColumnContainer();
-        this.factory = new ModelClassFactory();
-        this.sqlTable = sqlTable;
         this.filterController = new FilterController();
         this.interactiveTabPane = new InteractiveTabPane();
         // Set Tab to observe pane (if some class triggers the notify method to indicate changes were made to the pane)
         this.interactiveTabPane.addObserver(this);
-        // Build model class from model reference
-        this.modelClass = this.factory.build(classToModel);
 
-        // Check validity of modelClass
-        ModelClassFactory.checkModelClassValidity(this.modelClass,this.sqlTable);
+        this.selectQuery = queryToUse;
+        this.database = database;
 
-        //INSERT SOME QUERYRESULT HERE, this.columnContainer, this.factory
-        this.tableViewManager = new TableViewManager();
+        Future queryResult = database.executeQuantifiedQuery(queryToUse);
+
+
+        try {
+            QueryResult result = (QueryResult) queryResult.getItem();
+            //INSERT SOME QUERYRESULT HERE, this.columnContainer, this.factory
+            this.tableViewManager = new TableViewManager(result,this.columnContainer);
+        } catch (Exception e) {
+            // TODO
+        }
 
         setupTab();
 
@@ -102,7 +107,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
         // Tab will observe the filter controller for changes to filters (such as if a filter is being added)
         this.filterController.addObserver(this);
         // Observe SQL Table for any other changes
-        this.sqlTable.addObserver(this);
+        this.database.addObserver(this);
         // Observe TableViewManager for updates to TableView rows
         this.tableViewManager.addObserver(this);
 
@@ -116,7 +121,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
         this.totalWidth = 0;
 
         // getColumnNames() only returns columns that have Readable permissions
-        List<String> columnNames = this.sqlTable.getColumnNames();
+        List<String> columnNames = this.tableViewManager.getCurrentModelClassSet().get(0).getColumns();
 
         // Loop through each column
         for (String columnName : columnNames) {
@@ -186,7 +191,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public void loadTab(TableView destinationTable, GridPane fieldPane, GridPane buttonPane, Button previous, Button next, SplitMenuButton filterButton, Button exportButton) throws FailedQueryException, SQLException, InvalidRangeException, NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount {
+    public void loadTab(TableView destinationTable, GridPane fieldPane, GridPane buttonPane, Button previous, Button next, SplitMenuButton filterButton, Button exportButton) throws FailedQueryException, SQLException, InvalidRangeException, NotZeroArgumentException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, MultipleVariableMethodsException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount, InvalidAbstractColumnReturnTypeException, InvalidAnnotationUsageException {
 
         // Clear current data and columns
         destinationTable.getItems().clear();
@@ -202,7 +207,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
         destinationTable.setOnMouseClicked(null);
 
         // Change MouseCLicked event to the TableView object, to invoke the corresponding tableActionHandler method
-        destinationTable.setOnMouseClicked(mouseEvent -> this.tableSelectHandler.tableActionHandler(this.columnContainer,this.interactiveTabPane,this.sqlTable,this.windowManager));
+        destinationTable.setOnMouseClicked(mouseEvent -> this.tableSelectHandler.tableActionHandler(this.columnContainer,this.interactiveTabPane,this.database,this.windowManager));
 
         // Set previous and forward button logic for TableViewManager instance
         this.tableViewManager.applyPrevNextButtons(destinationTable,previous,next);
@@ -217,7 +222,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
         destinationTable.getSelectionModel().select(this.columnContainer.getCurrentSelectedRelativeIndex());
 
         // Set Export Button Action
-        exportButton.setOnAction(buttonEvent -> this.openExport.tableActionHandler(this.columnContainer,this.interactiveTabPane,this.sqlTable,this.windowManager));
+        exportButton.setOnAction(buttonEvent -> this.openExport.tableActionHandler(this.columnContainer,this.interactiveTabPane,this.database,this.windowManager));
 
         // Open any closed windows
         this.windowManager.openAllWindows();
@@ -226,7 +231,7 @@ public class Tab implements Observable<ModifyEvent,String>, Observer<ModifyEvent
 
     @Override
     public void removeObserving() {
-        this.sqlTable.removeObserver(this);
+        this.database.removeObserver(this);
         this.filterController.removeObserver(this);
         this.tableViewManager.removeObserver(this);
     }

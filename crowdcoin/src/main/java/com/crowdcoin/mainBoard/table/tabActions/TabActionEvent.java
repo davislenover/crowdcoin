@@ -1,6 +1,7 @@
 package com.crowdcoin.mainBoard.table.tabActions;
 
 import com.crowdcoin.mainBoard.table.ColumnContainer;
+import com.crowdcoin.newwork.SQLDatabase;
 import com.ratchet.interactive.InteractiveTabPane;
 import com.ratchet.window.WindowManager;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
@@ -15,6 +16,6 @@ public interface TabActionEvent {
      * @param manager the corresponding WindowManager found within the Tab. It is strongly recommended to that if creating any {@link PopWindow} classes within the event, that they be instantiated with
      * the WindowManager from the given Tab
      */
-    void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane, SQLTable table, WindowManager manager);
+    void tableActionHandler(ColumnContainer columnContainer, InteractiveTabPane pane, SQLDatabase table, WindowManager manager);
 
 }

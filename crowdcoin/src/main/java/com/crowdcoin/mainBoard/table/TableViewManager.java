@@ -11,7 +11,6 @@ import com.crowdcoin.newwork.Tuple;
 import com.ratchet.observe.ModifyEvent;
 import com.ratchet.observe.ModifyEventType;
 import com.crowdcoin.networking.sqlcom.data.SQLTable;
-import com.crowdcoin.networking.sqlcom.data.SQLTableReader;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -34,15 +33,14 @@ public class TableViewManager extends QueryResultReader {
      * Handles access of rows in an SQL Table in an ordered/iterative fashion for application to TableView objects.
      * @param queryResult        a queryResult to read SQL data from
      * @param columnContainer the columns for the TableView object
-     * @param factory         the factory to produce clones of the ModelClass
      * @throws FailedQueryException
      * @throws SQLException
      * @throws InvalidRangeException
      */
-    public TableViewManager(QueryResult queryResult, ColumnContainer columnContainer, ModelClassFactory factory) {
+    public TableViewManager(QueryResult queryResult, ColumnContainer columnContainer) {
         super(queryResult,10);
         this.columnContainer = columnContainer;
-        this.factory = factory;
+        this.factory = new ModelClassFactory();
     }
 
     public List<ModelClass> getCurrentModelClassSet() throws InvalidAbstractColumnReturnTypeException, InvalidAnnotationUsageException, MultipleVariableMethodsException, NotZeroArgumentException, InvalidVariableMethodParameterTypeException, InvalidVariableMethodParameterCount {
